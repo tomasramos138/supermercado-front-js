@@ -1,0 +1,105 @@
+.register-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+}
+
+.register-container {
+  background: white;
+  padding: 2.5rem 2rem;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #764ba2;
+  margin-bottom: 0.5rem;
+}
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.register-form select {
+  color: #2c3e50;
+  background-color: white;
+}
+
+.register-form select option {
+  color: #2c3e50 !important;
+  background-color: white !important;
+}
+
+.register-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.register-btn:disabled {
+  background: #b3b3b3;
+  cursor: not-allowed;
+}
+
+.register-btn:hover:not(:disabled) {
+  background: #764ba2;
+}
+
+.error-message {
+  background: #ffe0e0;
+  color: #e74c3c;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.register-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.98rem;
+}
+
+.login-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .register-container {
+    padding: 1.2rem;
+  }
+}
+
