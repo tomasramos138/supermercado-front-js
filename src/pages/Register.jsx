@@ -1,93 +1,142 @@
 import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import useZonas from "../hooks/useZonas";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import useZonas from "../hooks/useZonas";
 import "./Register.css";
 
 const Register = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const navigate = useNavigate();
+  const { registerUser, errorLogin } = useAuth();
   const { zonas, isLoading } = useZonas();
+  const navigate = useNavigate();
 
-  console.log("Zonas cargadas:", zonas);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    mode: "onBlur",
+  });
 
   const onSubmit = async (data) => {
-    try {
-    // Convertimos zona a número explícitamente
     const datosFormulario = {
-        ...data,
-        zonaId: Number(data.zona),
-        // Si usás roles, descomentá esto:
-        // rol: false,
+      ...data,
+      zonaId: Number(data.zona),
     };
 
-    console.log("Datos del formulario corregidos:", datosFormulario);
-
-    await axios.post("http://localhost:3000/api/auth/register", datosFormulario);
-
-    alert("Registro exitoso. Ahora inicia sesión.");
+    const result = await registerUser(datosFormulario);
+    if (!result?.success) return; // Si hay error, no navega
     navigate("/login");
-
-    } catch (error) {
-    console.error("Error al registrar:", error);
-    alert("Error al registrar usuario");
-    }
   };
 
   return (
     <div className="register-page">
       <div className="register-container">
         <div className="register-header">
-          <h2>Crear Cuenta</h2>
+          <h1>Crear Cuenta</h1>
+          <p>Complete sus datos para registrarse</p>
         </div>
 
-        <form className="register-form" onSubmit={handleSubmit(onSubmit)}>
+        <form className="register-form" onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="form-group">
-            <input className="form-input" {...register("name", { required: true })} placeholder="Nombre" />
-            {errors.name && <span className="error-message">El nombre es requerido</span>}
+            <label htmlFor="name">Nombre</label>
+            <input
+              id="name"
+              className="form-input"
+              {...register("name", { required: "El nombre es requerido" })}
+              placeholder="Nombre"
+            />
+            {errors.name && <div className="error-message">{errors.name.message}</div>}
           </div>
 
           <div className="form-group">
-            <input className="form-input" {...register("apellido", { required: true })} placeholder="Apellido" />
-            {errors.apellido && <span className="error-message">El apellido es requerido</span>}
+            <label htmlFor="apellido">Apellido</label>
+            <input
+              id="apellido"
+              className="form-input"
+              {...register("apellido", { required: "El apellido es requerido" })}
+              placeholder="Apellido"
+            />
+            {errors.apellido && <div className="error-message">{errors.apellido.message}</div>}
           </div>
 
           <div className="form-group">
-            <input className="form-input" {...register("dni", { required: true })} placeholder="DNI" />
-            {errors.dni && <span className="error-message">El DNI es requerido</span>}
+            <label htmlFor="dni">DNI</label>
+            <input
+              id="dni"
+              className="form-input"
+              {...register("dni", { required: "El DNI es requerido" })}
+              placeholder="DNI"
+            />
+            {errors.dni && <div className="error-message">{errors.dni.message}</div>}
           </div>
 
           <div className="form-group">
-            <input className="form-input" {...register("usuario", { required: true })} placeholder="Email" type="email" />
-            {errors.usuario && <span className="error-message">El email es requerido</span>}
+            <label htmlFor="usuario">Email</label>
+            <input
+              id="usuario"
+              type="email"
+              className="form-input"
+              {...register("usuario", {
+                required: "El usuario (email) es requerido",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  message: "Formato de email no válido",
+                },
+              })}
+              placeholder="Email"
+              autoComplete="username"
+            />
+            {errors.usuario && <div className="error-message">{errors.usuario.message}</div>}
           </div>
 
           <div className="form-group">
-            <input className="form-input" {...register("contraseña", { required: true })} placeholder="Contraseña" type="password" />
-            {errors.contraseña && <span className="error-message">La contraseña es requerida</span>}
+            <label htmlFor="contraseña">Contraseña</label>
+            <input
+              id="contraseña"
+              type="password"
+              className="form-input"
+              {...register("contraseña", { required: "La contraseña es requerida" })}
+              placeholder="Contraseña"
+              autoComplete="new-password"
+            />
+            {errors.contraseña && <div className="error-message">{errors.contraseña.message}</div>}
           </div>
 
           <div className="form-group">
-            <select className="form-input" {...register("zona", { required: true })}>
+            <label htmlFor="zona">Zona</label>
+            <select
+              id="zona"
+              className="form-input"
+              {...register("zona", { required: "Debe seleccionar una zona" })}
+            >
               <option value="">Seleccionar zona</option>
               {isLoading ? (
                 <option disabled>Cargando zonas...</option>
               ) : (
-                zonas?.map(z => (
-                  <option key={z.id} value={z.id}>{z.name} - {z.description}</option>
+                zonas?.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.name} - {z.description}
+                  </option>
                 ))
               )}
             </select>
-            {errors.zona && <span className="error-message">Debe seleccionar una zona</span>}
+            {errors.zona && <div className="error-message">{errors.zona.message}</div>}
           </div>
 
-          <button className="register-btn" type="submit">Registrarse</button>
+          <button className="register-btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Registrando..." : "Registrarse"}
+          </button>
+
+          {errorLogin && <div className="error-message">{errorLogin}</div>}
         </form>
 
         <div className="register-footer">
-          ¿Ya tenés una cuenta?{" "}
-          <a href="/login" className="login-link">Iniciar sesión</a>
+          <p>
+            ¿Ya tenés una cuenta?{" "}
+            <Link to="/login" className="login-link">
+              Iniciar sesión
+            </Link>
+          </p>
         </div>
       </div>
     </div>

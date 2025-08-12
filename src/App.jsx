@@ -1,17 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-// Layout Components
-import MainLayout from "./components/layouts/MainLayout";
 
-// Public Pages
-import Home from "./pages/Home";
-import About from "./pages/About";
 
 // Protected Pages
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ProductList from "./pages/ProductList";
+import Carrito from "./pages/Carrito";
 
 // Other components
 import Login from "./pages/Login";
@@ -19,7 +15,7 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Context and Hooks
+// Context and HooksS
 import { AuthProvider } from "./providers/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -32,21 +28,20 @@ function App() {
         <BrowserRouter>
           <div className="App">
             <Routes>
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Home />} />
-                <Route path="about" element={<About />} />
-              </Route>
+
 
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} /> 
 
               <Route
-                path="/dashboard"
+                path="/products"
                 element={<ProtectedRoute allowedRoles={[true,false]} />}
               >
-                <Route index element={<Dashboard />} />
-                <Route path="profile" element={<Profile />} />
+                <Route index element={<ProductList />} />
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="products" element={<ProductList />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="carrito" element={<Carrito/>} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

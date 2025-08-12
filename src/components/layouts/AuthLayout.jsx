@@ -8,40 +8,42 @@ const AuthLayout = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   return (
     <div className="auth-layout">
       <aside className="auth-sidebar">
         <div className="sidebar-header">
-          <h2>DSWApp</h2>
+          <h2>Supermercado</h2>
           <p>Bienvenido, {user?.name || 'User'}!</p>
         </div>
-        
+
         <nav className="sidebar-nav">
-          <Link to="/" className="sidebar-link">
-            <span className="icon">🏠</span>
-            Inicio
+
+          <Link to="/products" className="sidebar-link">
+            <span className="icon">🧴</span>
+            Productos
           </Link>
 
           {user?.rol === true && (
-            <Link to="/dashboard" className="sidebar-link">
+            <Link to="/products/dashboard" className="sidebar-link">
               <span className="icon">📊</span>
               Panel de Control
             </Link>
           )}
 
-          <Link to="/dashboard/products" className="sidebar-link">
-            <span className="icon">🧴</span>
-            Productos
+          <Link to="/products/carrito" className="sidebar-link">
+            <span className="icon">🛒</span>
+            Carrito
           </Link>
-          <Link to="/dashboard/profile" className="sidebar-link">
+          
+          <Link to="/products/profile" className="sidebar-link">
             <span className="icon">👤</span>
             Perfil
           </Link>
         </nav>
-        
+
         <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-btn">
             <span className="icon">🚪</span>
@@ -49,12 +51,12 @@ const AuthLayout = () => {
           </button>
         </div>
       </aside>
-      
+
       <main className="auth-content">
         <header className="auth-header">
           <h1>Area Protegida</h1>
         </header>
-        
+
         <div className="auth-main">
           <Outlet />
         </div>
@@ -63,4 +65,4 @@ const AuthLayout = () => {
   );
 };
 
-export default AuthLayout; 
+export default AuthLayout;

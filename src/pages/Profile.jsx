@@ -4,12 +4,15 @@ import "./Profile.css";
 
 const Profile = () => {
   const { user } = useAuth();
+
+  // Asegúrate de que tu objeto 'user' tenga 'name' y 'apellido'
+  // Si 'user.name' ya es el nombre completo, puedes ajustar esto.
+  // Asumo que 'user.name' es el nombre y 'user.apellido' es el apellido.
   const mockProfile = {
-    name: user?.name,
-    email: user?.usuario,
-    role: user?.rol || "Administrador",
-    joinDate: "04/11/1983",
-    lastLogin: "2 horas atrás",
+    name: user?.name || "",
+    lastName: user?.apellido || "", // Asumo que el apellido viene en user.apellido
+    email: user?.usuario || "", // Asumo que el email viene en user.usuario
+    role: user?.rol === true ? "Administrador" : "Cliente",
     avatar: "👤",
   };
 
@@ -21,18 +24,20 @@ const Profile = () => {
   } = useForm({
     defaultValues: {
       name: mockProfile.name,
+      apellido: mockProfile.lastName, // Asigna el apellido aquí
       email: mockProfile.email,
-      phone: "",
+      // Eliminamos 'phone' de los defaultValues
     },
   });
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
+    console.log("Datos del formulario enviados:", data);
     // Simulate API call
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Here you would update the user profile
-        // For demo, just reset the form
-        reset();
+        // Aquí actualizarías el perfil del usuario en tu backend
+        // Por ahora, solo reseteamos el formulario
+        reset(data); // Resetea con los datos enviados para mantenerlos en el formulario
         resolve();
       }, 1000);
     });
@@ -44,34 +49,23 @@ const Profile = () => {
         <h1>Perfil</h1>
         <p>Administrar la configuración y preferencias de su cuenta</p>
       </div>
-
       <div className="profile-content">
         <div className="profile-card">
           <div className="profile-avatar">
             <span className="avatar">{mockProfile.avatar}</span>
           </div>
-
           <div className="profile-info">
-            <h2>{mockProfile.name}</h2>
+            <h2>{mockProfile.name} {mockProfile.lastName}</h2> {/* Muestra nombre y apellido */}
             <p className="profile-role">{mockProfile.role}</p>
-
             <div className="profile-details">
               <div className="detail-item">
                 <label>Email:</label>
                 <span>{mockProfile.email}</span>
               </div>
-              <div className="detail-item">
-                <label>Registrado:</label>
-                <span>{mockProfile.joinDate}</span>
-              </div>
-              <div className="detail-item">
-                <label>Ultimo login:</label>
-                <span>{mockProfile.lastLogin}</span>
-              </div>
+              {/* Eliminamos "Registrado" y "Ultimo login" */}
             </div>
           </div>
         </div>
-
         <div className="profile-sections">
           <div className="section-card">
             <h3>Información personal</h3>
@@ -81,29 +75,40 @@ const Profile = () => {
               noValidate
             >
               <div className="form-group">
-                <label htmlFor="name">Nombre completo</label>
+                <label htmlFor="name">Nombre</label>
                 <input
                   type="text"
                   id="name"
-                  {...register("name", { required: "Name is required" })}
+                  {...register("name", { required: "El nombre es requerido" })}
                   className="form-input"
                 />
                 {errors.name && (
                   <div className="error-message">{errors.name.message}</div>
                 )}
               </div>
-
+              <div className="form-group">
+                <label htmlFor="apellido">Apellido</label> {/* Cambiado a 'apellido' */}
+                <input
+                  type="text"
+                  id="apellido"
+                  {...register("apellido", { required: "El apellido es requerido" })}
+                  className="form-input"
+                />
+                {errors.apellido && (
+                  <div className="error-message">{errors.apellido.message}</div>
+                )}
+              </div>
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <input
                   type="email"
                   id="email"
                   {...register("email", {
-                    required: "Email is required",
+                    required: "El email es requerido",
                     pattern: {
                       value:
                         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/, // Expresión regular para validar formato de email
-                      message: "Not valid email",
+                      message: "Email no válido",
                     },
                   })}
                   className="form-input"
@@ -112,18 +117,7 @@ const Profile = () => {
                   <div className="error-message">{errors.email.message}</div>
                 )}
               </div>
-
-              <div className="form-group">
-                <label htmlFor="phone">Teléfono</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  placeholder="+1 (555) 123-4567"
-                  {...register("phone")}
-                  className="form-input"
-                />
-              </div>
-
+              {/* Eliminamos el campo de Teléfono */}
               <button
                 type="submit"
                 className="save-btn"
@@ -133,7 +127,6 @@ const Profile = () => {
               </button>
             </form>
           </div>
-
           <div className="section-card">
             <h3>Configuraciones de seguridad</h3>
             <div className="security-options">
@@ -144,7 +137,6 @@ const Profile = () => {
                 </div>
                 <button className="security-btn">Cambiar</button>
               </div>
-
               <div className="security-item">
                 <div className="security-info">
                   <h4>Autenticación por doble factor</h4>
@@ -152,7 +144,6 @@ const Profile = () => {
                 </div>
                 <button className="security-btn">Habilitar</button>
               </div>
-
               <div className="security-item">
                 <div className="security-info">
                   <h4>Historial</h4>
@@ -162,7 +153,6 @@ const Profile = () => {
               </div>
             </div>
           </div>
-
           <div className="section-card">
             <h3>Preferencias</h3>
             <div className="preferences">
@@ -172,14 +162,12 @@ const Profile = () => {
                   <span>Notificaciones por email</span>
                 </label>
               </div>
-
               <div className="preference-item">
                 <label className="checkbox-label">
                   <input type="checkbox" />
                   <span>Notificaciones push</span>
                 </label>
               </div>
-
               <div className="preference-item">
                 <label className="checkbox-label">
                   <input type="checkbox" defaultChecked />
