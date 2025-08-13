@@ -1,10 +1,15 @@
+import { useState } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useCart } from '../../hooks/useCart';
+import CartPage from "../../pages/CartPage"; // Importa tu CartPage existente
 import './AuthLayout.css';
 
 const AuthLayout = () => {
   const { user, logout } = useAuth();
+  const { cartItemCount } = useCart();
   const navigate = useNavigate();
+  const [showCart, setShowCart] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -20,11 +25,19 @@ const AuthLayout = () => {
         </div>
 
         <nav className="sidebar-nav">
-
           <Link to="/products" className="sidebar-link">
             <span className="icon">🧴</span>
             Productos
           </Link>
+
+          {/* Botón para abrir el carrito como slider */}
+          <button 
+          className="sidebar-link cart-btn"
+            onClick={() => setShowCart(true)}
+          >
+            <span className="icon">🛒</span>
+            Carrito ({cartItemCount})
+          </button>
 
           {user?.rol === true && (
             <Link to="/products/dashboard" className="sidebar-link">
@@ -32,11 +45,6 @@ const AuthLayout = () => {
               Panel de Control
             </Link>
           )}
-
-          <Link to="/products/carrito" className="sidebar-link">
-            <span className="icon">🛒</span>
-            Carrito
-          </Link>
           
           <Link to="/products/profile" className="sidebar-link">
             <span className="icon">👤</span>
@@ -61,6 +69,9 @@ const AuthLayout = () => {
           <Outlet />
         </div>
       </main>
+
+      {/* CartPage como slider */}
+      <CartPage isOpen={showCart} onClose={() => setShowCart(false)} />
     </div>
   );
 };

@@ -35,6 +35,7 @@
   padding: 1rem 0;
 }
 
+/* Unificamos estilos para enlaces y botones del sidebar */
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -44,6 +45,11 @@
   text-decoration: none;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .sidebar-link:hover {
@@ -154,4 +160,4 @@
     border-left-color: transparent;
     border-bottom-color: #3498db;
   }
-} 
+}

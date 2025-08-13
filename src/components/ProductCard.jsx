@@ -1,4 +1,10 @@
+import { useCart } from "../hooks/useCart";
+
 function ProductCard({ product }) {
+  const { addToCart, cart } = useCart();
+  const cartItem = cart.find(item => item.id === product.id);
+  const availableStock = product.stock - (cartItem?.quantity || 0);
+
   return (
     <div style={cardStyles.card}>
       <img
@@ -13,12 +19,20 @@ function ProductCard({ product }) {
       <div style={cardStyles.price}>
         ${product.precio ? product.precio.toFixed(2) : 'N/A'}
       </div>
-      <button style={cardStyles.button}>Ver Detalles</button>
+      <div style={cardStyles.stock}>
+        Stock disponible: {availableStock}
+      </div>
+      <button 
+        style={cardStyles.button}
+        onClick={() => addToCart(product)}
+        disabled={availableStock <= 0}
+      >
+        {availableStock <= 0 ? 'Agotado' : 'Añadir al carrito'}
+      </button>
     </div>
   );
 }
 
-// Estilos básicos para la tarjeta
 const cardStyles = {
   card: {
     border: '1px solid #ddd',
@@ -32,7 +46,6 @@ const cardStyles = {
     alignItems: 'center',
     backgroundColor: '#fff',
     transition: 'transform 0.2s ease-in-out',
-    cursor: 'pointer',
   },
   image: {
     width: '100%',
@@ -48,7 +61,7 @@ const cardStyles = {
     color: '#333',
     textAlign: 'center',
   },
-  description: {  // ✅ corregido aquí
+  description: {
     fontSize: '0.9em',
     color: '#666',
     marginBottom: '15px',
@@ -59,7 +72,12 @@ const cardStyles = {
     fontSize: '1.3em',
     fontWeight: 'bold',
     color: '#28a745',
-    marginBottom: '15px',
+    marginBottom: '10px',
+  },
+  stock: {
+    fontSize: '0.8em',
+    color: '#666',
+    marginBottom: '10px',
   },
   button: {
     backgroundColor: '#007bff',
@@ -70,9 +88,11 @@ const cardStyles = {
     cursor: 'pointer',
     fontSize: '1em',
     transition: 'background-color 0.2s ease-in-out',
+    width: '100%',
   },
-  cardHover: {
-    transform: 'translateY(-5px)',
+  buttonDisabled: {
+    backgroundColor: '#cccccc',
+    cursor: 'not-allowed',
   }
 };
 
