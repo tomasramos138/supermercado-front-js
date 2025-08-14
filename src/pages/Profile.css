@@ -120,65 +120,11 @@
   background: #764ba2;
 }
 
-.security-options {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.security-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 6px;
-}
-
-.security-btn {
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.security-btn:hover {
-  background: #667eea;
-}
-
-.preferences {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-
-.preference-item {
-  display: flex;
-  align-items: center;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-  color: #2c3e50;
-}
-
 @media (max-width: 768px) {
   .profile-content {
     flex-direction: column;
     gap: 1.5rem;
   }
-  /* .profile-card {
-    max-width: 100%;
-    min-width: 0;
-    width: 100%;
-  } */
 }
 
 @media (max-width: 600px) {
@@ -188,4 +134,4 @@
   .section-card {
     padding: 1rem;
   }
-} 
+}

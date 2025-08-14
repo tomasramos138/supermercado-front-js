@@ -1,19 +1,23 @@
 import { useCart } from "../hooks/useCart";
-import './CartPage.css'; // Asegúrate de que los estilos estén actualizados
+import { useContext } from "react";
+import { AuthContext } from "../contexts/auth";
+import './CartPage.css';
 
 const CartPage = ({ isOpen, onClose }) => {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount } = useCart();
+  const { distribuidor } = useContext(AuthContext);
+  console.log("Distribuidor en CartPage:", distribuidor);
+  // Obtener el valor de entrega del distribuidor (0 si no hay distribuidor)
+  const valorEntrega = distribuidor?.valorEntrega || 0;
+  const totalConEnvio = cartTotal + valorEntrega;
 
   if (!isOpen) return null;
 
   return (
     <>
-      {/* Overlay para oscurecer el fondo */}
       <div className="cart-overlay" onClick={onClose} />
       
-      {/* Contenedor principal del slider */}
       <div className="cart-slider">
-        {/* Encabezado del carrito */}
         <div className="cart-header">
           <h2>Tu Carrito ({cartItemCount} {cartItemCount === 1 ? 'item' : 'items'})</h2>
           <button className="close-btn" onClick={onClose} aria-label="Cerrar carrito">
@@ -21,7 +25,6 @@ const CartPage = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Contenido del carrito */}
         <div className="cart-content">
           {cartItemCount === 0 ? (
             <div className="empty-cart-message">
@@ -35,7 +38,6 @@ const CartPage = ({ isOpen, onClose }) => {
             </div>
           ) : (
             <>
-              {/* Lista de productos */}
               <div className="cart-items-list">
                 {cart.map((item) => (
                   <div key={item.id} className="cart-item">
@@ -48,7 +50,6 @@ const CartPage = ({ isOpen, onClose }) => {
                       <h3 className="item-name">{item.name}</h3>
                       <p className="item-description">{item.descripcion}</p>
                       
-                      {/* Controles de cantidad */}
                       <div className="quantity-controls">
                         <button
                           className="quantity-btn minus"
@@ -70,14 +71,12 @@ const CartPage = ({ isOpen, onClose }) => {
                         </span>
                       </div>
                       
-                      {/* Precio */}
                       <div className="item-price">
                         ${(item.precio * item.quantity).toFixed(2)}
                         <span className="unit-price">(${item.precio.toFixed(2)} c/u)</span>
                       </div>
                     </div>
                     
-                    {/* Botón para eliminar */}
                     <button
                       className="remove-item-btn"
                       onClick={() => removeFromCart(item.id)}
@@ -89,7 +88,6 @@ const CartPage = ({ isOpen, onClose }) => {
                 ))}
               </div>
 
-              {/* Resumen de compra */}
               <div className="cart-summary">
                 <div className="summary-row">
                   <span>Subtotal ({cartItemCount} {cartItemCount === 1 ? 'producto' : 'productos'}):</span>
@@ -97,18 +95,28 @@ const CartPage = ({ isOpen, onClose }) => {
                 </div>
                 <div className="summary-row">
                   <span>Envío:</span>
-                  <span>Gratis</span>
+                  <span>
+                    {valorEntrega > 0 ? `$${valorEntrega.toFixed(2)}` : 'Gratis'}
+                  </span>
                 </div>
                 <div className="summary-row total">
                   <span>Total:</span>
-                  <span>${cartTotal.toFixed(2)}</span>
+                  <span>${totalConEnvio.toFixed(2)}</span>
                 </div>
                 
                 <button 
                   className="checkout-btn"
                   onClick={() => {
-                    // Aquí puedes agregar la lógica para proceder al pago
-                    console.log('Proceder al pago');
+                    // Aquí puedes incluir el valorEntrega en los datos del pago
+                    const datosPago = {
+                      productos: cart,
+                      subtotal: cartTotal,
+                      envio: valorEntrega,
+                      total: totalConEnvio,
+                      distribuidorId: distribuidor?.id
+                    };
+                    console.log('Datos para el pago:', datosPago);
+                    // Aquí iría la lógica para procesar el pago
                   }}
                 >
                   Proceder al pago

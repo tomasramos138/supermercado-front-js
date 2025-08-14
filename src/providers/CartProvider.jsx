@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from "react";
 import { CartContext } from '../contexts/CartContext';
+import { AuthContext } from '../contexts/auth';
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
+  const { user } = useContext(AuthContext);
+
+    // Limpiar el carrito cuando el usuario cierre sesión
+  useEffect(() => {
+    if (!user) {
+      setCart([]); // Vacía el carrito si no hay usuario
+    }
+  }, [user]); // Se ejecuta cada vez que `user` cambie
 
   const addToCart = (product) => {
     setCart((currentCart) => {
       const existingItem = currentCart.find(item => item.id === product.id);
-      
+
       if (existingItem) {
         if (existingItem.quantity >= product.stock) {
           alert(`No hay suficiente stock. Solo quedan ${product.stock} unidades.`);
@@ -55,7 +64,6 @@ export function CartProvider({ children }) {
       );
     });
   };
-
   const cartTotal = cart.reduce(
     (total, item) => total + (item.precio * item.quantity), 
     0
