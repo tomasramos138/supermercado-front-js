@@ -3,15 +3,23 @@ import { CartContext } from '../contexts/CartContext';
 import { AuthContext } from '../contexts/auth';
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
+    const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
   const { user } = useContext(AuthContext);
 
-    // Limpiar el carrito cuando el usuario cierre sesión
+    // Limpiar el carrito cuando el usuario cambie
   useEffect(() => {
-    if (!user) {
-      setCart([]); // Vacía el carrito si no hay usuario
-    }
-  }, [user]); // Se ejecuta cada vez que `user` cambie
+  if (!user) {
+    setCart([]);
+    localStorage.removeItem("cart");
+  }
+}, [user]); 
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (product) => {
     setCart((currentCart) => {

@@ -28,9 +28,7 @@ function App() {
         <CartProvider>
         <BrowserRouter>
           <div className="App">
-            <Routes>
-
-
+            <Routes> 
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} /> 
 

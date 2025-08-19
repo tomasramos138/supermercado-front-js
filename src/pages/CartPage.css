@@ -263,3 +263,47 @@
     padding: 0.8rem;
   }
 }
+
+/* Estilos para la confirmación de venta */
+.sale-confirmation {
+  padding: 20px;
+}
+
+.success-message {
+  background-color: #e8f5e9;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.success-message h3 {
+  color: #2e7d32;
+  margin: 0 0 10px 0;
+}
+
+.sale-details {
+  margin-bottom: 20px;
+}
+
+.sale-details h4 {
+  margin: 20px 0 10px 0;
+  color: #333;
+}
+
+.sale-items {
+  margin: 15px 0;
+}
+
+.sale-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.error-message {
+  color: #d32f2f;
+  margin: 10px 0;
+  text-align: center;
+}

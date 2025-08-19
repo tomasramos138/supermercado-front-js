@@ -58,16 +58,6 @@ const Login = () => {
             )}
           </div>
 
-          <div className="form-options">
-            <label className="checkbox-label">
-              <input type="checkbox" {...register("remember")} />
-              <span>Recordarme</span>
-            </label>
-            <Link to="/forgot-password" className="forgot-link">
-              Olvido su contraseña?
-            </Link>
-          </div>
-
           <button type="submit" className="login-btn" disabled={isSubmitting}>
             {isSubmitting ? "Ingresando..." : "Ingresar"}
           </button>

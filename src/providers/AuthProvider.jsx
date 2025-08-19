@@ -37,9 +37,9 @@ export const AuthProvider = ({ children }) => {
   const [errorLogin, setErrorLogin] = useState(null);
 
   // Función para obtener el distribuidor por zona
-  const fetchDistribuidor = async (zonaId) => {
+  const fetchDistribuidor = async (zona) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/distribuidor/zona/${zonaId}`);
+      const response = await axios.get(`http://localhost:3000/api/distribuidor/zona/${zona.id}`);
       return response.data.data[0]; // Asumiendo que devuelve un array y queremos el primero
     } catch (error) {
       console.error("Error al obtener distribuidor:", error);
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadDistribuidor = async () => {
       if (user?.zona) {
-        const distribuidorData = await fetchDistribuidor(user.zona.id);
+        const distribuidorData = await fetchDistribuidor(user.zona);
         setDistribuidor(distribuidorData);
       }
     };
@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setDistribuidor(null);
     localStorage.removeItem("token");
-    setWasAuthenticated(false);
+    setWasAuthenticated(false); // Resetear estado de autenticación
   };
 
 // ermite que las funciones puedan ser utilizadas en otras componentes del contexto

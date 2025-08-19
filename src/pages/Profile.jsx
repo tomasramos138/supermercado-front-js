@@ -4,15 +4,16 @@ import "./Profile.css";
 
 const Profile = () => {
   const { user } = useAuth();
-
+  
   const mockProfile = {
     name: user?.name || "",
     lastName: user?.apellido || "",
     email: user?.usuario || "",
     role: user?.rol === true ? "Administrador" : "Cliente",
+    zone: user?.zona?.name || "Sin zona asignada",
     avatar: "👤",
   };
-
+  
   const {
     register,
     handleSubmit,
@@ -49,7 +50,8 @@ const Profile = () => {
           </div>
           <div className="profile-info">
             <h2>{mockProfile.name} {mockProfile.lastName}</h2>
-            <p className="profile-role">{mockProfile.role}</p>
+            <p className="profile-role">Rol: {mockProfile.role}</p>
+            <p className="profile-zone">Zona: {mockProfile.zone}</p>
             <div className="profile-details">
               <div className="detail-item">
                 <label>Email:</label>
