@@ -3,7 +3,7 @@ import axios from "axios";
 
 const getZonas = async () => {
   const response = await axios.get("http://localhost:3000/api/zona");
-  console.log("useZonas: Datos recibidos:", response.data);
+  //console.log("useZonas: Datos recibidos:", response.data);
   return response.data.data  
 };
 

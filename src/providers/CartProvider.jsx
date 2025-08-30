@@ -3,6 +3,7 @@ import { CartContext } from '../contexts/CartContext';
 import { AuthContext } from '../contexts/auth';
 
 export function CartProvider({ children }) {
+    //recupera el carrito del localStorage o inicia uno vacío
     const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
@@ -16,7 +17,7 @@ export function CartProvider({ children }) {
     localStorage.removeItem("cart");
   }
 }, [user]); 
-
+  // Guarda cada cambio del carrito en el localStorage
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);

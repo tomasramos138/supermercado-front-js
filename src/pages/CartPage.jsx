@@ -6,7 +6,8 @@ import './CartPage.css';
 const CartPage = ({ isOpen, onClose }) => {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount } = useCart();
   const { distribuidor } = useContext(AuthContext);
-  console.log("Distribuidor en CartPage:", distribuidor);
+  //console.log("Distribuidor en CartPage:", distribuidor);
+
   // Obtener el valor de entrega del distribuidor (0 si no hay distribuidor)
   const valorEntrega = distribuidor?.valorEntrega || 0;
   const totalConEnvio = cartTotal + valorEntrega;
