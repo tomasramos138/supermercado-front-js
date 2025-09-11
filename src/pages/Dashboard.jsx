@@ -3,6 +3,7 @@ import useClientesCount from "../hooks/useCliente";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
 import useVentasCount from "../hooks/useVenta";
+import useProducts from "../hooks/useProducts"; // Importar el hook de productos
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -16,6 +17,11 @@ const Dashboard = () => {
     isLoading: isVentasLoading,
     isError: isVentasError,
   } = useVentasCount();
+  const {
+    totalStock,
+    isStockLoading,
+    isStockError
+  } = useProducts(); // Usar el hook de productos
 
   return (
     <div className="dashboard-page">
@@ -47,7 +53,13 @@ const Dashboard = () => {
               <div className="metric-icon">📦</div>
               <div className="metric-content">
                 <h3>Stock Total</h3>
-                <p className="metric-value">1,248</p>
+                {isStockLoading ? (
+                  <p className="metric-value">Cargando...</p>
+                ) : isStockError ? (
+                  <p className="metric-value">Error</p>
+                ) : (
+                  <p className="metric-value">{totalStock?.toLocaleString()}</p>
+                )}
               </div>
             </div>
 

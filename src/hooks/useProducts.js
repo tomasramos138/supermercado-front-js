@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const getProducts = async () => {
@@ -6,6 +6,10 @@ const getProducts = async () => {
   return response.data.data;
 };
 
+const getTotalStock = async () => {
+  const response = await axios.get("http://localhost:3000/api/producto/stockTotal");
+  return response.data.data; 
+};
 
 function useProducts() {
   const { data, isError, error, isLoading } = useQuery({
@@ -13,11 +17,27 @@ function useProducts() {
     queryFn: getProducts,
   });
 
+  const { 
+    data: totalStock, 
+    isError: isStockError, 
+    error: stockError, 
+    isLoading: isStockLoading,
+    refetch: refetchStock 
+  } = useQuery({
+    queryKey: ["totalStock"],
+    queryFn: getTotalStock,
+  });
+
   return {
     products: data,
+    totalStock, 
     isError,
     error,
     isLoading,
+    isStockError,
+    stockError,
+    isStockLoading,
+    refetchStock,
   };
 }
 
