@@ -2,10 +2,20 @@ import { useAuth } from "../hooks/useAuth";
 import useClientesCount from "../hooks/useCliente";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
+import useVentasCount from "../hooks/useVenta";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { clientesCount, isLoading, isError } = useClientesCount();
+  const {
+    clientesCount,
+    isLoading: isClientesLoading,
+    isError: isClientesError,
+  } = useClientesCount();
+  const {
+    ventasCount,
+    isLoading: isVentasLoading,
+    isError: isVentasError,
+  } = useVentasCount();
 
   return (
     <div className="dashboard-page">
@@ -23,9 +33,9 @@ const Dashboard = () => {
               <div className="metric-icon">👥</div>
               <div className="metric-content">
                 <h3>Clientes</h3>
-                {isLoading ? (
+                {isClientesLoading ? (
                   <p className="metric-value">Cargando...</p>
-                ) : isError ? (
+                ) : isClientesError ? (
                   <p className="metric-value">Error</p>
                 ) : (
                   <p className="metric-value">{clientesCount}</p>
@@ -45,7 +55,13 @@ const Dashboard = () => {
               <div className="metric-icon">💰</div>
               <div className="metric-content">
                 <h3>Cantidad de Ventas</h3>
-                <p className="metric-value">0</p>
+                {isVentasLoading ? (
+                  <p className="metric-value">Cargando...</p>
+                ) : isVentasError ? (
+                  <p className="metric-value">Error</p>
+                ) : (
+                  <p className="metric-value">{ventasCount}</p>
+                )}
               </div>
             </div>
           </div>
@@ -59,12 +75,12 @@ const Dashboard = () => {
               <span className="action-icon">🗺️</span>
               <span className="action-label">Nueva Zona-Distribuidor</span>
             </Link>
-            
+
             <Link to="/productos/nuevo" className="action-card">
               <span className="action-icon">🛍️</span>
               <span className="action-label">Nuevo Producto</span>
             </Link>
-            
+
             <Link to="/stock/ajuste" className="action-card">
               <span className="action-icon">📊</span>
               <span className="action-label">Ajustar Stock</span>
@@ -87,7 +103,7 @@ const Dashboard = () => {
                 <p>Analiza y filtra tus ventas</p>
               </div>
             </Link>
-            
+
             <Link to="/clientes" className="module-card">
               <div className="action-icon">👥</div>
               <div className="module-content">
