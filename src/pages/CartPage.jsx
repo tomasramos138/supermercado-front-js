@@ -1,16 +1,120 @@
+import { useContext, useState } from "react";
 import { useCart } from "../hooks/useCart";
-import { useContext } from "react";
-import { AuthContext } from "../contexts/auth";
+import { AuthContext } from "../contexts/auth"; // Asegúrate de que la ruta a tu contexto sea correcta
 import './CartPage.css';
 
 const CartPage = ({ isOpen, onClose }) => {
-  const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount } = useCart();
-  const { distribuidor } = useContext(AuthContext);
-  //console.log("Distribuidor en CartPage:", distribuidor);
+  // 1. OBTENER DATOS DE LOS HOOKS
+  const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount, clearCart } = useCart();
+  const { user, distribuidor } = useContext(AuthContext);
 
-  // Obtener el valor de entrega del distribuidor (0 si no hay distribuidor)
+  // 2. ESTADOS PARA MANEJAR LA INTERFAZ
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [mensajeExito, setMensajeExito] = useState(null);
+
+  // 3. CÁLCULOS
   const valorEntrega = distribuidor?.valorEntrega || 0;
   const totalConEnvio = cartTotal + valorEntrega;
+
+  // 4. FUNCIÓN PARA PROCESAR LA COMPRA
+  const handleProcesarCompra = async () => {
+    setIsLoading(true);
+    setError(null);
+    setMensajeExito(null);
+
+    // Validaciones iniciales en el frontend
+    if (!user) {
+      setError("Debes iniciar sesión para realizar una compra.");
+      setIsLoading(false);
+      return;
+    }
+    
+    if (cartItemCount === 0) {
+      setError("Tu carrito está vacío.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // --- PASO 1: VERIFICAR STOCK EN EL BACKEND ---
+      const itemsParaVerificar = cart.map(item => ({
+        productoId: item.id,
+        cantidad: item.quantity,
+      }));
+
+      const resStock = await fetch("http://localhost:3000/api/venta/verificar-stock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: itemsParaVerificar }),
+      });
+
+      if (!resStock.ok) {
+        const errorData = await resStock.json();
+        throw new Error(errorData.message || "Error al verificar el stock.");
+      }
+
+      // --- PASO 2: CREAR LA VENTA ---
+      const resVenta = await fetch("http://localhost:3000/api/venta", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fecha: new Date().toISOString(),
+          total: 0, // El total se actualizará al final
+          cliente: user.id,
+          distribuidor: distribuidor?.id,
+        }),
+      });
+
+      if (!resVenta.ok) {
+        throw new Error("No se pudo crear el registro de la venta.");
+      }
+
+      const ventaCreada = await resVenta.json();
+      const ventaId = ventaCreada.data.id;
+
+      // --- PASO 3: CREAR LOS ITEMS DE VENTA ---
+      const promesasItems = cart.map(item =>
+        fetch("http://localhost:3000/api/item-venta", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cantidad: item.quantity,
+            producto: item.id,
+            venta: ventaId,
+          }),
+        }).then(res => {
+          if (!res.ok) throw new Error('Error al procesar el producto: ${item.name}');
+          return res.json();
+        })
+      );
+
+      const itemsCreados = await Promise.all(promesasItems);
+
+      // --- PASO 4: ACTUALIZAR EL TOTAL DE LA VENTA ---
+      const totalFinal = itemsCreados.reduce((total, item) => total + item.data.subtotal, 0);
+
+      await fetch('http://localhost:3000/api/venta/${ventaId}', {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ total: totalFinal }),
+      });
+
+      setMensajeExito("¡Compra realizada con éxito! Gracias por elegirnos.");
+      clearCart(); // Limpiamos el carrito
+
+      // Opcional: Cierra el carrito después de 3 segundos
+      setTimeout(() => {
+        onClose();
+        setMensajeExito(null);
+      }, 3000);
+
+    } catch (err) {
+      setError(err.message || "Ocurrió un error inesperado al procesar la compra.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -27,13 +131,12 @@ const CartPage = ({ isOpen, onClose }) => {
         </div>
 
         <div className="cart-content">
+          {error && <div className="alert alert-danger mx-3">{error}</div>}
+          
           {cartItemCount === 0 ? (
             <div className="empty-cart-message">
-              <p>Tu carrito está vacío</p>
-              <button 
-                className="continue-shopping-btn"
-                onClick={onClose}
-              >
+              <p>{mensajeExito ? mensajeExito : "Tu carrito está vacío"}</p>
+              <button className="continue-shopping-btn" onClick={onClose}>
                 Seguir comprando
               </button>
             </div>
@@ -68,7 +171,7 @@ const CartPage = ({ isOpen, onClose }) => {
                           +
                         </button>
                         <span className="stock-info">
-                          {item.quantity >= item.stock ? 'Máximo' : `Stock: ${item.stock}`}
+                          {item.quantity >= item.stock ? 'Máximo' : 'Stock: ${item.stock}'}
                         </span>
                       </div>
                       
@@ -97,7 +200,7 @@ const CartPage = ({ isOpen, onClose }) => {
                 <div className="summary-row">
                   <span>Envío:</span>
                   <span>
-                    {valorEntrega > 0 ? `$${valorEntrega.toFixed(2)}` : 'Gratis'}
+                    {valorEntrega > 0 ? '$${valorEntrega.toFixed(2)}' : 'Gratis'}
                   </span>
                 </div>
                 <div className="summary-row total">
@@ -107,20 +210,17 @@ const CartPage = ({ isOpen, onClose }) => {
                 
                 <button 
                   className="checkout-btn"
-                  onClick={() => {
-                    // Aquí puedes incluir el valorEntrega en los datos del pago
-                    const datosPago = {
-                      productos: cart,
-                      subtotal: cartTotal,
-                      envio: valorEntrega,
-                      total: totalConEnvio,
-                      distribuidorId: distribuidor?.id
-                    };
-                    console.log('Datos para el pago:', datosPago);
-                    // Aquí iría la lógica para procesar el pago
-                  }}
+                  onClick={handleProcesarCompra} // Cambiado para llamar a la nueva función
+                  disabled={isLoading || cartItemCount === 0}
                 >
-                  Proceder al pago
+                  {isLoading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Procesando...
+                    </>
+                  ) : (
+                    "Proceder al pago"
+                  )}
                 </button>
               </div>
             </>

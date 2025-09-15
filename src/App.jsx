@@ -1,18 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-
-
 // Protected Pages
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ProductList from "./pages/ProductList";
+import Ventas from "./pages/dashboardPages/Ventas";
 
 // Other components
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute"; // Importa tu ProtectedRoute
+import AuthLayout from "./components/layouts/AuthLayout"; // Importa AuthLayout directamente
 
 // Context and HooksS
 import { AuthProvider } from "./providers/AuthProvider";
@@ -26,26 +26,41 @@ function App() {
     <QueryClientProvider client={client}>
       <AuthProvider>
         <CartProvider>
-        <BrowserRouter>
-          <div className="App">
-            <Routes> 
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} /> 
+          <BrowserRouter>
+            <div className="App">
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-              <Route
-                path="/products"
-                element={<ProtectedRoute allowedRoles={[true,false]} />}
-              >
-                <Route index element={<ProductList />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="products" element={<ProductList />} />
-                <Route path="profile" element={<Profile />} />
-              </Route>
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
+                <Route element={<AuthLayout />}>
+                  {/* Rutas accesibles para todos los usuarios autenticados (admin o cliente) */}
+                  <Route path="/" element={<ProtectedRoute allowedRoles={[true, false]}><ProductList /></ProtectedRoute>} />
+                  <Route path="/products" element={<ProtectedRoute allowedRoles={[true, false]}><ProductList /></ProtectedRoute>} />
+                  <Route path="/products/profile" element={<ProtectedRoute allowedRoles={[true, false]}><Profile /></ProtectedRoute>} />
+
+                  {/* Rutas solo para administradores */}
+                  <Route
+                    path="/products/dashboard"
+                    element={<ProtectedRoute allowedRoles={[true]}><Dashboard /></ProtectedRoute>}
+                  />
+                  <Route
+                    path="/products/ventas"
+                    element={<ProtectedRoute allowedRoles={[true]}><Ventas /></ProtectedRoute>}
+                  />
+
+                  <Route path="/zonas-distribuidores/nuevo" element={<ProtectedRoute allowedRoles={[true]}><div>Nueva Zona-Distribuidor (ADMIN)</div></ProtectedRoute>} />
+                  <Route path="/productos/nuevo" element={<ProtectedRoute allowedRoles={[true]}><div>Nuevo Producto (ADMIN)</div></ProtectedRoute>} />
+                  <Route path="/stock/ajuste" element={<ProtectedRoute allowedRoles={[true]}><div>Ajustar Stock (ADMIN)</div></ProtectedRoute>} />
+                  <Route path="/categorias/nueva" element={<ProtectedRoute allowedRoles={[true]}><div>Nueva Categoría (ADMIN)</div></ProtectedRoute>} />
+                  <Route path="/clientes" element={<ProtectedRoute allowedRoles={[true]}><div>Gestion de Usuarios (ADMIN)</div></ProtectedRoute>} />
+
+                </Route>
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
         </CartProvider>
       </AuthProvider>
     </QueryClientProvider>

@@ -3,7 +3,7 @@ import useClientesCount from "../hooks/useCliente";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
 import useVentasCount from "../hooks/useVenta";
-import useProducts from "../hooks/useProducts"; // Importar el hook de productos
+import useProducts from "../hooks/useProducts";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -108,7 +108,7 @@ const Dashboard = () => {
         <div className="modules-section">
           <h2 className="section-title">Módulos Principales</h2>
           <div className="modules-grid">
-            <Link to="/ventas" className="module-card">
+            <Link to="/products/ventas" className="module-card">
               <span className="action-icon">💰</span>
               <div className="module-content">
                 <h3>Reporte de Ventas</h3>
@@ -130,4 +130,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard

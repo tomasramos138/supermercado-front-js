@@ -1,0 +1,179 @@
+.ventas-container {
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+.ventas-container h1 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+}
+
+.ventas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.ventas-header h2 {
+  color: #34495e;
+  margin: 0;
+}
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-controls span {
+  font-weight: bold;
+  color: #7f8c8d;
+}
+
+.sort-controls button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ecf0f1;
+  color: #7f8c8d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sort-controls button.active {
+  background-color: #3498db;
+  color: white;
+}
+
+.sort-controls button:hover {
+  background-color: #3498db;
+  color: white;
+}
+
+.ventas-table-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  overflow-x: auto;
+}
+
+.ventas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.ventas-table th {
+  background-color: #34495e;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #2c3e50;
+}
+
+.ventas-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.venta-row:hover {
+  background-color: #f8f9fa;
+}
+
+.venta-id {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.venta-fecha {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.venta-cliente {
+  font-weight: 500;
+}
+
+.venta-distribucion {
+  color: #7f8c8d;
+}
+
+.venta-total {
+  font-weight: bold;
+  color: #27ae60;
+  text-align: right;
+}
+
+.venta-productos {
+  max-width: 250px;
+}
+
+.productos-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.producto-item {
+  padding: 4px 0;
+  border-bottom: 1px dashed #ecf0f1;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
+.producto-item:last-child {
+  border-bottom: none;
+}
+
+.no-ventas {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+}
+
+.loading {
+  color: #3498db;
+}
+
+.error {
+  color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+  .ventas-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .ventas-table {
+    font-size: 0.8rem;
+  }
+  
+  .ventas-table th,
+  .ventas-table td {
+    padding: 8px;
+  }
+  
+  .producto-item {
+    font-size: 0.75rem;
+  }
+}
