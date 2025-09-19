@@ -84,7 +84,7 @@ const CartPage = ({ isOpen, onClose }) => {
             venta: ventaId,
           }),
         }).then(res => {
-          if (!res.ok) throw new Error('Error al procesar el producto: ${item.name}');
+          if (!res.ok) throw new Error(`Error al procesar el producto: ${item.name}`);
           return res.json();
         })
       );
@@ -94,7 +94,7 @@ const CartPage = ({ isOpen, onClose }) => {
       // --- PASO 4: ACTUALIZAR EL TOTAL DE LA VENTA ---
       const totalFinal = itemsCreados.reduce((total, item) => total + item.data.subtotal, 0);
 
-      await fetch('http://localhost:3000/api/venta/${ventaId}', {
+      await fetch(`http://localhost:3000/api/venta/${ventaId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ total: totalFinal }),
@@ -171,7 +171,7 @@ const CartPage = ({ isOpen, onClose }) => {
                           +
                         </button>
                         <span className="stock-info">
-                          {item.quantity >= item.stock ? 'Máximo' : 'Stock: ${item.stock}'}
+                          {item.quantity >= item.stock ? 'Máximo' : `Stock: ${item.stock}`}
                         </span>
                       </div>
                       
@@ -200,7 +200,7 @@ const CartPage = ({ isOpen, onClose }) => {
                 <div className="summary-row">
                   <span>Envío:</span>
                   <span>
-                    {valorEntrega > 0 ? '$${valorEntrega.toFixed(2)}' : 'Gratis'}
+                    {valorEntrega > 0 ? `$${valorEntrega.toFixed(2)}` : 'Gratis'}
                   </span>
                 </div>
                 <div className="summary-row total">
