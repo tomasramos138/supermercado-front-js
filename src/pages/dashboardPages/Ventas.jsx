@@ -105,7 +105,7 @@ const Ventas = () => {
                           <ul className="productos-list">
                             {venta.itemsVenta.map((item, index) => (
                               <li key={index} className="producto-item">
-                                {item.cantidad} x {item.producto?.nombre || 'Producto'} - ${item.precio?.toFixed(2)}
+                                {item.cantidad} x {item.producto.name || 'Producto'} - ${item.precio?.toFixed(2)}
                               </li>
                             ))}
                           </ul>

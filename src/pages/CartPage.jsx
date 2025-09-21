@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useCart } from "../hooks/useCart";
-import { AuthContext } from "../contexts/auth"; // Asegúrate de que la ruta a tu contexto sea correcta
+import { AuthContext } from "../contexts/auth";
 import './CartPage.css';
 
 const CartPage = ({ isOpen, onClose }) => {
