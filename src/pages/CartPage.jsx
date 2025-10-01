@@ -1,116 +1,73 @@
 import { useContext, useState } from "react";
 import { useCart } from "../hooks/useCart";
+import  useVentas  from "../hooks/useVenta";
 import { AuthContext } from "../contexts/auth";
+import useProducts from "../hooks/useProducts";
 import './CartPage.css';
 
 const CartPage = ({ isOpen, onClose }) => {
   // 1. OBTENER DATOS DE LOS HOOKS
   const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount, clearCart } = useCart();
   const { user, distribuidor } = useContext(AuthContext);
+  const { procesarCompra } = useVentas();
 
   // 2. ESTADOS PARA MANEJAR LA INTERFAZ
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [mensajeExito, setMensajeExito] = useState(null);
-
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { refetchProducts } = useProducts(); //funcion para refrezcar el stock de los productos luego de la venta
   // 3. CÁLCULOS
   const valorEntrega = distribuidor?.valorEntrega || 0;
   const totalConEnvio = cartTotal + valorEntrega;
 
-  // 4. FUNCIÓN PARA PROCESAR LA COMPRA
-  const handleProcesarCompra = async () => {
+  // 4. FUNCIÓN PARA MOSTRAR CONFIRMACIÓN
+  const handleMostrarConfirmacion = () => {
+    setShowConfirmation(true);
+  };
+
+  // 5. FUNCIÓN PARA CANCELAR CONFIRMACIÓN
+  const handleCancelarConfirmacion = () => {
+    setShowConfirmation(false);
+    setError(null);
+  };
+
+  // 6. FUNCIÓN PARA PROCESAR LA COMPRA (CONFIRMADA)
+  const handleProcesarCompraConfirmada = async () => {
     setIsLoading(true);
     setError(null);
-    setMensajeExito(null);
-
-    // Validaciones iniciales en el frontend
-    if (!user) {
-      setError("Debes iniciar sesión para realizar una compra.");
-      setIsLoading(false);
-      return;
-    }
-    
-    if (cartItemCount === 0) {
-      setError("Tu carrito está vacío.");
-      setIsLoading(false);
-      return;
-    }
+    setShowConfirmation(false);
 
     try {
-      // --- PASO 1: VERIFICAR STOCK EN EL BACKEND ---
-      const itemsParaVerificar = cart.map(item => ({
+      // Preparar datos para la compra
+      const itemsParaCompra = cart.map(item => ({
         productoId: item.id,
         cantidad: item.quantity,
       }));
 
-      const resStock = await fetch("http://localhost:3000/api/venta/verificar-stock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: itemsParaVerificar }),
-      });
-
-      if (!resStock.ok) {
-        const errorData = await resStock.json();
-        throw new Error(errorData.message || "Error al verificar el stock.");
-      }
-
-      // --- PASO 2: CREAR LA VENTA ---
-      const resVenta = await fetch("http://localhost:3000/api/venta", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fecha: new Date().toISOString(),
-          total: 0, // El total se actualizará al final
-          cliente: user.id,
-          distribuidor: distribuidor?.id,
-        }),
-      });
-
-      if (!resVenta.ok) {
-        throw new Error("No se pudo crear el registro de la venta.");
-      }
-
-      const ventaCreada = await resVenta.json();
-      const ventaId = ventaCreada.data.id;
-
-      // --- PASO 3: CREAR LOS ITEMS DE VENTA ---
-      const promesasItems = cart.map(item =>
-        fetch("http://localhost:3000/api/item-venta", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cantidad: item.quantity,
-            producto: item.id,
-            venta: ventaId,
-          }),
-        }).then(res => {
-          if (!res.ok) throw new Error(`Error al procesar el producto: ${item.name}`);
-          return res.json();
-        })
-      );
-
-      const itemsCreados = await Promise.all(promesasItems);
-
-      // --- PASO 4: ACTUALIZAR EL TOTAL DE LA VENTA ---
-      const totalFinal = itemsCreados.reduce((total, item) => total + item.data.subtotal, 0);
-
-      await fetch(`http://localhost:3000/api/venta/${ventaId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ total: totalFinal }),
+      // Procesar toda la compra usando el hook
+      await procesarCompra({
+        items: itemsParaCompra,
+        cliente: user.id,
+        distribuidor: distribuidor?.id,
       });
 
       setMensajeExito("¡Compra realizada con éxito! Gracias por elegirnos.");
-      clearCart(); // Limpiamos el carrito
+      
+      // LIMPIAR CARRITO INMEDIATAMENTE después de compra exitosa
+      clearCart();
 
-      // Opcional: Cierra el carrito después de 3 segundos
+      // Refrescar productos para actualizar stock
+      await refetchProducts();
+
+      // Cerrar el carrito después de 3 segundos
       setTimeout(() => {
         onClose();
         setMensajeExito(null);
       }, 3000);
 
     } catch (err) {
-      setError(err.message || "Ocurrió un error inesperado al procesar la compra.");
+      setError(err.response?.data?.message || err.message || "Ocurrió un error inesperado al procesar la compra.");
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +167,7 @@ const CartPage = ({ isOpen, onClose }) => {
                 
                 <button 
                   className="checkout-btn"
-                  onClick={handleProcesarCompra} // Cambiado para llamar a la nueva función
+                  onClick={handleMostrarConfirmacion} // ← Ahora muestra confirmación
                   disabled={isLoading || cartItemCount === 0}
                 >
                   {isLoading ? (
@@ -226,6 +183,48 @@ const CartPage = ({ isOpen, onClose }) => {
             </>
           )}
         </div>
+
+        {/* MODAL DE CONFIRMACIÓN */}
+        {showConfirmation && (
+          <div className="confirmation-overlay">
+            <div className="confirmation-modal">
+              <div className="confirmation-header">
+                <h3>Confirmar Compra</h3>
+              </div>
+              <div className="confirmation-body">
+                <p>¿Estás seguro de que deseas proceder con la compra?</p>
+                <div className="confirmation-details">
+                  <p><strong>Total a pagar:</strong> ${totalConEnvio.toFixed(2)}</p>
+                  <p><strong>Productos:</strong> {cartItemCount}</p>
+                  <p><strong>Envío:</strong> {valorEntrega > 0 ? `$${valorEntrega.toFixed(2)}` : 'Gratis'}</p>
+                </div>
+              </div>
+              <div className="confirmation-actions">
+                <button 
+                  className="btn-cancel"
+                  onClick={handleCancelarConfirmacion}
+                  disabled={isLoading}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  className="btn-confirm"
+                  onClick={handleProcesarCompraConfirmada}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Procesando...
+                    </>
+                  ) : (
+                    "Confirmar Compra"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

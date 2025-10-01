@@ -12,7 +12,13 @@ const getTotalStock = async () => {
 };
 
 function useProducts() {
-  const { data, isError, error, isLoading } = useQuery({
+  const { 
+    data, 
+    isError, 
+    error, 
+    isLoading,
+    refetch: refetchProducts // ← Agrega esto
+  } = useQuery({
     queryKey: ["products"],
     queryFn: getProducts,
   });
@@ -37,6 +43,7 @@ function useProducts() {
     isStockError,
     stockError,
     isStockLoading,
+    refetchProducts, // ← Agrégalo al return
     refetchStock,
   };
 }

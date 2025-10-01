@@ -6,13 +6,7 @@ import "./Login.css";
 const Login = () => {
   const { login, errorLogin } = useAuth();
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    mode: "onBlur",
-  });
+  const { register, handleSubmit, formState: { errors, isSubmitting },} = useForm({ mode: "onSubmit",});
 
   const onSubmit = async (data) => {
     await login(data)

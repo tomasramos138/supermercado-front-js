@@ -7,7 +7,7 @@ import useClientes from "../hooks/useCliente";
 const Profile = () => {
   const { user, logout } = useAuth();
   const { zonas } = useZonas();
-  const { updateClient, updateStatus } = useClientes(); // 👈 usamos updateClient
+  const { updateClient } = useClientes();
 
   const mockProfile = {
     id: user?.id,
@@ -36,15 +36,20 @@ const Profile = () => {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { confirmPassword, ...clienteEditado } = data; 
-    updateClient({
-      id: mockProfile.id,
-      ...clienteEditado,
-    });
-    reset(data);
-    alert("Los cambios se guardaron con éxito.\nSu sesión se cerrará y deberá volver a iniciar sesión.");
-    logout();
+    try {
+      await updateClient({
+        id: mockProfile.id,
+        ...clienteEditado,
+      });
+      reset(data);
+      alert("Los cambios se guardaron con éxito.\nSu sesión se cerrará y deberá volver a iniciar sesión.");
+      logout();
+    } catch (error) {
+      // El error ya se maneja en el hook
+      console.error('Error en el componente:', error);
+    }
   };
 
   return (
@@ -201,17 +206,6 @@ const Profile = () => {
               <button type="submit" className="save-btn" disabled={isSubmitting}>
                 {isSubmitting ? "Guardando..." : "Guardar cambios"}
               </button>
-
-              {/* Estado del update */}
-              {updateStatus.isLoading && <p>Actualizando cliente...</p>}
-              {updateStatus.isError && (
-                <p style={{ color: "red" }}>
-                  Error: {updateStatus.error.message}
-                </p>
-              )}
-              {updateStatus.isSuccess && (
-                <p style={{ color: "green" }}>¡Cliente actualizado con éxito!</p>
-              )}
             </form>
           </div>
         </div>

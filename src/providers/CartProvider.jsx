@@ -73,6 +73,12 @@ export function CartProvider({ children }) {
       );
     });
   };
+//Limpiar el carrito luego de confirmar la compra
+  const clearCart = () => {
+    setCart([]);
+    localStorage.removeItem("cart");
+  };
+
   const cartTotal = cart.reduce(
     (total, item) => total + (item.precio * item.quantity), 
     0
@@ -89,7 +95,8 @@ export function CartProvider({ children }) {
     removeFromCart, 
     updateQuantity,
     cartTotal,
-    cartItemCount
+    cartItemCount,
+    clearCart
   };
 
   return (

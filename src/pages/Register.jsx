@@ -9,13 +9,7 @@ const Register = () => {
   const { zonas, isLoading } = useZonas();
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    mode: "onBlur",
-  });
+  const {register, handleSubmit, formState: { errors, isSubmitting }, } = useForm({ mode: "onSubmit",});
 
   const onSubmit = async (data) => {
     const datosFormulario = {
