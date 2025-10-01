@@ -17,6 +17,13 @@ const updateClient = async ({ id, ...clientData }) => {
   }
 };
 
+const searchClientesByName = async (nombre) => {
+  const response = await axios.get("http://localhost:3000/api/cliente/search", {
+    params: { q: nombre },
+  });
+  return response.data.data;
+};
+
 function useClientes() {
   const { data, isError, error, isLoading } = useQuery({
     queryKey: ["clientesCount"],
@@ -29,6 +36,7 @@ function useClientes() {
     error,
     isLoading,
     updateClient,
+    searchClientesByName,
   };
 }
 

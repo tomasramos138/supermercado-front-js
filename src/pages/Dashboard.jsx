@@ -116,7 +116,7 @@ const Dashboard = () => {
               </div>
             </Link>
 
-            <Link to="/clientes" className="module-card">
+            <Link to="/products/GestionUsu" className="module-card">
               <div className="action-icon">👥</div>
               <div className="module-content">
                 <h3>Gestion de Usuarios</h3>

@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ProductList from "./pages/ProductList";
 import Ventas from "./pages/dashboardPages/Ventas";
+import GestionUsu from "./pages/dashboardPages/GestionUsu";
 
 // Other components
 import Login from "./pages/Login";
@@ -32,28 +33,20 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
-
                 <Route element={<AuthLayout />}>
                   {/* Rutas accesibles para todos los usuarios autenticados (admin o cliente) */}
                   <Route path="/" element={<ProtectedRoute allowedRoles={[true, false]}><ProductList /></ProtectedRoute>} />
                   <Route path="/products" element={<ProtectedRoute allowedRoles={[true, false]}><ProductList /></ProtectedRoute>} />
                   <Route path="/products/profile" element={<ProtectedRoute allowedRoles={[true, false]}><Profile /></ProtectedRoute>} />
-
                   {/* Rutas solo para administradores */}
-                  <Route
-                    path="/products/dashboard"
-                    element={<ProtectedRoute allowedRoles={[true]}><Dashboard /></ProtectedRoute>}
-                  />
-                  <Route
-                    path="/products/ventas"
-                    element={<ProtectedRoute allowedRoles={[true]}><Ventas /></ProtectedRoute>}
-                  />
-
+                  <Route path="/products/dashboard" element={<ProtectedRoute allowedRoles={[true]}><Dashboard /></ProtectedRoute>}/>
+                  <Route path="/products/ventas" element={<ProtectedRoute allowedRoles={[true]}><Ventas /></ProtectedRoute>}/>
                   <Route path="/zonas-distribuidores/nuevo" element={<ProtectedRoute allowedRoles={[true]}><div>Nueva Zona-Distribuidor (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/productos/nuevo" element={<ProtectedRoute allowedRoles={[true]}><div>Nuevo Producto (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/stock/ajuste" element={<ProtectedRoute allowedRoles={[true]}><div>Ajustar Stock (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/categorias/nueva" element={<ProtectedRoute allowedRoles={[true]}><div>Nueva Categoría (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/clientes" element={<ProtectedRoute allowedRoles={[true]}><div>Gestion de Usuarios (ADMIN)</div></ProtectedRoute>} />
+                  <Route path="/products/GestionUsu" element={<ProtectedRoute allowedRoles={[true]}><GestionUsu /></ProtectedRoute>}/>
 
                 </Route>
 
