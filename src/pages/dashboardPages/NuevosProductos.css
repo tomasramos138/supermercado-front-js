@@ -1,0 +1,92 @@
+.nuevo-producto-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.nuevo-producto-container h1 {
+  text-align: center;
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+/* FORMULARIO */
+.nuevo-producto-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.8rem 1rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* BOTÓN */
+.nuevo-producto-form button {
+  padding: 0.9rem 1rem;
+  background: #667eea;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.nuevo-producto-form button:hover {
+  background: #5566d6;
+  transform: translateY(-2px);
+}
+
+.nuevo-producto-form button:disabled {
+  background: #a3b0f0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 650px) {
+  .nuevo-producto-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .nuevo-producto-form button {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+}

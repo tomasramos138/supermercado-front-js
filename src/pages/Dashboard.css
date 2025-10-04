@@ -2,6 +2,9 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .dashboard-header {
@@ -21,11 +24,13 @@
   font-size: 1.1rem;
 }
 
+/* GRID GENERAL */
 .dashboard-grid {
   display: grid;
   gap: 2rem;
 }
 
+/* TITULOS DE SECCIÓN */
 .section-title {
   font-size: 1.4rem;
   color: #2c3e50;
@@ -35,7 +40,7 @@
   border-bottom: 2px solid #f0f2f5;
 }
 
-/* Sección de Métricas */
+/* SECCIÓN DE MÉTRICAS */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -86,7 +91,21 @@
   margin: 0;
 }
 
-/* Sección de Acciones Rápidas */
+/* SECCIÓN GRÁFICA (Stock por producto) */
+.chart-section {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-section h2 {
+  margin-bottom: 1rem;
+}
+
+/* SECCIÓN DE ACCIONES RÁPIDAS */
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -130,7 +149,7 @@
   text-align: center;
 }
 
-/* Sección de Módulos Principales - Estilo actualizado con hover azul */
+/* SECCIÓN DE MÓDULOS PRINCIPALES */
 .modules-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -153,14 +172,13 @@
 .module-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  background: #667eea; /* Fondo azul al hacer hover */
-  color: white; /* Texto en blanco */
+  background: #667eea; /* Fondo azul al hover */
+  color: white;
 }
 
 .module-card:hover .module-content p {
-  color: rgba(255,255,255,0.8); /* Texto más claro para mejor contraste */
+  color: rgba(255,255,255,0.8);
 }
-
 
 .module-content h3 {
   margin: 0 0 0.3rem 0;
@@ -175,12 +193,12 @@
   transition: color 0.2s;
 }
 
-/* Responsive Design */
+/* RESPONSIVE DESIGN */
 @media (max-width: 900px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .metrics-grid,
   .actions-grid,
   .modules-grid {
@@ -192,17 +210,17 @@
   .dashboard-page {
     padding: 1rem;
   }
-  
+
   .dashboard-header h1 {
     font-size: 1.8rem;
   }
-  
+
   .metrics-grid,
   .actions-grid,
   .modules-grid {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .metric-card,
   .action-card,
   .module-card {

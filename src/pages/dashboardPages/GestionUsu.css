@@ -1,123 +1,102 @@
-/*
-  ======================================================
-  CLIENTES.CSS - Estilos Modernos y Coherentes con Ventas
-  ======================================================
-*/
-
-/* 1. Contenedor Principal */
 .gestion-page {
-  /* Mantenemos el contenedor amplio y centrado */
-  max-width: 1300px; 
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
-  font-family: 'Inter', sans-serif;
-  background-color: #f4f7f9; /* Fondo suave del área de trabajo */
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f7fa;
   min-height: 100vh;
 }
 
 .gestion-header h2 {
-  /* Título de la página */
-  text-align: center;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 2rem;
-  letter-spacing: -0.5px;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  text-align: left;
 }
 
-/* 2. Barra de Búsqueda y Acciones */
+/* Barra de Búsqueda y Acciones */
 .search-bar {
-  /* Diseño de tarjeta flotante para la barra de búsqueda */
   display: flex;
   gap: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 1.5rem;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
 .search-bar input {
-  /* Input de búsqueda estilizado */
   flex-grow: 1;
   max-width: 400px;
-  padding: 0.8rem 1.2rem;
-  border: 1px solid #e0e6ed;
-  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
   font-size: 1rem;
   outline: none;
   transition: all 0.3s ease;
 }
 
 .search-bar input:focus {
-  /* Efecto al enfocar con el color primario */
-  border-color: #0d9488;
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .search-bar button {
-  /* Botón de búsqueda/acción (usando el color primario Teal) */
-  background: linear-gradient(to right, #0d9488, #067c70); 
+  background: #667eea;
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 0.8rem 1.8rem;
-  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);
-  transition: all 0.3s ease;
+  transition: background 0.2s;
 }
 
 .search-bar button:hover {
-  /* Efecto hover del botón */
-  background: linear-gradient(to right, #067c70, #0d9488);
-  box-shadow: 0 6px 15px rgba(13, 148, 136, 0.5);
-  transform: translateY(-1px);
+  background: #764ba2;
 }
 
-/* 3. Estilos de la Tabla de Clientes */
+/* Estilos de la Tabla de Clientes */
 .clientes-table-container {
-  /* Contenedor de la tabla, similar al de ventas */
   background: white;
-  border-radius: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 0;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .clientes-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
 }
 
 /* Encabezados de la Tabla */
 .clientes-table th {
-  background-color: #f9fafb;
-  color: #4b5563;
-  font-weight: 700;
-  padding: 1rem 1.5rem;
+  background: #667eea;
+  color: white;
+  padding: 1rem;
   text-align: left;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #764ba2;
 }
 
-/* Filas de la Venta */
+/* Filas de la Tabla */
 .clientes-table tr {
   transition: background-color 0.2s ease;
 }
 
 .clientes-table tbody tr:hover {
-  /* Efecto hover sutil */
-  background-color: #f3f4f6;
+  background-color: #f8f9fa;
 }
 
 .clientes-table td {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  color: #374151;
+  padding: 1rem;
+  border-bottom: 1px solid #f8f9fa;
+  color: #2c3e50;
   font-size: 0.95rem;
 }
 
@@ -125,14 +104,13 @@
   border-bottom: none;
 }
 
-/* 4. Estilo para el Checkbox/Switch de Rol */
+/* Estilo para el Checkbox/Switch de Rol */
 .role-checkbox {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-/* Ocultar el input nativo */
 .role-checkbox input {
   opacity: 0;
   width: 0;
@@ -140,19 +118,17 @@
 }
 
 .role-checkbox label {
-  /* El estilo del "switch" o toggle */
   position: relative;
   display: inline-block;
   width: 45px;
   height: 25px;
-  background-color: #d1d5db; /* Gris base */
+  background-color: #6c757d;
   border-radius: 25px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .role-checkbox label:after {
-  /* El "círculo" o "pulgar" del switch */
   content: '';
   position: absolute;
   top: 3px;
@@ -165,39 +141,73 @@
   transition: transform 0.3s;
 }
 
-/* El switch se enciende cuando el input está 'checked' */
 .role-checkbox input:checked + label {
-  background-color: #22c55e; /* Verde brillante para ACTIVO/ROL */
+  background-color: #28a745;
 }
 
 .role-checkbox input:checked + label:after {
   transform: translateX(20px);
 }
 
-/* Etiqueta de texto al lado del switch */
 .role-checkbox span {
-    font-size: 0.9rem;
-    color: #4b5563;
-    font-weight: 500;
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 500;
 }
 
-/* 5. Mensaje de No Clientes */
+/* Mensaje de No Clientes */
 .no-clientes {
   text-align: center;
-  color: #9ca3af;
+  color: #6c757d;
   padding: 3rem;
   font-size: 1.1rem;
   background: white;
-  border-radius: 12px;
+  border-radius: 10px;
   margin-top: 1.5rem;
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed #e9ecef;
 }
 
-/* 6. Responsive Design */
-@media (max-width: 992px) {
+/* Estados de las filas */
+.cliente-activo {
+  background-color: #f8fff9;
+}
+
+.cliente-inactivo {
+  background-color: #fff8f8;
+}
+
+/* Botones de acción en la tabla */
+.action-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 0.5rem;
+}
+
+.action-btn:hover {
+  background: #764ba2;
+}
+
+.action-btn.delete {
+  background: #dc3545;
+}
+
+.action-btn.delete:hover {
+  background: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .search-bar {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .search-bar input,
@@ -213,15 +223,36 @@
   .clientes-table {
     min-width: 700px;
   }
+  
+  .clientes-table th,
+  .clientes-table td {
+    padding: 0.8rem;
+  }
 }
 
-@media (max-width: 576px) {
-  .gestion-header h2 {
-    font-size: 2rem;
+@media (max-width: 600px) {
+  .gestion-page {
+    padding: 1rem;
   }
   
+  .gestion-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .clientes-table {
+    font-size: 0.8rem;
+  }
+  
+  .clientes-table th,
   .clientes-table td {
-    padding: 0.8rem 1rem;
-    font-size: 0.85rem;
+    padding: 0.6rem;
+  }
+  
+  .no-clientes {
+    padding: 2rem 1rem;
+  }
+  
+  .role-checkbox {
+    justify-content: center;
   }
 }

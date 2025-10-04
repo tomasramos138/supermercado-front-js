@@ -7,6 +7,9 @@ import Profile from "./pages/Profile";
 import ProductList from "./pages/ProductList";
 import Ventas from "./pages/dashboardPages/Ventas";
 import GestionUsu from "./pages/dashboardPages/GestionUsu";
+import NuevosProductos from "./pages/dashboardPages/NuevosProductos";
+import Stock from "./pages/dashboardPages/Stock";
+
 
 // Other components
 import Login from "./pages/Login";
@@ -42,8 +45,8 @@ function App() {
                   <Route path="/products/dashboard" element={<ProtectedRoute allowedRoles={[true]}><Dashboard /></ProtectedRoute>}/>
                   <Route path="/products/ventas" element={<ProtectedRoute allowedRoles={[true]}><Ventas /></ProtectedRoute>}/>
                   <Route path="/zonas-distribuidores/nuevo" element={<ProtectedRoute allowedRoles={[true]}><div>Nueva Zona-Distribuidor (ADMIN)</div></ProtectedRoute>} />
-                  <Route path="/productos/nuevo" element={<ProtectedRoute allowedRoles={[true]}><div>Nuevo Producto (ADMIN)</div></ProtectedRoute>} />
-                  <Route path="/stock/ajuste" element={<ProtectedRoute allowedRoles={[true]}><div>Ajustar Stock (ADMIN)</div></ProtectedRoute>} />
+{/*aca*/}         <Route path="/products/NuevosProductos" element={<ProtectedRoute allowedRoles={[true]}><NuevosProductos /></ProtectedRoute>}/>
+                  <Route path="/products/Stock" element={<ProtectedRoute allowedRoles={[true]}><Stock /></ProtectedRoute>} />
                   <Route path="/categorias/nueva" element={<ProtectedRoute allowedRoles={[true]}><div>Nueva Categoría (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/clientes" element={<ProtectedRoute allowedRoles={[true]}><div>Gestion de Usuarios (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/products/GestionUsu" element={<ProtectedRoute allowedRoles={[true]}><GestionUsu /></ProtectedRoute>}/>

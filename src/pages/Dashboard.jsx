@@ -40,7 +40,7 @@ const Dashboard = () => {
               <div className="metric-content">
                 <h3>Clientes</h3>
                 {isClientesLoading ? (
-                  <p className="metric-value">Cargando...</p>
+                  <div className="spinner"></div>
                 ) : isClientesError ? (
                   <p className="metric-value">Error</p>
                 ) : (
@@ -54,7 +54,7 @@ const Dashboard = () => {
               <div className="metric-content">
                 <h3>Stock Total</h3>
                 {isStockLoading ? (
-                  <p className="metric-value">Cargando...</p>
+                  <div className="spinner"></div>
                 ) : isStockError ? (
                   <p className="metric-value">Error</p>
                 ) : (
@@ -68,7 +68,7 @@ const Dashboard = () => {
               <div className="metric-content">
                 <h3>Cantidad de Ventas</h3>
                 {isVentasLoading ? (
-                  <p className="metric-value">Cargando...</p>
+                  <div className="spinner"></div>
                 ) : isVentasError ? (
                   <p className="metric-value">Error</p>
                 ) : (
@@ -88,12 +88,12 @@ const Dashboard = () => {
               <span className="action-label">Nueva Zona-Distribuidor</span>
             </Link>
 
-            <Link to="/productos/nuevo" className="action-card">
+            <Link to="/products/NuevosProductos" className="action-card">
               <span className="action-icon">🛍️</span>
               <span className="action-label">Nuevo Producto</span>
             </Link>
 
-            <Link to="/stock/ajuste" className="action-card">
+            <Link to="/products/Stock" className="action-card">
               <span className="action-icon">📊</span>
               <span className="action-label">Ajustar Stock</span>
             </Link>
@@ -129,5 +129,4 @@ const Dashboard = () => {
     </div>
   );
 };
-
 export default Dashboard
