@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import useProducts from "../../hooks/useProducts";
 import "./NuevosProductos.css";
 
 const NuevoProducto = () => {
-  const { createProduct, isCreating } = useProducts();
+  const { createProduct, uploadImage } = useProducts();
 
   const [formData, setFormData] = useState({
     name: "",
     descripcion: "",
-    categoria_id: 0,
-    precio: 0,
-    imagen: null, // archivo
-    stock: 0,
+    categoria: "",
+    precio: 0.00,
+    imagen: "",
+    stock: "",
   });
+
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -25,32 +27,55 @@ const NuevoProducto = () => {
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: name === "precio" || name === "stock" ? Number(value) : value,
+        [name]: value,
       }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const data = new FormData();
-      for (const key in formData) {
-        data.append(key, formData[key]);
+      setIsUploading(true);
+
+      // Subir la imagen si existe
+      let imageUrl = "";
+      if (formData.imagen) {
+        const uploadResult = await uploadImage(formData.imagen);
+        imageUrl = `../imagenes/${uploadResult.filename}`;
       }
 
-      await createProduct(data);
-      alert("✅ Producto creado con éxito");
+      // Convertir los valores numéricos correctamente
+      const productoData = {
+        name: formData.name,
+        descripcion: formData.descripcion,
+        categoria: Number(formData.categoria),
+        precio: parseFloat(
+          String(formData.precio).replace(",", ".") // por si usa coma
+        ),
+        imagen: imageUrl,
+        stock: Number(formData.stock),
+      };
+
+      // Crear producto
+      await createProduct(productoData);
+
+      alert("Producto creado con éxito");
+
+      // Resetear formulario
       setFormData({
         name: "",
         descripcion: "",
-        categoria_id: 0,
-        precio: 0,
-        imagen: null,
-        stock: 0,
+        categoria: "",
+        precio: "",
+        imagen: "",
+        stock: "",
       });
     } catch (error) {
-      console.error(error);
-      alert("❌ Error al crear el producto");
+      console.error("Error al crear producto:", error);
+      alert("Error al crear el producto");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -61,37 +86,76 @@ const NuevoProducto = () => {
       <form className="nuevo-producto-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Nombre:</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Descripción:</label>
-          <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} required />
+          <textarea
+            name="descripcion"
+            value={formData.descripcion}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Categoría (ID):</label>
-          <input type="number" name="categoria_id" value={formData.categoria_id} onChange={handleChange} required />
+          <input
+            type="number"
+            name="categoria"
+            value={formData.categoria}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Precio:</label>
-          <input type="number" name="precio" value={formData.precio} onChange={handleChange} required />
+          <input
+            type="number"
+            name="precio"
+            value={formData.precio}
+            onChange={handleChange}
+            step="any"        // Permite decimales
+            inputMode="decimal" // ayuda en móviles
+            required
+          />
         </div>
 
         <div className="form-group">
           <label>Imagen:</label>
-          <input type="file" name="imagen" accept="image/*" onChange={handleChange} />
+          <input
+            type="file"
+            name="imagen"
+            accept="image/*"
+            onChange={handleChange}
+          />
         </div>
 
         <div className="form-group">
           <label>Stock:</label>
-          <input type="number" name="stock" value={formData.stock} onChange={handleChange} min="0" required />
+          <input
+            type="number"
+            name="stock"
+            value={formData.stock}
+            onChange={handleChange}
+            min="0"
+            required
+          />
         </div>
 
-        <button type="submit" disabled={isCreating}>
-          {isCreating ? "Creando..." : "Crear Producto"}
+        <button type="submit" disabled={isUploading}>
+          {isUploading ? "Creando..." : "Crear Producto"}
         </button>
+
+        {isUploading && <p>Subiendo imagen y creando producto...</p>}
       </form>
     </div>
   );

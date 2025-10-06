@@ -4,7 +4,7 @@ import './Stock.css';
 
 const Stock = () => {
   const { products, isLoading, isError, updateStock } = useProducts();
-  const [editStock, setEditStock] = useState({}); // valores temporales al editar
+  const [editStock, setEditStock] = useState({}); 
 
   if (isLoading) {
     return <div className="loading">Cargando productos...</div>;
@@ -15,24 +15,25 @@ const Stock = () => {
   }
 
   const handleStockChange = (id, value) => {
+    // Para que no nos deje ingresar un stock negativo
+    const stockValue = Math.max(0, Number(value));
     setEditStock((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: stockValue,
     }));
   };
 
   const handleSaveStock = async (id) => {
-  const newStock = editStock[id];
-  if (newStock !== undefined && !isNaN(newStock)) {
-    try {
-      await updateStock({ id, stock: Number(newStock) });
-      alert('Stock actualizado correctamente');
-    } catch (error) {
-      alert('Error al actualizar el stock');
+    const newStock = editStock[id];
+    if (newStock !== undefined && !isNaN(newStock)) {
+      try {
+        await updateStock({ id, stock: Number(newStock) });
+        alert('Stock actualizado correctamente');
+      } catch (error) {
+        alert('Error al actualizar el stock');
+      }
     }
-  }
-};
-
+  };
 
   return (
     <div className="stock-container">
@@ -59,6 +60,7 @@ const Stock = () => {
                   <td>
                     <input
                       type="number"
+                      min="0"
                       value={
                         editStock[producto.id] !== undefined
                           ? editStock[producto.id]

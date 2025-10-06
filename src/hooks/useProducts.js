@@ -11,15 +11,27 @@ const getTotalStock = async () => {
   return response.data.data; 
 };
 
-// 🚀 Actualizar stock
 const updateStock = async ({ id, stock }) => {
-  const response = await axios.put(`http://localhost:3000/api/producto/${id}`, { stock });
+  const response = await axios.put("http://localhost:3000/api/producto/${id}", { stock });
   return response.data;
 };
 
-// 🚀 Crear producto nuevo
 const createProduct = async (producto) => {
   const response = await axios.post("http://localhost:3000/api/producto", producto);
+  return response.data;
+};
+
+const uploadImage = async (imageFile) => {
+  const formData = new FormData();
+  formData.append('imagen', imageFile);
+
+  const response = await axios.post( "http://localhost:3000/api/producto/imagen", formData, 
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  );
   return response.data;
 };
 
@@ -56,9 +68,10 @@ function useProducts() {
     stockError,
     isStockLoading,
     refetchProducts,
-    refetchStock,   
+    refetchStock,
     createProduct,
     updateStock,
+    uploadImage,
   };
 }
 
