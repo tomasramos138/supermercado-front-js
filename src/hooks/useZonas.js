@@ -7,6 +7,11 @@ const getZonas = async () => {
   return response.data.data  
 };
 
+const createZona = async (zonaData) => {
+  const response = await axios.post("http://localhost:3000/api/zona", zonaData);
+  return response.data;
+};
+
 function useZonas() {
   const { data, isError, error, isLoading } = useQuery({
     queryKey: ["zonas"],
@@ -18,6 +23,7 @@ function useZonas() {
     isError,
     error,
     isLoading,
+    createZona,
   };
 }
 

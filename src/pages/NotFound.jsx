@@ -9,7 +9,7 @@ const NotFound = () => {
         <img
           src={notFoundImage}
           alt="Página no encontrada - Enlace roto"
-          class="error-image"
+          className="error-image"
         />
         <div>
           <h1 className="nf__status">404</h1>

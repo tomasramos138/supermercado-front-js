@@ -1,0 +1,134 @@
+/* Contenedor principal */
+.categorias-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   }
+   
+   
+   /* Título */
+   .categorias-title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.8rem;
+    color: #2c3e50;
+    border-bottom: 3px solid #2ecc71;
+    display: inline-block;
+    padding-bottom: 0.3rem;
+   }
+   
+   
+   /* Lista de categorías */
+   .categorias-list {
+    display: grid;
+    gap: 1rem;
+   }
+   
+   
+   /* Card coloridas */
+   .categoria-card {
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+   }
+   
+   
+   /* Variantes de color */
+   .categoria-card:nth-child(3n+1) {
+    background: linear-gradient(135deg, #27ae60, #2ecc71); /* verde */
+   }
+   
+   
+   .categoria-card:nth-child(3n+2) {
+    background: linear-gradient(135deg, #f39c12, #f1c40f); /* amarillo/naranja */
+   }
+   
+   
+   .categoria-card:nth-child(3n+3) {
+    background: linear-gradient(135deg, #e67e22, #d35400); /* naranja fuerte */
+   }
+   
+   
+   .categoria-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+   }
+   
+   
+   .categoria-nombre {
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+   }
+   
+   
+   .categoria-descripcion {
+    font-size: 0.9rem;
+    opacity: 0.9;
+   }
+   
+   
+   /* Sección nueva categoría */
+   .nueva-categoria {
+    margin-top: 2.5rem;
+    text-align: center;
+   }
+   
+   
+   .nueva-categoria-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #34495e;
+   }
+   
+   
+   /* Formulario */
+   .form-categoria {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+   }
+   
+   
+   .form-categoria input {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.7rem 1rem;
+    border: 2px solid #2ecc71;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+   }
+   
+   
+   .form-categoria input:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 6px rgba(39, 174, 96, 0.4);
+    outline: none;
+   }
+   
+   
+   .form-categoria button {
+    padding: 0.7rem 1.2rem;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+   }
+   
+   
+   .form-categoria button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #219150, #27ae60);
+   }

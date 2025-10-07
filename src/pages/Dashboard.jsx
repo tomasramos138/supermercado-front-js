@@ -83,7 +83,7 @@ const Dashboard = () => {
         <div className="quick-actions-section">
           <h2 className="section-title">Acciones Rápidas</h2>
           <div className="actions-grid">
-            <Link to="/zonas-distribuidores/nuevo" className="action-card">
+            <Link to="/products/Zonasydistribuidores" className="action-card">
               <span className="action-icon">🗺️</span>
               <span className="action-label">Nueva Zona-Distribuidor</span>
             </Link>

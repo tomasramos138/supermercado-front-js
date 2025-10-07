@@ -7,7 +7,13 @@ const getDistribuidoresByZona = async (zonaId) => {
   return response.data.data;
 };
 
+const createDistribuidor = async (distribuidorData) => {
+  const response = await axios.post("http://localhost:3000/api/distribuidor", distribuidorData);
+  return response.data;
+};
+
 function useDistribuidor(zonaId) {
+
   const { data, isError, error, isLoading } = useQuery({
     queryKey: ["distribuidores", zonaId],
     queryFn: () => getDistribuidoresByZona(zonaId),
@@ -19,6 +25,7 @@ function useDistribuidor(zonaId) {
     isError,
     error,
     isLoading,
+    createDistribuidor,
   };
 }
 
