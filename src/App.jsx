@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
-// Protected Pages
+// Paginas protegida
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ProductList from "./pages/ProductList";
@@ -9,17 +9,17 @@ import Ventas from "./pages/dashboardPages/Ventas";
 import GestionUsu from "./pages/dashboardPages/GestionUsu";
 import NuevosProductos from "./pages/dashboardPages/NuevosProductos";
 import Stock from "./pages/dashboardPages/Stock";
+import ZonasDistribuidores from "./pages/dashboardPages/Zonas-distribuidores";
 import NuevaCategoria from "./pages/dashboardPages/NuevaCategoria";
-import Zonasydistribuidores from "./pages/dashboardPages/Zonasydistribuidores";
 
-// Other components
+// Otras paginas
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute"; // Importa tu ProtectedRoute
 import AuthLayout from "./components/layouts/AuthLayout"; // Importa AuthLayout directamente
 
-// Context and HooksS
+// Contextos y hooks
 import { AuthProvider } from "./providers/AuthProvider";
 import { CartProvider } from './providers/CartProvider';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -45,10 +45,10 @@ function App() {
                   {/* Rutas solo para administradores */}
                   <Route path="/products/dashboard" element={<ProtectedRoute allowedRoles={[true]}><Dashboard /></ProtectedRoute>}/>
                   <Route path="/products/ventas" element={<ProtectedRoute allowedRoles={[true]}><Ventas /></ProtectedRoute>}/>
-                  <Route path="/products/Zonasydistribuidores" element={<ProtectedRoute allowedRoles={[true]}> <Zonasydistribuidores/> </ProtectedRoute>} />
-{/*aca*/}         <Route path="/products/NuevosProductos" element={<ProtectedRoute allowedRoles={[true]}><NuevosProductos /></ProtectedRoute>}/>
+                  <Route path="/products/zonas-distribuidores" element={<ProtectedRoute allowedRoles={[true]}><ZonasDistribuidores /></ProtectedRoute>} />
+                  <Route path="/products/NuevosProductos" element={<ProtectedRoute allowedRoles={[true]}><NuevosProductos /></ProtectedRoute>}/>
                   <Route path="/products/Stock" element={<ProtectedRoute allowedRoles={[true]}><Stock /></ProtectedRoute>} />
-                  <Route path="/categorias/nueva" element={ <ProtectedRoute allowedRoles={[true]}> <NuevaCategoria /> </ProtectedRoute> }/>
+                  <Route path="/products/nuevaCategoria" element={ <ProtectedRoute allowedRoles={[true]}> <NuevaCategoria /> </ProtectedRoute> }/>
                   <Route path="/clientes" element={<ProtectedRoute allowedRoles={[true]}><div>Gestion de Usuarios (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/products/GestionUsu" element={<ProtectedRoute allowedRoles={[true]}><GestionUsu /></ProtectedRoute>}/>
 

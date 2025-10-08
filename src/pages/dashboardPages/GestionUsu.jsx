@@ -1,66 +1,90 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import useClientes from "../../hooks/useCliente";
-import './GestionUsu.css'; // Asegúrate de que este archivo contiene el CSS que te pasé antes.
+import "./GestionUsu.css";
 
 function GestionUsu() {
   const { searchClientesByName, updateClient } = useClientes();
-  const [searchTerm, setSearchTerm] = useState("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
+  const onSearch = async (data) => {
+    const { searchTerm } = data;
     if (!searchTerm.trim()) {
-      setClientes([]); // Limpiar resultados si la búsqueda está vacía
+      setClientes([]);
       return;
     }
+
     setLoading(true);
     try {
       const results = await searchClientesByName(searchTerm);
       setClientes(results);
     } catch (error) {
       console.error("Error buscando clientes:", error);
-      // Opcional: Mostrar un mensaje de error al usuario
+      alert("Error al buscar clientes");
     } finally {
       setLoading(false);
+      reset();
     }
   };
 
   const handleToggleAdmin = async (id, currentRole) => {
     try {
-      const newRole = !currentRole; // cambia true/false
+      const newRole = !currentRole;
       await updateClient({ id, rol: newRole });
-      setClientes(prev =>
-        prev.map(c => c.id === id ? { ...c, rol: newRole } : c)
+      setClientes((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, rol: newRole } : c))
       );
     } catch (error) {
       console.error("Error actualizando rol:", error);
-      // Opcional: Revertir el estado o mostrar un error
+      alert("Error al actualizar el rol");
     }
   };
 
   return (
-    // Aplicamos la clase principal
     <div className="gestion-page">
-      <div className="gestion-header">
-        <h2>Gestión de Clientes/Usuarios</h2>
+      <div className="register-header">
+        <h1>Gestión de Usuarios</h1>
+        <p>Busque un cliente para editar su rol</p>
       </div>
 
-      {/* Aplicamos la clase de la barra de búsqueda */}
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Buscar cliente por nombre..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          // Permite buscar al presionar Enter
-          onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
-        />
-        <button onClick={handleSearch} disabled={loading}>
-          {loading ? "Buscando..." : "Buscar Clientes"}
+      <form
+        className="register-form"
+        onSubmit={handleSubmit(onSearch)}
+        noValidate
+      >
+        <div className="form-group">
+          <label htmlFor="searchTerm">Buscar cliente</label>
+          <input
+            id="searchTerm"
+            type="text"
+            className="form-input"
+            placeholder="Ingrese nombre del cliente"
+            {...register("searchTerm", {
+              required: "Debe ingresar un nombre para buscar",
+            })}
+          />
+          {errors.searchTerm && (
+            <div className="error-message">{errors.searchTerm.message}</div>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          className="register-btn"
+          disabled={isSubmitting || loading}
+        >
+          {loading ? "Buscando..." : "Buscar"}
         </button>
-      </div>
+      </form>
 
-      {/* Contenedor de la tabla con la clase flotante */}
       <div className="clientes-table-container">
         {clientes.length > 0 ? (
           <table className="clientes-table">
@@ -70,7 +94,7 @@ function GestionUsu() {
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>DNI</th>
-                <th>Rol (Admin)</th> {/* Cambiamos el texto para que quede mejor con el switch */}
+                <th>Rol</th>
               </tr>
             </thead>
             <tbody>
@@ -81,17 +105,17 @@ function GestionUsu() {
                   <td>{cliente.apellido}</td>
                   <td>{cliente.dni}</td>
                   <td>
-                    {/* Aplicamos la clase role-checkbox para el switch */}
                     <div className="role-checkbox">
                       <input
                         type="checkbox"
-                        id={`rol-switch-${cliente.id}`} // Necesario para el label
-                        checked={cliente.rol} // true = admin
-                        onChange={() => handleToggleAdmin(cliente.id, cliente.rol)}
+                        id={`rol-switch-${cliente.id}`}
+                        checked={cliente.rol}
+                        onChange={() =>
+                          handleToggleAdmin(cliente.id, cliente.rol)
+                        }
                       />
-                      {/* El label es el elemento visible que se estiliza como switch */}
                       <label htmlFor={`rol-switch-${cliente.id}`}></label>
-                      <span>{cliente.rol ? 'Admin' : 'Cliente'}</span>
+                      <span>{cliente.rol ? "Admin" : "Cliente"}</span>
                     </div>
                   </td>
                 </tr>
@@ -99,9 +123,10 @@ function GestionUsu() {
             </tbody>
           </table>
         ) : (
-          // Mensaje si no hay resultados, usando la clase moderna
           <p className="no-clientes">
-            {loading ? "Cargando..." : "Usa la barra de búsqueda para encontrar clientes."}
+            {loading
+              ? "Cargando..."
+              : "Usa el campo de búsqueda para encontrar clientes."}
           </p>
         )}
       </div>

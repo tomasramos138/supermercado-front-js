@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import useZonas from '../../hooks/useZonas';
 import useDistribuidor from '../../hooks/useDistribuidor';
-import './Zonasydistribuidores.css';
+import './Zonas-distribuidores.css';
 
-const Zonasydistribuidores = () => {
+const ZonaDistribuidor = () => {
   const { createZona } = useZonas();
   const { createDistribuidor } = useDistribuidor();
 
@@ -17,7 +17,7 @@ const Zonasydistribuidores = () => {
 
   const onSubmit = async (data) => {
     try {
-      // 1. Crear la zona primero
+      // 1)Crear la zona primero
       const zonaData = {
         name: data.zonaName,
         description: data.zonaDescription
@@ -26,7 +26,7 @@ const Zonasydistribuidores = () => {
       const zonaCreada = await createZona(zonaData);
       console.log('Zona creada:', zonaCreada);
 
-      // 2. Crear el distribuidor asociado a la zona
+      // 2)Crear el distribuidor asociado a la zona
       const distribuidorData = {
         name: data.distribuidorName,
         apellido: data.distribuidorApellido,
@@ -45,7 +45,7 @@ const Zonasydistribuidores = () => {
       console.error('Error al crear zona y distribuidor:', error);
       setError('root', {
         type: 'manual',
-        message: '❌ Error al crear la zona y distribuidor'
+        message: 'Error al crear la zona y distribuidor'
       });
     }
   };
@@ -175,4 +175,5 @@ const Zonasydistribuidores = () => {
   );
 };
 
-export default Zonasydistribuidores;
+export default ZonaDistribuidor;
+

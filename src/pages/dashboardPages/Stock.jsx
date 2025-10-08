@@ -29,7 +29,7 @@ const Stock = () => {
       try {
         await updateStock({ id, stock: Number(newStock) });
         alert('Stock actualizado correctamente');
-      } catch (error) {
+      } catch {
         alert('Error al actualizar el stock');
       }
     }

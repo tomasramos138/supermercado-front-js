@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const getProducts = async () => {
@@ -12,7 +12,7 @@ const getTotalStock = async () => {
 };
 
 const updateStock = async ({ id, stock }) => {
-  const response = await axios.put("http://localhost:3000/api/producto/${id}", { stock });
+  const response = await axios.put(`http://localhost:3000/api/producto/${id}`, { stock });
   return response.data;
 };
 
@@ -24,7 +24,7 @@ const createProduct = async (producto) => {
 const uploadImage = async (imageFile) => {
   const formData = new FormData();
   formData.append('imagen', imageFile);
-
+  
   const response = await axios.post( "http://localhost:3000/api/producto/imagen", formData, 
     {
       headers: {
@@ -68,7 +68,7 @@ function useProducts() {
     stockError,
     isStockLoading,
     refetchProducts,
-    refetchStock,
+    refetchStock,   
     createProduct,
     updateStock,
     uploadImage,

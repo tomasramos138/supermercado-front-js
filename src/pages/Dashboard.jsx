@@ -7,21 +7,9 @@ import useProducts from "../hooks/useProducts";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const {
-    clientesCount,
-    isLoading: isClientesLoading,
-    isError: isClientesError,
-  } = useClientesCount();
-  const {
-    ventasCount,
-    isLoading: isVentasLoading,
-    isError: isVentasError,
-  } = useVentasCount();
-  const {
-    totalStock,
-    isStockLoading,
-    isStockError
-  } = useProducts(); // Usar el hook de productos
+  const {clientesCount, isLoading: isClientesLoading, isError: isClientesError,} = useClientesCount();
+  const {ventasCount, isLoading: isVentasLoading, isError: isVentasError, } = useVentasCount();
+  const {totalStock, isStockLoading, isStockError} = useProducts();
 
   return (
     <div className="dashboard-page">
@@ -83,7 +71,7 @@ const Dashboard = () => {
         <div className="quick-actions-section">
           <h2 className="section-title">Acciones Rápidas</h2>
           <div className="actions-grid">
-            <Link to="/products/Zonasydistribuidores" className="action-card">
+            <Link to="/products/zonas-distribuidores" className="action-card">
               <span className="action-icon">🗺️</span>
               <span className="action-label">Nueva Zona-Distribuidor</span>
             </Link>
@@ -97,7 +85,7 @@ const Dashboard = () => {
               <span className="action-icon">📊</span>
               <span className="action-label">Ajustar Stock</span>
             </Link>
-            <Link to="/categorias/nueva" className="action-card">
+            <Link to="/products/nuevaCategoria" className="action-card">
               <span className="action-icon">🏷️</span>
               <span className="action-label">Nueva Categoría</span>
             </Link>

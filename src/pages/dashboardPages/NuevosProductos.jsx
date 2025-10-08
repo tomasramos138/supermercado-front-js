@@ -1,81 +1,52 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import useProducts from "../../hooks/useProducts";
 import "./NuevosProductos.css";
+import useCategoria from "../../hooks/useCategoria";
 
 const NuevoProducto = () => {
   const { createProduct, uploadImage } = useProducts();
+  const { 
+    categorias, 
+    isLoading: loadingCategorias, 
+    isError: categoriasError,
+    error 
+  } = useCategoria();
+  
+  const {
+    register, 
+    handleSubmit, 
+    reset, 
+    formState: { errors, isSubmitting },
+  } = useForm();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    descripcion: "",
-    categoria: "",
-    precio: 0.00,
-    imagen: "",
-    stock: "",
-  });
-
-  const [isUploading, setIsUploading] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === "imagen") {
-      setFormData((prev) => ({
-        ...prev,
-        imagen: files[0],
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     try {
-      setIsUploading(true);
-
-      // Subir la imagen si existe
+      //1)Subir la imagen si existe
       let imageUrl = "";
-      if (formData.imagen) {
-        const uploadResult = await uploadImage(formData.imagen);
+      if (data.imagen && data.imagen[0]) {
+        const uploadResult = await uploadImage(data.imagen[0]);
         imageUrl = `../imagenes/${uploadResult.filename}`;
       }
 
-      // Convertir los valores numéricos correctamente
+      //2)Preparar el objeto producto
       const productoData = {
-        name: formData.name,
-        descripcion: formData.descripcion,
-        categoria: Number(formData.categoria),
-        precio: parseFloat(
-          String(formData.precio).replace(",", ".") // por si usa coma
-        ),
+        name: data.name,
+        descripcion: data.descripcion,
+        categoria: Number(data.categoria),
+        precio: parseFloat(String(data.precio).replace(",", ".")),
         imagen: imageUrl,
-        stock: Number(formData.stock),
+        stock: Number(data.stock),
       };
 
-      // Crear producto
+      //3)Crear producto
       await createProduct(productoData);
-
       alert("Producto creado con éxito");
 
-      // Resetear formulario
-      setFormData({
-        name: "",
-        descripcion: "",
-        categoria: "",
-        precio: "",
-        imagen: "",
-        stock: "",
-      });
+      //4)Resetear formulario
+      reset();
     } catch (error) {
       console.error("Error al crear producto:", error);
       alert("Error al crear el producto");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -83,79 +54,92 @@ const NuevoProducto = () => {
     <div className="nuevo-producto-container">
       <h1>Agregar Nuevo Producto</h1>
 
-      <form className="nuevo-producto-form" onSubmit={handleSubmit}>
+      <form className="nuevo-producto-form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className="form-group">
           <label>Nombre:</label>
           <input
+            {...register("name", { required: "El nombre es obligatorio" })}
             type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
+            placeholder="Nombre del producto"
           />
+          {errors.name && <p className="error-message">{errors.name.message}</p>}
         </div>
 
         <div className="form-group">
           <label>Descripción:</label>
           <textarea
-            name="descripcion"
-            value={formData.descripcion}
-            onChange={handleChange}
-            required
+            {...register("descripcion", { required: "La descripción es obligatoria" })}
+            placeholder="Descripción del producto"
           />
+          {errors.descripcion && <p className="error-message">{errors.descripcion.message}</p>}
         </div>
 
         <div className="form-group">
-          <label>Categoría (ID):</label>
-          <input
-            type="number"
-            name="categoria"
-            value={formData.categoria}
-            onChange={handleChange}
-            required
-          />
+          <label>Categoría:</label>
+          {loadingCategorias ? (
+            <p>Cargando categorías...</p>
+          ) : categoriasError ? (
+            <p className="error-message">
+              Error al cargar categorías: {error?.message || "Error desconocido"}
+            </p>
+          ) : (
+            <select
+              {...register("categoria", { 
+                required: "Debe seleccionar una categoría",
+                validate: value => value !== "" || "Debe seleccionar una categoría"
+              })}
+            >
+              <option value="">Seleccione una categoría</option>
+              {categorias?.map((categoria) => (
+                <option key={categoria.id} value={categoria.id}>
+                  {categoria.nombre || categoria.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {errors.categoria && <p className="error-message">{errors.categoria.message}</p>}
         </div>
 
         <div className="form-group">
           <label>Precio:</label>
           <input
             type="number"
-            name="precio"
-            value={formData.precio}
-            onChange={handleChange}
-            step="any"        // Permite decimales
-            inputMode="decimal" // ayuda en móviles
-            required
+            step="any"
+            inputMode="decimal"
+            {...register("precio", {
+              required: "Debe ingresar un precio",
+              min: { value: 0, message: "El precio no puede ser negativo" },
+            })}
+            placeholder="Precio"
           />
+          {errors.precio && <p className="error-message">{errors.precio.message}</p>}
         </div>
 
         <div className="form-group">
           <label>Imagen:</label>
-          <input
-            type="file"
-            name="imagen"
-            accept="image/*"
-            onChange={handleChange}
-          />
+          <input type="file" {...register("imagen")} accept="image/*" />
         </div>
 
         <div className="form-group">
           <label>Stock:</label>
           <input
             type="number"
-            name="stock"
-            value={formData.stock}
-            onChange={handleChange}
             min="0"
-            required
+            {...register("stock", {
+              required: "Debe ingresar el stock",
+              min: { value: 0, message: "El stock no puede ser negativo" },
+            })}
+            placeholder="Stock disponible"
           />
+          {errors.stock && <p className="error-message">{errors.stock.message}</p>}
         </div>
 
-        <button type="submit" disabled={isUploading}>
-          {isUploading ? "Creando..." : "Crear Producto"}
+        <button 
+          type="submit" 
+          disabled={isSubmitting || loadingCategorias || categoriasError}
+        >
+          {isSubmitting ? "Creando..." : "Crear Producto"}
         </button>
-
-        {isUploading && <p>Subiendo imagen y creando producto...</p>}
       </form>
     </div>
   );

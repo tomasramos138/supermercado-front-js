@@ -1,5 +1,5 @@
 .nuevo-producto-container {
-  max-width: 700px;
+  max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
   background: white;
@@ -18,6 +18,29 @@
 .nuevo-producto-form {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.form-section h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.2rem;
 }
 
@@ -33,9 +56,7 @@
   font-size: 0.95rem;
 }
 
-.form-group input,
-.form-group textarea,
-.form-group select {
+.form-group input {
   padding: 0.7rem 0.8rem;
   border: 1px solid #e9ecef;
   border-radius: 6px;
@@ -43,28 +64,16 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.form-group textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group input:focus {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* Estilos del desplegable */
-.form-group select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 0.7rem center;
-  background-size: 0.65rem auto;
-  padding-right: 2.5rem;
-  cursor: pointer;
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
 }
 
 button[type="submit"] {
@@ -77,6 +86,7 @@ button[type="submit"] {
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.25s ease, transform 0.1s ease;
+  margin-top: 0.5rem;
 }
 
 button[type="submit"]:hover:not(:disabled) {
@@ -87,48 +97,32 @@ button[type="submit"]:hover:not(:disabled) {
 button[type="submit"]:disabled {
   background: #a8b4e0;
   cursor: not-allowed;
+  transform: none;
 }
 
-.nuevo-producto-form p {
-  text-align: center;
-  color: #6c757d;
-  margin-top: 0.8rem;
-  font-size: 0.95rem;
-}
-
-.error-message {
-  color: #e74c3c;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-/* Pequeñas animaciones */
-button[type="submit"],
-.form-group input,
-.form-group textarea,
-.form-group select {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .nuevo-producto-container {
     padding: 1.5rem;
+    margin: 1rem;
   }
 
   .nuevo-producto-container h1 {
     font-size: 1.7rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 
 @media (max-width: 600px) {
   .nuevo-producto-container {
     padding: 1rem;
+    margin: 0.5rem;
   }
 
-  .form-group input,
-  .form-group textarea,
-  .form-group select {
+  .form-group input {
     font-size: 0.95rem;
   }
 
@@ -136,3 +130,4 @@ button[type="submit"],
     width: 100%;
   }
 }
+

@@ -7,17 +7,14 @@ function ProductList() {
   const { isLoading, isError, error, products } = useProducts();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Filtrar productos con stock mayor a 0
-  const productsWithStock = products?.filter(product => product.stock > 0) || [];
-
   //Recorre los productos y obtiene las categorias sin repetir, si no hay productos, devuelve un array vacio
-  const categoriasUnicas = ["all",...new Set(productsWithStock?.map(p => p.categoria.name) || [])]; 
+  const categoriasUnicas = ["all",...new Set(products?.map(p => p.categoria.name) || [])]; 
   //console.log(categoriasUnicas);
 
   // Filtrar productos por categoría seleccionada
   const filteredProducts = selectedCategory === "all" 
-    ? productsWithStock 
-    : productsWithStock.filter(product => product.categoria.name === selectedCategory);
+    ? products 
+    : products.filter(product => product.categoria.name === selectedCategory);
 
   if (isLoading) {
     return (
@@ -38,7 +35,7 @@ function ProductList() {
     );
   }
 
-  if (productsWithStock.length === 0) {
+  if (products.length === 0) {
     return (
       <div className="container-centered">
         <p className="message">No se encontraron productos.</p>

@@ -29,7 +29,7 @@ function useClientes() {
     queryKey: ["clientesCount"],
     queryFn: getClientesCount,
   });
-
+  
   return {
     clientesCount: data,
     isError,

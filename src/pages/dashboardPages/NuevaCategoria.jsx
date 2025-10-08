@@ -1,68 +1,210 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import useCategoria from "../../hooks/useCategoria";
-import "./NuevaCategoria.css"; // 👈 Importar estilos
-
+import "./NuevaCategoria.css";
 
 function NuevaCategoria() {
- const { categorias, isLoading, createCategoria } = useCategoria();
+  const { categorias, isLoading, createCategoria, refetchCategorias, updateCategoria, deleteCategoria, isCreating = false } = useCategoria();
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting }
+  } = useForm();
 
- const [name, setName] = useState("");
- const [description, setDescription] = useState("");
+  // form para editar categoría en modal
+  const {
+    register: registerEdit,
+    handleSubmit: handleSubmitEdit,
+    reset: resetEdit,
+    formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }
+  } = useForm();
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [isProcessingDelete, setIsProcessingDelete] = useState(false);
+  const [isProcessingUpdate, setIsProcessingUpdate] = useState(false);
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
-   await createCategoria({ name, description });
-   setName("");
-   setDescription("");
- };
+  const onSubmit = async (data) => {
+    try {
+      await createCategoria({ 
+        name: data.name, 
+        description: data.description 
+      });
+      
+      // Refetch para actualizar la lista de categorías
+      refetchCategorias?.();
+      
+      // Resetear el formulario
+      reset();
+    } catch (error) {
+      console.error("Error al crear la categoría:", error);
+    }
+  };
 
+  const handleDelete = async (id) => {
+    const ok = window.confirm("¿Eliminar esta categoría?");
+    if (!ok) return;
+    try {
+      setIsProcessingDelete(true);
+      await deleteCategoria(id);
+      refetchCategorias?.();
+    } catch (err) {
+      console.error("Error al eliminar categoría:", err);
+    } finally {
+      setIsProcessingDelete(false);
+    }
+  };
 
- if (isLoading) return <p>Cargando categorías...</p>;
+  const openEditModal = (cat) => {
+    setEditingCategory(cat);
+    // set valores iniciales del form de edición
+    resetEdit({ name: cat.name, description: cat.description });
+    setEditModalOpen(true);
+  };
 
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+    setEditingCategory(null);
+    resetEdit();
+  };
 
- return (
-   <div className="categorias-container">
-     <h2 className="categorias-title">Categorías</h2>
+  const onEditSubmit = async (data) => {
+    if (!editingCategory) return;
+    try {
+      setIsProcessingUpdate(true);
+      await updateCategoria(editingCategory.id, { name: data.name, description: data.description });
+      refetchCategorias?.();
+      closeEditModal();
+    } catch (err) {
+      console.error("Error al actualizar categoría:", err);
+    } finally {
+      setIsProcessingUpdate(false);
+    }
+  };
 
+  if (isLoading) return <p>Cargando categorías...</p>;
 
-     <div className="categorias-list">
-       {categorias?.map((cat) => (
-         <div key={cat.id} className="categoria-card">
-           <div className="categoria-nombre">
-             {cat.name}
-           </div>
-           <div className="categoria-descripcion">
-             {cat.description}
-           </div>
-         </div>
-       ))}
-     </div>
+  return (
+    <div className="categorias-container">
+      <h2 className="categorias-title">Categorías</h2>
 
+      <div className="categorias-list">
+        {categorias?.map((cat) => (
+          <div key={cat.id} className="categoria-card">
+            <div className="categoria-actions">
+              <button
+                className="categoria-delete"
+                onClick={() => handleDelete(cat.id)}
+                disabled={isProcessingDelete}
+                title="Eliminar categoría"
+              >
+                ✖
+              </button>
+              <button
+                className="categoria-edit"
+                onClick={() => openEditModal(cat)}
+                title="Editar categoría"
+              >
+                ✎
+              </button>
+            </div>
+            <div className="categoria-nombre">
+              {cat.name}
+            </div>
+            <div className="categoria-descripcion">
+              {cat.description}
+            </div>
+          </div>
+        ))}
+      </div>
 
-     <div className="nueva-categoria">
-       <h3 className="nueva-categoria-title">Nueva Categoría</h3>
-       <form className="form-categoria" onSubmit={handleSubmit}>
-         <input
-           type="text"
-           placeholder="Nombre"
-           value={name}
-           onChange={(e) => setName(e.target.value)}
-           required
-         />
-         <input
-           type="text"
-           placeholder="Descripción"
-           value={description}
-           onChange={(e) => setDescription(e.target.value)}
-         />
-         <button type="submit">Crear</button>
-       </form>
-     </div>
-   </div>
- );
+      {/* Modal de edición simple */}
+      {editModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Editar categoría</h3>
+            <form onSubmit={handleSubmitEdit(onEditSubmit)} className="form-categoria">
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  {...registerEdit("name", {
+                    required: "El nombre es obligatorio",
+                    minLength: { value: 2, message: "El nombre debe tener al menos 2 caracteres" },
+                    pattern: { value: /^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/, message: "Solo se permiten letras y espacios" }
+                  })}
+                />
+                {errorsEdit?.name && <p className="error-message">{errorsEdit.name.message}</p>}
+              </div>
+
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Descripción"
+                  {...registerEdit("description", {
+                    minLength: { value: 5, message: "La descripción debe tener al menos 5 caracteres" }
+                  })}
+                />
+                {errorsEdit?.description && <p className="error-message">{errorsEdit.description.message}</p>}
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" onClick={closeEditModal}>Cancelar</button>
+                <button type="submit" disabled={isProcessingUpdate || isSubmittingEdit}>{isProcessingUpdate ? "Guardando..." : "Guardar"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <div className="nueva-categoria">
+        <h3 className="nueva-categoria-title">Nueva Categoría</h3>
+        <form className="form-categoria" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Nombre"
+              {...register("name", {
+                required: "El nombre es obligatorio",
+                minLength: {
+                  value: 2,
+                  message: "El nombre debe tener al menos 2 caracteres"
+                },
+                pattern: {
+                  value: /^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/,
+                  message: "Solo se permiten letras y espacios"
+                }
+              })}
+            />
+            {errors.name && <p className="error-message">{errors.name.message}</p>}
+          </div>
+
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Descripción"
+              {...register("description", {
+                minLength: {
+                  value: 5,
+                  message: "La descripción debe tener al menos 5 caracteres"
+                }
+              })}
+            />
+            {errors.description && <p className="error-message">{errors.description.message}</p>}
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={isSubmitting || isCreating}
+          >
+            {isSubmitting || isCreating ? "Creando..." : "Crear"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
-
 
 export default NuevaCategoria;
