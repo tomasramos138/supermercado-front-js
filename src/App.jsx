@@ -8,7 +8,7 @@ import ProductList from "./pages/ProductList";
 import Ventas from "./pages/dashboardPages/Ventas";
 import GestionUsu from "./pages/dashboardPages/GestionUsu";
 import NuevosProductos from "./pages/dashboardPages/NuevosProductos";
-import Stock from "./pages/dashboardPages/Stock";
+import GestionProductos from "./pages/dashboardPages/GestionProductos";
 import ZonasDistribuidores from "./pages/dashboardPages/Zonas-distribuidores";
 import NuevaCategoria from "./pages/dashboardPages/NuevaCategoria";
 
@@ -23,6 +23,7 @@ import AuthLayout from "./components/layouts/AuthLayout"; // Importa AuthLayout 
 import { AuthProvider } from "./providers/AuthProvider";
 import { CartProvider } from './providers/CartProvider';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Gestion_productos from "./pages/dashboardPages/GestionProductos";
 
 const client = new QueryClient();
 
@@ -47,7 +48,7 @@ function App() {
                   <Route path="/products/ventas" element={<ProtectedRoute allowedRoles={[true]}><Ventas /></ProtectedRoute>}/>
                   <Route path="/products/zonas-distribuidores" element={<ProtectedRoute allowedRoles={[true]}><ZonasDistribuidores /></ProtectedRoute>} />
                   <Route path="/products/NuevosProductos" element={<ProtectedRoute allowedRoles={[true]}><NuevosProductos /></ProtectedRoute>}/>
-                  <Route path="/products/Stock" element={<ProtectedRoute allowedRoles={[true]}><Stock /></ProtectedRoute>} />
+                  <Route path="/products/GestionProductos" element={<ProtectedRoute allowedRoles={[true]}><GestionProductos /></ProtectedRoute>} />
                   <Route path="/products/nuevaCategoria" element={ <ProtectedRoute allowedRoles={[true]}> <NuevaCategoria /> </ProtectedRoute> }/>
                   <Route path="/clientes" element={<ProtectedRoute allowedRoles={[true]}><div>Gestion de Usuarios (ADMIN)</div></ProtectedRoute>} />
                   <Route path="/products/GestionUsu" element={<ProtectedRoute allowedRoles={[true]}><GestionUsu /></ProtectedRoute>}/>

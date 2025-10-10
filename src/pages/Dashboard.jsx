@@ -81,9 +81,9 @@ const Dashboard = () => {
               <span className="action-label">Nuevo Producto</span>
             </Link>
 
-            <Link to="/products/Stock" className="action-card">
+            <Link to="/products/GestionProductos" className="action-card">
               <span className="action-icon">📊</span>
-              <span className="action-label">Ajustar Stock</span>
+              <span className="action-label">Gestion productos</span>
             </Link>
             <Link to="/products/nuevaCategoria" className="action-card">
               <span className="action-icon">🏷️</span>

@@ -16,6 +16,11 @@ const updateStock = async ({ id, stock }) => {
   return response.data;
 };
 
+const updateProduct = async ({ id, estado }) => {
+  const response = await axios.put(`http://localhost:3000/api/producto/${id}`, { estado });
+  return response.data;
+};
+
 const createProduct = async (producto) => {
   const response = await axios.post("http://localhost:3000/api/producto", producto);
   return response.data;
@@ -72,6 +77,7 @@ function useProducts() {
     createProduct,
     updateStock,
     uploadImage,
+    updateProduct,
   };
 }
 

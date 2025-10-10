@@ -36,6 +36,7 @@ const NuevoProducto = () => {
         precio: parseFloat(String(data.precio).replace(",", ".")),
         imagen: imageUrl,
         stock: Number(data.stock),
+        estado: true,
       };
 
       //3)Crear producto
