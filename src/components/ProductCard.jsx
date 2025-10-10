@@ -40,7 +40,7 @@ const cardStyles = {
     padding: '15px',
     margin: '15px',
     width: '250px',
-    height: '350px', 
+    minHeight: '350px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     display: 'flex',
     flexDirection: 'column',

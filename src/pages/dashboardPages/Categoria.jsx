@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useCategoria from "../../hooks/useCategoria";
-import "./NuevaCategoria.css";
+import "./Categoria.css";
 
 function NuevaCategoria() {
-  const { categorias, isLoading, createCategoria, refetchCategorias, updateCategoria, deleteCategoria, isCreating = false } = useCategoria();
+  const { categorias, isLoading, createCategoria, refetchCategorias, updateCategoria, deleteCategoria, isCreating = false, searchCategoriasByName } = useCategoria();
 
   const {
     register,
@@ -25,6 +25,36 @@ function NuevaCategoria() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [isProcessingDelete, setIsProcessingDelete] = useState(false);
   const [isProcessingUpdate, setIsProcessingUpdate] = useState(false);
+  
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [displayedCategorias, setDisplayedCategorias] = useState([]);
+
+  useEffect(() => {
+    setDisplayedCategorias(categorias || []);
+  }, [categorias]);
+
+  const handleRefetch = () => {
+    setSearchTerm("");
+    refetchCategorias?.();
+  };
+
+  const handleSearch = async (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    
+    if (term.trim() === "") {
+      setDisplayedCategorias(categorias || []);
+    } else {
+      try {
+        const result = await searchCategoriasByName(term);
+        setDisplayedCategorias(result || []);
+      } catch (error) {
+        console.error("Error en búsqueda:", error);
+        setDisplayedCategorias([]);
+      }
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -33,10 +63,9 @@ function NuevaCategoria() {
         description: data.description 
       });
       
-      // Refetch para actualizar la lista de categorías
-      refetchCategorias?.();
+      // Refetch para actualizar la lista de categorías Y limpiar twxtbox de la busqueda
+      handleRefetch();
       
-      // Resetear el formulario
       reset();
     } catch (error) {
       console.error("Error al crear la categoría:", error);
@@ -49,7 +78,7 @@ function NuevaCategoria() {
     try {
       setIsProcessingDelete(true);
       await deleteCategoria(id);
-      refetchCategorias?.();
+      handleRefetch();
     } catch (err) {
       console.error("Error al eliminar categoría:", err);
     } finally {
@@ -59,7 +88,6 @@ function NuevaCategoria() {
 
   const openEditModal = (cat) => {
     setEditingCategory(cat);
-    // set valores iniciales del form de edición
     resetEdit({ name: cat.name, description: cat.description });
     setEditModalOpen(true);
   };
@@ -75,7 +103,7 @@ function NuevaCategoria() {
     try {
       setIsProcessingUpdate(true);
       await updateCategoria(editingCategory.id, { name: data.name, description: data.description });
-      refetchCategorias?.();
+      handleRefetch();
       closeEditModal();
     } catch (err) {
       console.error("Error al actualizar categoría:", err);
@@ -90,8 +118,19 @@ function NuevaCategoria() {
     <div className="categorias-container">
       <h2 className="categorias-title">Categorías</h2>
 
+      {/* Campo de búsqueda */}
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Buscar categorías por nombre..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="search-input"
+        />
+      </div>
+
       <div className="categorias-list">
-        {categorias?.map((cat) => (
+        {displayedCategorias?.map((cat) => (
           <div key={cat.id} className="categoria-card">
             <div className="categoria-actions">
               <button
@@ -118,6 +157,9 @@ function NuevaCategoria() {
             </div>
           </div>
         ))}
+        {searchTerm && displayedCategorias.length === 0 && (
+          <p>No se encontraron categorías</p>
+        )}
       </div>
 
       {/* Modal de edición simple */}

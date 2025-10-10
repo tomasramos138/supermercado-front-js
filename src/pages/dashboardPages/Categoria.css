@@ -1,0 +1,276 @@
+/* Contenedor principal */
+.categorias-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.categorias-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.categorias-list {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.categoria-card {
+  padding: 1.2rem;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.categoria-card:hover {
+  border-color: #667eea;
+}
+
+.categoria-nombre {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.categoria-descripcion {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.categoria-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.categoria-edit,
+.categoria-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  font-size: 1rem;
+}
+
+.categoria-edit {
+  color: #667eea;
+}
+
+.categoria-delete {
+  color: #e74c3c;
+}
+
+.nueva-categoria {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.nueva-categoria-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-categoria {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-categoria input {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.form-categoria input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-categoria button {
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-categoria button:hover:not(:disabled) {
+  background: #764ba2;
+}
+
+.form-categoria button:disabled {
+  background: #a8b4e0;
+  cursor: not-allowed;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.modal h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-actions button[type="button"] {
+  background: #6c757d;
+  color: white;
+}
+
+.modal-actions button[type="submit"] {
+  background: #667eea;
+  color: white;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .categorias-container {
+    padding: 1.5rem;
+  }
+  
+  .categorias-title {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .categorias-container {
+    padding: 1rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+/* Contenedor de búsqueda */
+.search-container {
+margin-bottom: 1.5rem;
+}
+
+.search-input {
+width: 100%;
+padding: 0.8rem 1rem;
+border: 1px solid #e9ecef;
+border-radius: 8px;
+font-size: 1rem;
+background-color: #f8f9fa;
+transition: all 0.2s ease;
+}
+
+.search-input:focus {
+outline: none;
+border-color: #667eea;
+background-color: white;
+box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-input::placeholder {
+color: #6c757d;
+opacity: 0.8;
+}
+
+/* Estados de carga para la búsqueda */
+.search-input:disabled {
+background-color: #e9ecef;
+cursor: not-allowed;
+opacity: 0.7;
+}
+
+/* Efecto hover para el input de búsqueda */
+.search-input:hover:not(:focus):not(:disabled) {
+border-color: #adb5bd;
+background-color: #f1f3f4;
+}
+
+/* Responsive para el campo de búsqueda */
+@media (max-width: 768px) {
+.search-container {
+  margin-bottom: 1.2rem;
+}
+
+.search-input {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+}
+}
+
+@media (max-width: 600px) {
+.search-container {
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  padding: 0.6rem 0.8rem;
+}
+}

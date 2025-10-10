@@ -1,14 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-// obtener todas las categorías
 const getCategoria = async () => {
   const response = await axios.get("http://localhost:3000/api/categoria");
   return response.data.data;
  };
- 
- 
- // crear nueva categoría
+
+const searchCategoriasByName = async (param) => {
+  const response = await axios.get("http://localhost:3000/api/categoria/search", {
+    params: { q: param },
+  });
+  return response.data.data;
+};
+
  const createCategoria = async (categoriaData) => {
   try {
     const response = await axios.post("http://localhost:3000/api/categoria", categoriaData);
@@ -46,6 +50,7 @@ const getCategoria = async () => {
  }
  
  function useCategoria() {
+  
   const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["categorias"],
     queryFn: getCategoria,
@@ -61,6 +66,7 @@ const getCategoria = async () => {
     refetchCategorias: refetch,
     updateCategoria,
     deleteCategoria,
+    searchCategoriasByName,
   };
  }
  

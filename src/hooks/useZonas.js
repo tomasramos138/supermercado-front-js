@@ -3,8 +3,14 @@ import axios from "axios";
 
 const getZonas = async () => {
   const response = await axios.get("http://localhost:3000/api/zona");
-  //console.log("useZonas: Datos recibidos:", response.data);
   return response.data.data  
+};
+
+const searchZonasByName = async (param) => {
+  const response = await axios.get("http://localhost:3000/api/zona/search", {
+    params: { q: param },
+  });
+  return response.data.data;
 };
 
 const createZona = async (zonaData) => {
@@ -12,8 +18,18 @@ const createZona = async (zonaData) => {
   return response.data;
 };
 
+const deleteZona = async (zonaId) => {
+  const response = await axios.delete(`http://localhost:3000/api/zona/${zonaId}`);
+  return response.data;
+}
+
+const updateZona = async (zonaId, zonaData) => {
+  const response = await axios.put(`http://localhost:3000/api/zona/${zonaId}`, zonaData);
+  return response.data;
+} 
+
 function useZonas() {
-  const { data, isError, error, isLoading } = useQuery({
+  const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["zonas"],
     queryFn: getZonas,
   });
@@ -24,7 +40,11 @@ function useZonas() {
     error,
     isLoading,
     createZona,
+    deleteZona,
+    refetchZonas: refetch,
+    updateZona,
+    searchZonasByName,
   };
 }
 
-export default useZonas;
+export default useZonas;   

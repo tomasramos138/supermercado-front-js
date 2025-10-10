@@ -12,9 +12,19 @@ const createDistribuidor = async (distribuidorData) => {
   return response.data;
 };
 
+const deleteDistribuidor = async (distribuidorId) => {
+  const response = await axios.delete(`http://localhost:3000/api/distribuidor/${distribuidorId}`);
+  return response.data;
+} 
+
+const updateDistribuidor = async (distribuidorId, distribuidorData) => {
+  const response = await axios.put(`http://localhost:3000/api/distribuidor/${distribuidorId}`, distribuidorData);
+  return response.data;
+}
+
 function useDistribuidor(zonaId) {
 
-  const { data, isError, error, isLoading } = useQuery({
+  const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["distribuidores", zonaId],
     queryFn: () => getDistribuidoresByZona(zonaId),
     enabled: !!zonaId, // Solo ejecuta la consulta si zonaId tiene valor
@@ -26,6 +36,9 @@ function useDistribuidor(zonaId) {
     error,
     isLoading,
     createDistribuidor,
+    deleteDistribuidor, 
+    refetchDistribuidores: refetch,
+    updateDistribuidor
   };
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useClientes from "../../hooks/useCliente";
 import "./GestionUsu.css";
@@ -7,33 +7,39 @@ function GestionUsu() {
   const { searchClientesByName, updateClient } = useClientes();
   const {
     register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
+    watch,
+   // formState: { errors },
   } = useForm();
 
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const onSearch = async (data) => {
-    const { searchTerm } = data;
-    if (!searchTerm.trim()) {
-      setClientes([]);
-      return;
-    }
+  const searchTerm = watch("searchTerm");
 
-    setLoading(true);
-    try {
-      const results = await searchClientesByName(searchTerm);
-      setClientes(results);
-    } catch (error) {
-      console.error("Error buscando clientes:", error);
-      alert("Error al buscar clientes");
-    } finally {
-      setLoading(false);
-      reset();
-    }
-  };
+  useEffect(() => {
+    const searchClientes = async () => {
+      if (!searchTerm || !searchTerm.trim()) {
+        setClientes([]);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const results = await searchClientesByName(searchTerm);
+        setClientes(results);
+      } catch (error) {
+        console.error("Error buscando clientes:", error);
+        alert("Error al buscar clientes");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Debounce para evitar muchas llamadas API
+    const timeoutId = setTimeout(searchClientes, 300);
+    
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, searchClientesByName]);
 
   const handleToggleAdmin = async (id, currentRole) => {
     try {
@@ -55,11 +61,7 @@ function GestionUsu() {
         <p>Busque un cliente para editar su rol</p>
       </div>
 
-      <form
-        className="register-form"
-        onSubmit={handleSubmit(onSearch)}
-        noValidate
-      >
+      <form className="register-form" noValidate>
         <div className="form-group">
           <label htmlFor="searchTerm">Buscar cliente</label>
           <input
@@ -67,22 +69,13 @@ function GestionUsu() {
             type="text"
             className="form-input"
             placeholder="Ingrese nombre del cliente"
-            {...register("searchTerm", {
-              required: "Debe ingresar un nombre para buscar",
-            })}
+            {...register("searchTerm")}
           />
-          {errors.searchTerm && (
-            <div className="error-message">{errors.searchTerm.message}</div>
-          )}
         </div>
 
-        <button
-          type="submit"
-          className="register-btn"
-          disabled={isSubmitting || loading}
-        >
-          {loading ? "Buscando..." : "Buscar"}
-        </button>
+        {loading && (
+          <div className="loading-indicator">Buscando...</div>
+        )}
       </form>
 
       <div className="clientes-table-container">
@@ -126,6 +119,8 @@ function GestionUsu() {
           <p className="no-clientes">
             {loading
               ? "Cargando..."
+              : searchTerm && searchTerm.trim()
+              ? "No se encontraron clientes"
               : "Usa el campo de búsqueda para encontrar clientes."}
           </p>
         )}

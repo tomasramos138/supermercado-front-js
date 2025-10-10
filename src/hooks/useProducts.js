@@ -6,6 +6,20 @@ const getProducts = async () => {
   return response.data.data;
 };
 
+const searchProductsByName = async (param) => {
+  const response = await axios.get("http://localhost:3000/api/producto/search", {
+    params: { q: param },
+  });
+  return response.data.data;
+};
+
+const searchProductsByCategoria = async (categoriaId) => {
+  const response = await axios.get("http://localhost:3000/api/producto/searchCat", {
+    params: { categoriaId: categoriaId }, 
+  });
+  return response.data.data;
+};
+
 const getTotalStock = async () => {
   const response = await axios.get("http://localhost:3000/api/producto/stockTotal");
   return response.data.data; 
@@ -13,11 +27,6 @@ const getTotalStock = async () => {
 
 const updateStock = async ({ id, stock }) => {
   const response = await axios.put(`http://localhost:3000/api/producto/${id}`, { stock });
-  return response.data;
-};
-
-const updateProduct = async ({ id, estado }) => {
-  const response = await axios.put(`http://localhost:3000/api/producto/${id}`, { estado });
   return response.data;
 };
 
@@ -77,7 +86,8 @@ function useProducts() {
     createProduct,
     updateStock,
     uploadImage,
-    updateProduct,
+    searchProductsByName,
+    searchProductsByCategoria,
   };
 }
 

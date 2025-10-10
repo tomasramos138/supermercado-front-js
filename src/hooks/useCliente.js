@@ -17,9 +17,9 @@ const updateClient = async ({ id, ...clientData }) => {
   }
 };
 
-const searchClientesByName = async (nombre) => {
+const searchClientesByName = async (param) => {
   const response = await axios.get("http://localhost:3000/api/cliente/search", {
-    params: { q: nombre },
+    params: { q: param },
   });
   return response.data.data;
 };
