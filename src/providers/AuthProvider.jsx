@@ -40,14 +40,14 @@ export const AuthProvider = ({ children }) => {
   const fetchDistribuidor = async (zona) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/distribuidor/zona/${zona.id}`);
-      return response.data.data[0]; // Asumiendo que devuelve un array y queremos el primero
+      return response.data.data[0];
     } catch (error) {
       console.error("Error al obtener distribuidor:", error);
       return null;
     }
   };
 
-  // Efecto para cargar el distribuidor cuando el usuario cambia
+  // Cargar distribuidor cuando el usuario cambia
   useEffect(() => {
     const loadDistribuidor = async () => {
       if (user?.zona) {
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }) => {
     setWasAuthenticated(false); // Resetear estado de autenticación
   };
 
-// ermite que las funciones puedan ser utilizadas en otras componentes del contexto
+// Permite que las funciones puedan ser utilizadas en otras componentes del contexto
   const authValue = {
     isAuthenticated,
     user,

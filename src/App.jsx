@@ -16,8 +16,8 @@ import Categoria from "./pages/dashboardPages/Categoria";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute"; // Importa tu ProtectedRoute
-import AuthLayout from "./components/layouts/AuthLayout"; // Importa AuthLayout directamente
+import ProtectedRoute from "./components/ProtectedRoute"; 
+import AuthLayout from "./components/layouts/AuthLayout"; 
 
 // Contextos y hooks
 import { AuthProvider } from "./providers/AuthProvider";
@@ -38,11 +38,11 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 <Route element={<AuthLayout />}>
-                  {/* Rutas accesibles para todos los usuarios autenticados (admin o cliente) */}
+                  {/* Rutas accesibles para todos los usuarios autenticados (admin (True) o cliente (False)) */}
                   <Route path="/" element={<ProtectedRoute allowedRoles={[true, false]}><ProductList /></ProtectedRoute>} />
                   <Route path="/products" element={<ProtectedRoute allowedRoles={[true, false]}><ProductList /></ProtectedRoute>} />
                   <Route path="/products/profile" element={<ProtectedRoute allowedRoles={[true, false]}><Profile /></ProtectedRoute>} />
-                  {/* Rutas solo para administradores */}
+                  {/* Rutas solo para administradores (True) */}
                   <Route path="/products/dashboard" element={<ProtectedRoute allowedRoles={[true]}><Dashboard /></ProtectedRoute>}/>
                   <Route path="/products/ventas" element={<ProtectedRoute allowedRoles={[true]}><Ventas /></ProtectedRoute>}/>
                   <Route path="/products/zonas-distribuidores" element={<ProtectedRoute allowedRoles={[true]}><ZonasDistribuidores /></ProtectedRoute>} />

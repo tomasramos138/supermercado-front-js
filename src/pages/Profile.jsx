@@ -40,7 +40,6 @@ const Profile = () => {
   });
 
   const onSubmit = async (data) => {
-    // Crear objeto con los valores actuales del formulario
     const currentValues = {
       name: data.name,
       apellido: data.apellido,
@@ -49,7 +48,6 @@ const Profile = () => {
       zona: data.zona
     };
 
-    // Crear objeto con los valores originales (sin contraseñas)
     const originalValues = {
       name: mockProfile.name,
       apellido: mockProfile.lastName,
@@ -58,26 +56,22 @@ const Profile = () => {
       zona: mockProfile.zone
     };
 
-    // Filtrar solo los campos que han cambiado y no están vacíos
     const cambios = {};
     
     Object.keys(currentValues).forEach(key => {
       const currentValue = currentValues[key];
       const originalValue = originalValues[key];
       
-      // Para contraseña, solo incluir si no está vacía
       if (key === 'contraseña') {
         if (currentValue && currentValue.trim() !== '') {
           cambios[key] = currentValue;
         }
       } 
-      // Para otros campos, incluir si son diferentes
       else if (currentValue !== originalValue) {
         cambios[key] = currentValue;
       }
     });
 
-    // Si no hay cambios, mostrar mensaje y salir
     if (Object.keys(cambios).length === 0) {
       alert("No se detectaron cambios para guardar.");
       setEditMode(false);
@@ -90,7 +84,6 @@ const Profile = () => {
         ...cambios,
       });
       
-      // Resetear solo los campos de contraseña
       reset({
         ...data,
         contraseña: "",
@@ -172,7 +165,7 @@ const Profile = () => {
           className="form-input"
           disabled={!editMode}
         >
-          <option value="">Seleccione una zona</option>
+          
           {zonas?.map((zona) => (
             <option key={zona.id} value={zona.id}>
               {zona.name}

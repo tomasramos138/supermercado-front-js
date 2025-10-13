@@ -5,19 +5,8 @@ import useCategoria from "../../hooks/useCategoria";
 
 const NuevoProducto = () => {
   const { createProduct, uploadImage } = useProducts();
-  const { 
-    categorias, 
-    isLoading: loadingCategorias, 
-    isError: categoriasError,
-    error 
-  } = useCategoria();
-  
-  const {
-    register, 
-    handleSubmit, 
-    reset, 
-    formState: { errors, isSubmitting },
-  } = useForm();
+  const {categorias, isLoading: loadingCategorias, isError: categoriasError, error} = useCategoria();
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting }, } = useForm();
 
   const onSubmit = async (data) => {
     try {

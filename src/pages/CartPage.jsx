@@ -6,33 +6,29 @@ import useProducts from "../hooks/useProducts";
 import './CartPage.css';
 
 const CartPage = ({ isOpen, onClose }) => {
-  // 1. OBTENER DATOS DE LOS HOOKS
   const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount, clearCart } = useCart();
   const { user, distribuidor } = useContext(AuthContext);
   const { procesarCompra } = useVentas();
 
-  // 2. ESTADOS PARA MANEJAR LA INTERFAZ
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [mensajeExito, setMensajeExito] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const { refetchProducts } = useProducts(); //funcion para refrezcar el stock de los productos luego de la venta
-  // 3. CÁLCULOS
+  const { refetchProducts } = useProducts(); 
+  
+  // Se calcula el precio total que es el precio del carrito + el valor de entrega del distribuidor
   const valorEntrega = distribuidor?.valorEntrega || 0;
   const totalConEnvio = cartTotal + valorEntrega;
 
-  // 4. FUNCIÓN PARA MOSTRAR CONFIRMACIÓN
   const handleMostrarConfirmacion = () => {
     setShowConfirmation(true);
   };
 
-  // 5. FUNCIÓN PARA CANCELAR CONFIRMACIÓN
   const handleCancelarConfirmacion = () => {
     setShowConfirmation(false);
     setError(null);
   };
 
-  // 6. FUNCIÓN PARA PROCESAR LA COMPRA (CONFIRMADA)
   const handleProcesarCompraConfirmada = async () => {
     setIsLoading(true);
     setError(null);
@@ -53,14 +49,9 @@ const CartPage = ({ isOpen, onClose }) => {
       });
 
       setMensajeExito("¡Compra realizada con éxito! Gracias por elegirnos.");
-      
-      // LIMPIAR CARRITO INMEDIATAMENTE después de compra exitosa
       clearCart();
-
-      // Refrescar productos para actualizar stock
       await refetchProducts();
 
-      // Cerrar el carrito después de 3 segundos
       setTimeout(() => {
         onClose();
         setMensajeExito(null);
@@ -167,7 +158,7 @@ const CartPage = ({ isOpen, onClose }) => {
                 
                 <button 
                   className="checkout-btn"
-                  onClick={handleMostrarConfirmacion} // ← Ahora muestra confirmación
+                  onClick={handleMostrarConfirmacion}
                   disabled={isLoading || cartItemCount === 0}
                 >
                   {isLoading ? (
@@ -184,7 +175,7 @@ const CartPage = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        {/* MODAL DE CONFIRMACIÓN */}
+        {/* Modal de Confirmación */}
         {showConfirmation && (
           <div className="confirmation-overlay">
             <div className="confirmation-modal">

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
-import CartPage from "../../pages/CartPage"; // Importa tu CartPage existente
+import CartPage from "../../pages/CartPage";
 import './AuthLayout.css';
 
 const AuthLayout = () => {

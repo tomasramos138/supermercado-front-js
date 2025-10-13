@@ -15,7 +15,6 @@
   text-align: left;
 }
 
-/* Barra de Búsqueda y Acciones */
 .search-bar {
   display: flex;
   gap: 1rem;
@@ -73,7 +72,6 @@
   border-collapse: collapse;
 }
 
-/* Encabezados de la Tabla */
 .clientes-table th {
   background: #667eea;
   color: white;
@@ -84,7 +82,6 @@
   border-bottom: 2px solid #764ba2;
 }
 
-/* Filas de la Tabla */
 .clientes-table tr {
   transition: background-color 0.2s ease;
 }
@@ -104,7 +101,6 @@
   border-bottom: none;
 }
 
-/* Estilo para el Checkbox/Switch de Rol */
 .role-checkbox {
   display: flex;
   align-items: center;
@@ -155,7 +151,6 @@
   font-weight: 500;
 }
 
-/* Mensaje de No Clientes */
 .no-clientes {
   text-align: center;
   color: #6c757d;
@@ -167,7 +162,6 @@
   border: 2px dashed #e9ecef;
 }
 
-/* Estados de las filas */
 .cliente-activo {
   background-color: #f8fff9;
 }
@@ -176,7 +170,6 @@
   background-color: #fff8f8;
 }
 
-/* Botones de acción en la tabla */
 .action-btn {
   background: #667eea;
   color: white;
@@ -202,7 +195,6 @@
   background: #c82333;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .search-bar {
     flex-direction: column;

@@ -1,4 +1,4 @@
-/* Contenedor principal */
+
 .categorias-container {
   max-width: 700px;
   margin: 2rem auto;
@@ -213,7 +213,6 @@
   }
 }
 
-/* Contenedor de búsqueda */
 .search-container {
 margin-bottom: 1.5rem;
 }
@@ -240,20 +239,17 @@ color: #6c757d;
 opacity: 0.8;
 }
 
-/* Estados de carga para la búsqueda */
 .search-input:disabled {
 background-color: #e9ecef;
 cursor: not-allowed;
 opacity: 0.7;
 }
 
-/* Efecto hover para el input de búsqueda */
 .search-input:hover:not(:focus):not(:disabled) {
 border-color: #adb5bd;
 background-color: #f1f3f4;
 }
 
-/* Responsive para el campo de búsqueda */
 @media (max-width: 768px) {
 .search-container {
   margin-bottom: 1.2rem;

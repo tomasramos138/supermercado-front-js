@@ -5,21 +5,8 @@ import "./Categoria.css";
 
 function NuevaCategoria() {
   const { categorias, isLoading, createCategoria, refetchCategorias, updateCategoria, deleteCategoria, isCreating = false, searchCategoriasByName } = useCategoria();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting }
-  } = useForm();
-
-  // form para editar categoría en modal
-  const {
-    register: registerEdit,
-    handleSubmit: handleSubmitEdit,
-    reset: resetEdit,
-    formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }
-  } = useForm();
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting }} = useForm();
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }} = useForm();
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -63,7 +50,7 @@ function NuevaCategoria() {
         description: data.description 
       });
       
-      // Refetch para actualizar la lista de categorías Y limpiar twxtbox de la busqueda
+      // Funcion que hace el refetch y limpia el texto de la barra de búsqueda
       handleRefetch();
       
       reset();

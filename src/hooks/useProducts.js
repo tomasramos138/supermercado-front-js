@@ -25,8 +25,8 @@ const getTotalStock = async () => {
   return response.data.data; 
 };
 
-const updateStock = async ({ id, stock }) => {
-  const response = await axios.put(`http://localhost:3000/api/producto/${id}`, { stock });
+const updateProduct = async ({ Productid, param }) => {
+  const response = await axios.put(`http://localhost:3000/api/producto/${Productid}`, param);
   return response.data;
 };
 
@@ -84,7 +84,7 @@ function useProducts() {
     refetchProducts,
     refetchStock,   
     createProduct,
-    updateStock,
+    updateProduct,
     uploadImage,
     searchProductsByName,
     searchProductsByCategoria,

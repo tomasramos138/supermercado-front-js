@@ -1,4 +1,4 @@
-/* Reset y base */
+
 * {
   margin: 0;
   padding: 0;
@@ -24,7 +24,6 @@ body {
   line-height: 1.5;
 }
 
-/* Root container */
 #root {
   margin: 0 auto;
   text-align: center;
@@ -34,12 +33,12 @@ body {
   flex-direction: column;
 }
 
-/* General App wrapper */
+
 .App {
   padding: 1.5rem;
 }
 
-/* Links */
+
 a {
   color: var(--primary);
   text-decoration: none;
@@ -50,7 +49,7 @@ a:hover {
   color: var(--accent);
 }
 
-/* Tarjetas y secciones */
+
 .dashboard-page {
   text-align: left;
   display: flex;
@@ -69,14 +68,14 @@ a:hover {
   margin-top: 0.25rem;
 }
 
-/* Grid general */
+
 .dashboard-grid {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* Métricas rápidas */
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -102,7 +101,7 @@ a:hover {
   font-weight: bold;
 }
 
-/* Acciones rápidas */
+
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -134,7 +133,6 @@ a:hover {
   font-weight: 600;
 }
 
-/* Módulos principales */
 .modules-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -168,7 +166,6 @@ a:hover {
   color: var(--text-light);
 }
 
-/* Gráfico */
 .chart-section {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -176,7 +173,6 @@ a:hover {
   padding: 1.5rem;
 }
 
-/* Responsividad */
 @media (max-width: 768px) {
   .metrics-grid,
   .actions-grid,

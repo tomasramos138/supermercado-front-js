@@ -24,13 +24,11 @@
   font-size: 1.1rem;
 }
 
-/* GRID GENERAL */
 .dashboard-grid {
   display: grid;
   gap: 2rem;
 }
 
-/* TITULOS DE SECCIÓN */
 .section-title {
   font-size: 1.4rem;
   color: #2c3e50;
@@ -40,7 +38,6 @@
   border-bottom: 2px solid #f0f2f5;
 }
 
-/* SECCIÓN DE MÉTRICAS */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -91,7 +88,6 @@
   margin: 0;
 }
 
-/* SECCIÓN GRÁFICA (Stock por producto) */
 .chart-section {
   background: white;
   border-radius: 10px;
@@ -105,7 +101,6 @@
   margin-bottom: 1rem;
 }
 
-/* SECCIÓN DE ACCIONES RÁPIDAS */
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -149,7 +144,6 @@
   text-align: center;
 }
 
-/* SECCIÓN DE MÓDULOS PRINCIPALES */
 .modules-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -172,7 +166,7 @@
 .module-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-  background: #667eea; /* Fondo azul al hover */
+  background: #667eea;
   color: white;
 }
 
@@ -193,7 +187,6 @@
   transition: color 0.2s;
 }
 
-/* RESPONSIVE DESIGN */
 @media (max-width: 900px) {
   .dashboard-grid {
     grid-template-columns: 1fr;

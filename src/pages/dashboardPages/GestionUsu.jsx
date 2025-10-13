@@ -5,11 +5,7 @@ import "./GestionUsu.css";
 
 function GestionUsu() {
   const { searchClientesByName, updateClient } = useClientes();
-  const {
-    register,
-    watch,
-   // formState: { errors },
-  } = useForm();
+  const {register, watch, } = useForm();
 
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,7 +31,6 @@ function GestionUsu() {
       }
     };
 
-    // Debounce para evitar muchas llamadas API
     const timeoutId = setTimeout(searchClientes, 300);
     
     return () => clearTimeout(timeoutId);

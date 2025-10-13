@@ -5,38 +5,13 @@ import useDistribuidor from '../../hooks/useDistribuidor';
 import './Zonas-distribuidores.css';
 
 const ZonaDistribuidor = () => {
-  const { 
-    createZona, 
-    deleteZona, 
-    zonas,
-    isLoading, 
-    refetchZonas,
-    updateZona,
-    searchZonasByName,
-  } = useZonas();
+  const { createZona, deleteZona, zonas, isLoading, refetchZonas, updateZona, searchZonasByName,} = useZonas();
   
-  const { 
-    createDistribuidor, 
-    deleteDistribuidor,
-    updateDistribuidor
-  } = useDistribuidor();
+  const { createDistribuidor, deleteDistribuidor, updateDistribuidor } = useDistribuidor();
 
-  // Form para crear nueva zona y distribuidor
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-    setError
-  } = useForm();
-
-  // Form para editar zona y distribuidor en modal
-  const {
-    register: registerEdit,
-    handleSubmit: handleSubmitEdit,
-    reset: resetEdit,
-    formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }
-  } = useForm();
+  //Un form para crear y otro para editar
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting }, setError } = useForm();
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }} = useForm();
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingZona, setEditingZona] = useState(null);
@@ -44,25 +19,20 @@ const ZonaDistribuidor = () => {
   const [isProcessingDelete, setIsProcessingDelete] = useState(false);
   const [isProcessingUpdate, setIsProcessingUpdate] = useState(false);
   
-  // Estado para la búsqueda
   const [searchTerm, setSearchTerm] = useState("");
   const [displayedZonas, setDisplayedZonas] = useState([]);
 
-  // Sincronizar displayedZonas con zonas
   useEffect(() => {
     setDisplayedZonas(zonas || []);
   }, [zonas]);
 
-  // Función para manejar la búsqueda
   const handleSearch = async (e) => {
     const term = e.target.value;
     setSearchTerm(term);
     
     if (term.trim() === "") {
-      // Si no hay término, mostrar todas las zonas
       setDisplayedZonas(zonas || []);
     } else {
-      // Buscar zonas por nombre
       try {
         const result = await searchZonasByName(term);
         setDisplayedZonas(result || []);
@@ -102,7 +72,6 @@ const ZonaDistribuidor = () => {
       const distribuidorCreado = await createDistribuidor(distribuidorData);
       console.log('Distribuidor creado:', distribuidorCreado);
 
-      // Refetch para actualizar la lista de zonas Y limpiar búsqueda
       handleRefetch();
       
       reset();
@@ -124,10 +93,8 @@ const ZonaDistribuidor = () => {
     try {
       setIsProcessingDelete(true);
       
-      // PRIMERO eliminar la ZONA
       await deleteZona(zonaId);
       
-      // LUEGO eliminar el DISTRIBUIDOR
       if (distribuidorId) {
         await deleteDistribuidor(distribuidorId);
       }
@@ -152,7 +119,6 @@ const ZonaDistribuidor = () => {
     
     setEditingDistribuidor(distribuidorAsociado);
 
-    // Set valores iniciales del form de edición
     resetEdit({
       zonaName: zona.name,
       zonaDescription: zona.description,
@@ -207,7 +173,6 @@ const ZonaDistribuidor = () => {
     }
   };
 
-  // Función para obtener el distribuidor de una zona
   const getDistribuidorByZona = (zona) => {
     return zona.distribuidores && zona.distribuidores.length > 0 
       ? zona.distribuidores[0] 

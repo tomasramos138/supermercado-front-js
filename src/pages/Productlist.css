@@ -55,7 +55,6 @@
   }
 }
 
-/* Estilos para el filtro de categorías */
 .category-filter {
   margin: 20px 0;
   display: flex;
@@ -84,7 +83,6 @@
   border-color: #007bff;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .category-filter {
     flex-direction: column;

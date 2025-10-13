@@ -27,7 +27,7 @@ function useDistribuidor(zonaId) {
   const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["distribuidores", zonaId],
     queryFn: () => getDistribuidoresByZona(zonaId),
-    enabled: !!zonaId, // Solo ejecuta la consulta si zonaId tiene valor
+    enabled: !!zonaId, 
   });
 
   return {

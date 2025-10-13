@@ -1,13 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-// Función para obtener el conteo de ventas
 const getVentasCount = async () => {
   const response = await axios.get("http://localhost:3000/api/venta/count");
   return response.data.data;
 };
 
-// Función para obtener todas las ventas
 const getVentas = async () => {
   const response = await axios.get("http://localhost:3000/api/venta");
   return response.data.data;
@@ -62,10 +60,10 @@ const procesarCompra = async (compraData) => {
   try {
     const { items, cliente, distribuidor } = compraData;
 
-    // 1. Verificar stock
+    //1)Verificar stock
     await verificarStock(items);
 
-    // 2. Crear la venta
+    //2) Crear la venta
     const ventaCreada = await crearVenta({
       fecha: new Date().toISOString(),
       total: 0, // El total se actualizará al final
@@ -75,7 +73,7 @@ const procesarCompra = async (compraData) => {
 
     const ventaId = ventaCreada.data.id;
 
-    // 3. Crear los items de venta
+    //3) Crear los items de venta
     const promesasItems = items.map(item =>
       crearItemVenta({
         cantidad: item.cantidad,
@@ -86,7 +84,7 @@ const procesarCompra = async (compraData) => {
 
     const itemsCreados = await Promise.all(promesasItems);
 
-    // 4. Actualizar el total de la venta
+    //4) Actualizar el total de la venta
     const totalFinal = itemsCreados.reduce((total, item) => total + item.data.subtotal, 0);
     await actualizarTotalVenta(ventaId, totalFinal);
 
@@ -98,7 +96,6 @@ const procesarCompra = async (compraData) => {
 };
 
 function useVenta() {
-  // Query para el conteo de ventas
   const { 
     data: countData, 
     isError: isCountError, 
@@ -109,7 +106,6 @@ function useVenta() {
     queryFn: getVentasCount,
   });
 
-  // Query para obtener todas las ventas
   const { 
     data: ventasData, 
     isError: isVentasError, 
@@ -121,23 +117,16 @@ function useVenta() {
   });
 
   return {
-    // Datos del count
     ventasCount: countData,
     isCountError,
     countError,
     isCountLoading,
-    
-    // Datos de todas las ventas
     ventas: ventasData,
     isVentasError,
     ventasError,
     isVentasLoading,
-    
-    // Estados combinados
     isLoading: isCountLoading || isVentasLoading,
     isError: isCountError || isVentasError,
-
-    // Funciones para operaciones
     verificarStock,
     crearVenta,
     crearItemVenta,
