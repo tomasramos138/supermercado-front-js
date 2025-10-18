@@ -31,7 +31,7 @@ function getUser(jwt) {
 
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(getUser(localStorage.getItem("token")));
+  const [user, setUser] = useState(getUser(localStorage.getItem("token")));//Si hay un token guardado en localStorage, lo decodifica. Si el token sigue siendo válido, devuelve los datos del usuario. Si el token está vencido o corrupto, getUser() devuelve null
   const [distribuidor, setDistribuidor] = useState(null);
   const [wasAuthenticated, setWasAuthenticated] = useState(false);
   const [errorLogin, setErrorLogin] = useState(null);

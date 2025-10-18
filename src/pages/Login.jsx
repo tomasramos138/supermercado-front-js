@@ -1,16 +1,27 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import "./Login.css";
 
-const Login = () => {
-  const { login, errorLogin } = useAuth();
+const Login = () => { 
+  const { login, errorLogin, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors, isSubmitting },} = useForm({ mode: "onSubmit",});
+  const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm({ mode: "onSubmit" });
+
+  // Si el usuario ya está autenticado, saltar el login
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/products");
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data) => {
-    await login(data)
-    navigate("/products");
+    await login(data);
+    // Navegar solo si la autenticación fue exitosa
+    if (isAuthenticated()) {
+      navigate("/products");
+    }
   };
 
   return (
