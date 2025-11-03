@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import useProducts from "../hooks/useProducts";
 import useCategoria from "../hooks/useCategoria";
-import "./ProductList.css";
+import "./Productlist.css";
 
 function ProductList() {
   const { isLoading, isError, error, products, searchProductsByName, searchProductsByCategoria } = useProducts();
