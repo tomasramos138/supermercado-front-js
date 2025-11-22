@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getClientesCount, updateClient, searchClientesByName } from "../services/api";
+import { getClientesCount, updateClient, searchClientesByName, getClientesCount } from "../services/api";
 
 function useClientes() {
   const { data, isError, error, isLoading, refetch } = useQuery({
@@ -7,7 +7,7 @@ function useClientes() {
     queryFn: () => getClientesCount().then(res => res.data.data),
   });
 
-  const updateClientFn = ({ id, ...clientData }) => {
+  const updateClientFn= ({ id, ...clientData }) => {
     return updateClient(id, clientData)
       .then(res => {
         alert("Cliente modificado correctamente");
