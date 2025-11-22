@@ -18,6 +18,7 @@ export default defineConfig([
       globals: {
         ...globals.browser,
         ...globals.vitest, // 👈 agrega esta línea
+        process: 'readonly',
       },
       parserOptions: {
         ecmaVersion: 'latest',

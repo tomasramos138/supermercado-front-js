@@ -1,42 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-
-const getClientesCount = async () => {
-  const response = await axios.get("http://localhost:3000/api/cliente/count");
-  return response.data.data;
-};
-
-const updateClient = async ({ id, ...clientData }) => {
-  try {
-    const response = await axios.patch(`http://localhost:3000/api/cliente/${id}`, clientData);
-    alert('Cliente modificado correctamente');
-    return response.data;
-  } catch (error) {
-    console.error('Error al modificar el cliente:', error);
-    throw error;
-  }
-};
-
-const searchClientesByName = async (param) => {
-  const response = await axios.get("http://localhost:3000/api/cliente/search", {
-    params: { q: param },
-  });
-  return response.data.data;
-};
+import { getClientesCount, updateClient, searchClientesByName } from "../services/api";
 
 function useClientes() {
-  const { data, isError, error, isLoading } = useQuery({
+  const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["clientesCount"],
-    queryFn: getClientesCount,
+    queryFn: () => getClientesCount().then(res => res.data.data),
   });
-  
+
+  const updateClientFn = ({ id, ...clientData }) => {
+    return updateClient(id, clientData)
+      .then(res => {
+        alert("Cliente modificado correctamente");
+        return res.data;
+      })
+      .catch(err => {
+        console.error("Error al modificar el cliente:", err);
+        throw err;
+      });
+  };
+
+  const searchClientesByNameFn = (param) => {
+    return searchClientesByName(param).then(res => res.data.data);
+  };
+
   return {
     clientesCount: data,
     isError,
     error,
     isLoading,
-    updateClient,
-    searchClientesByName,
+    refetchClientesCount: refetch,
+    updateClient: updateClientFn,
+    searchClientesByName: searchClientesByNameFn,
   };
 }
 

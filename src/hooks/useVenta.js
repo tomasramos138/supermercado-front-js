@@ -1,48 +1,44 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-
-const getVentasCount = async () => {
-  const response = await axios.get("http://localhost:3000/api/venta/count");
-  return response.data.data;
-};
-
-const getVentas = async () => {
-  const response = await axios.get("http://localhost:3000/api/venta");
-  return response.data.data;
-};
-
-
-// Función para procesar toda la compra
-const procesarCompra = async (compraData) => {
-  try {
-    const response = await axios.post("http://localhost:3000/api/venta/procesarCompra", compraData);
-    return response.data;
-  } catch (error) {
-    console.error('Error al procesar compra:', error);
-    throw error;
-  }
-};
+import { getVentasCount, getVentas, procesarCompra as procesarCompraAPI } from "../services/api";
 
 function useVenta() {
   const { 
     data: countData, 
     isError: isCountError, 
     error: countError, 
-    isLoading: isCountLoading 
+    isLoading: isCountLoading,
+    refetch: refetchCount
   } = useQuery({
     queryKey: ["ventasCount"],
-    queryFn: getVentasCount,
+    queryFn: async () => {
+      const res = await getVentasCount();
+      return res.data.data;
+    },
   });
 
   const { 
     data: ventasData, 
     isError: isVentasError, 
     error: ventasError, 
-    isLoading: isVentasLoading 
+    isLoading: isVentasLoading,
+    refetch: refetchVentas
   } = useQuery({
     queryKey: ["ventas"],
-    queryFn: getVentas,
+    queryFn: async () => {
+      const res = await getVentas();
+      return res.data.data;
+    },
   });
+
+  const procesarCompraFn = async (compraData) => {
+    try {
+      const res = await procesarCompraAPI(compraData);
+      return res.data;
+    } catch (err) {
+      console.error("Error al procesar compra:", err);
+      throw err;
+    }
+  };
 
   return {
     ventasCount: countData,
@@ -55,7 +51,9 @@ function useVenta() {
     isVentasLoading,
     isLoading: isCountLoading || isVentasLoading,
     isError: isCountError || isVentasError,
-    procesarCompra
+    refetchCount,
+    refetchVentas,
+    procesarCompra: procesarCompraFn
   };
 }
 

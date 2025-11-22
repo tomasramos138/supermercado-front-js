@@ -1,74 +1,72 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { 
+  getCategorias,
+  searchCategoriasByName,
+  createCategoria,
+  updateCategoria,
+  deleteCategoria
+} from "../services/api";
 
-const getCategoria = async () => {
-  const response = await axios.get("http://localhost:3000/api/categoria");
-  return response.data.data;
- };
-
-const searchCategoriasByName = async (param) => {
-  const response = await axios.get("http://localhost:3000/api/categoria/search", {
-    params: { q: param },
-  });
-  return response.data.data;
-};
-
- const createCategoria = async (categoriaData) => {
-  try {
-    const response = await axios.post("http://localhost:3000/api/categoria", categoriaData);
-    alert("Categoría creada correctamente");
-    return response.data;
-  } catch (error) {
-    console.error("Error al crear la categoría:", error);
-    alert("Error al crear la categoría ");
-    throw error;
-  }
- };
- 
- const deleteCategoria = async (id) => {
-  try {
-    const response = await axios.delete(`http://localhost:3000/api/categoria/${id}`);
-    alert("Categoría eliminada correctamente");
-    return response.data;
-  } catch (error) {
-    console.error("Error al eliminar la categoría:", error);
-    alert("Error al eliminar la categoría");
-    throw error;
-  }
- };
- 
- const updateCategoria = async (id, categoriaData) => {
-  try {
-    const response = await axios.put(`http://localhost:3000/api/categoria/${id}`, categoriaData);
-    alert("Categoría actualizada correctamente");
-    return response.data;
-  } catch (error) {
-    console.error("Error al actualizar la categoría:", error);
-    alert("Error al actualizar la categoría");
-    throw error;
-  }
- }
- 
- function useCategoria() {
-  
+function useCategoria() {
   const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["categorias"],
-    queryFn: getCategoria,
+    queryFn: () => getCategorias().then(res => res.data.data),
   });
- 
- 
+
+  const createCategoriaFn = (categoriaData) => {
+    return createCategoria(categoriaData)
+      .then(res => {
+        alert("Categoría creada correctamente");
+        return res.data;
+      })
+      .catch(err => {
+        console.error("Error al crear la categoría:", err);
+        alert("Error al crear la categoría");
+        throw err;
+      });
+  };
+
+  const updateCategoriaFn = (id, categoriaData) => {
+    return updateCategoria(id, categoriaData)
+      .then(res => {
+        alert("Categoría actualizada correctamente");
+        return res.data;
+      })
+      .catch(err => {
+        console.error("Error al actualizar la categoría:", err);
+        alert("Error al actualizar la categoría");
+        throw err;
+      });
+  };
+
+  const deleteCategoriaFn = (id) => {
+    return deleteCategoria(id)
+      .then(res => {
+        alert("Categoría eliminada correctamente");
+        return res.data;
+      })
+      .catch(err => {
+        console.error("Error al eliminar la categoría:", err);
+        alert("Error al eliminar la categoría");
+        throw err;
+      });
+  };
+
+  const searchCategoriasByNameFn = (param) => {
+    return searchCategoriasByName(param).then(res => res.data.data);
+  };
+
   return {
     categorias: data,
     isError,
     error,
     isLoading,
-    createCategoria,
     refetchCategorias: refetch,
-    updateCategoria,
-    deleteCategoria,
-    searchCategoriasByName,
+    createCategoria: createCategoriaFn,
+    updateCategoria: updateCategoriaFn,
+    deleteCategoria: deleteCategoriaFn,
+    searchCategoriasByName: searchCategoriasByNameFn,
   };
- }
- 
- 
- export default useCategoria;
+}
+
+export default useCategoria;

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { createPreference as createPreferenceAPI } from "../services/api";
 
 function useMercadoPago() {
   // Recibe el carrito y crea la preferencia en el backend
@@ -15,14 +15,11 @@ function useMercadoPago() {
     }));
 
     try {
-      const res = await axios.post("http://localhost:3000/api/mercadopago/create-preference", {
-        items, // enviamos todo el array
-      });
-
+      const res = await createPreferenceAPI({ items }); // usamos la función del helper
       // Devuelvo todo el objeto para obtener init_point y id de la preferencia
       return res.data;
     } catch (error) {
-      console.error("Error creando preferencia Bricks:", error.response?.data || error.message);
+      console.error("Error creando preferencia de pago:", error.response?.data || error.message);
       throw new Error(error.response?.data?.error || "Error creando preferencia de pago");
     }
   };

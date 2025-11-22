@@ -1,44 +1,63 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-
-const getDistribuidoresByZona = async (zonaId) => {
-  const response = await axios.get(`http://localhost:3000/api/distribuidor?zona=${zonaId}`);
-  console.log("useDistribuidor: Datos recibidos:", response.data);
-  return response.data.data;
-};
-
-const createDistribuidor = async (distribuidorData) => {
-  const response = await axios.post("http://localhost:3000/api/distribuidor", distribuidorData);
-  return response.data;
-};
-
-const deleteDistribuidor = async (distribuidorId) => {
-  const response = await axios.delete(`http://localhost:3000/api/distribuidor/${distribuidorId}`);
-  return response.data;
-} 
-
-const updateDistribuidor = async (distribuidorId, distribuidorData) => {
-  const response = await axios.put(`http://localhost:3000/api/distribuidor/${distribuidorId}`, distribuidorData);
-  return response.data;
-}
+import { 
+  getDistribuidoresByZona,
+  createDistribuidor,
+  deleteDistribuidor,
+  updateDistribuidor
+} from "../services/api";
 
 function useDistribuidor(zonaId) {
-
   const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["distribuidores", zonaId],
-    queryFn: () => getDistribuidoresByZona(zonaId),
-    enabled: !!zonaId, 
+    queryFn: async () => {
+      const res = await getDistribuidoresByZona(zonaId);
+      return res.data.data;
+    },
+    enabled: !!zonaId, // solo se ejecuta si zonaId tiene valor
   });
+
+  const createDistribuidorFn = async (distribuidorData) => {
+    try {
+      const res = await createDistribuidor(distribuidorData);
+      alert("Distribuidor creado correctamente");
+      return res.data;
+    } catch (err) {
+      console.error("Error al crear el distribuidor:", err);
+      throw err;
+    }
+  };
+
+  const updateDistribuidorFn = async (id, distribuidorData) => {
+    try {
+      const res = await updateDistribuidor(id, distribuidorData);
+      alert("Distribuidor actualizado correctamente");
+      return res.data;
+    } catch (err) {
+      console.error("Error al actualizar el distribuidor:", err);
+      throw err;
+    }
+  };
+
+  const deleteDistribuidorFn = async (id) => {
+    try {
+      const res = await deleteDistribuidor(id);
+      alert("Distribuidor eliminado correctamente");
+      return res.data;
+    } catch (err) {
+      console.error("Error al eliminar el distribuidor:", err);
+      throw err;
+    }
+  };
 
   return {
     distribuidores: data,
     isError,
     error,
     isLoading,
-    createDistribuidor,
-    deleteDistribuidor, 
     refetchDistribuidores: refetch,
-    updateDistribuidor
+    createDistribuidor: createDistribuidorFn,
+    updateDistribuidor: updateDistribuidorFn,
+    deleteDistribuidor: deleteDistribuidorFn,
   };
 }
 
