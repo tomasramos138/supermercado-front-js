@@ -1,48 +1,53 @@
-import axios from 'axios';
+// src/services/api.js
+import axios from "axios";
 
- const API_URL = process.env.NEXT_PUBLIC_API_URL; 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+if (!API_URL) throw new Error("Variable NEXT_PUBLIC_API_URL no definida");
 
-if (!API_URL) {
-  throw new Error("Variable NEXT_PUBLIC_API_URL no definida en .env.local");
-}
 // --- Clientes ---
-export const getClientes = () => axios.get(`${API_URL}/api/cliente`);
-export const updateCliente = (id, clientData) => axios.patch(`${API_URL}/api/cliente/${id}`, clientData);
-export const searchClientesByName = (param) => axios.get(`${API_URL}/api/cliente/search?name=${param}`);
-export const getClientesCount = () => axios.get(`${API_URL}/api/cliente/count`);
+export const getClientes = async () => (await axios.get(`${API_URL}/api/cliente`)).data;
+export const updateClient = async (id, clientData) => (await axios.patch(`${API_URL}/api/cliente/${id}`, clientData)).data;
+export const searchClientesByName = async (param) => (await axios.get(`${API_URL}/api/cliente/search?name=${param}`)).data;
+export const getClientesCount = async () => (await axios.get(`${API_URL}/api/cliente/count`)).data;
 
 // --- Categorias ---
-export const getCategorias = () => axios.get(`${API_URL}/api/categoria`);
-export const createCategoria = (categoriaData) => axios.post(`${API_URL}/api/categoria`, categoriaData);
-export const updateCategoria = (id, categoriaData) => axios.patch(`${API_URL}/api/categoria/${id}`, categoriaData);
-export const deleteCategoria = (id) => axios.delete(`${API_URL}/api/categoria/${id}`);
-export const searchCategoriasByName = (param) => axios.get(`${API_URL}/api/categoria/search?name=${param}`);
+export const getCategorias = async () => (await axios.get(`${API_URL}/api/categoria`)).data;
+export const createCategoria = async (data) => (await axios.post(`${API_URL}/api/categoria`, data)).data;
+export const updateCategoria = async (id, data) => (await axios.patch(`${API_URL}/api/categoria/${id}`, data)).data;
+export const deleteCategoria = async (id) => (await axios.delete(`${API_URL}/api/categoria/${id}`)).data;
+export const searchCategoriasByName = async (param) => (await axios.get(`${API_URL}/api/categoria/search?name=${param}`)).data;
 
 // --- Distribuidores ---
-export const getDistribuidoresByZona = (zonaId) => axios.get(`${API_URL}/api/distribuidor/zona/${zonaId}`);
-export const createDistribuidor = (distribuidorData) => axios.post(`${API_URL}/api/distribuidor`, distribuidorData);
-export const updateDistribuidor = (distribuidorId, data) => axios.patch(`${API_URL}/api/distribuidor/${distribuidorId}`, data);
-export const deleteDistribuidor = (distribuidorId) => axios.delete(`${API_URL}/api/distribuidor/${distribuidorId}`);
+export const getDistribuidoresByZona = async (zonaId) => (await axios.get(`${API_URL}/api/distribuidor/zona/${zonaId}`)).data;
+export const createDistribuidor = async (data) => (await axios.post(`${API_URL}/api/distribuidor`, data)).data;
+export const updateDistribuidor = async (id, data) => (await axios.patch(`${API_URL}/api/distribuidor/${id}`, data)).data;
+export const deleteDistribuidor = async (id) => (await axios.delete(`${API_URL}/api/distribuidor/${id}`)).data;
 
 // --- MercadoPago ---
-export const createPreference = (data) => axios.post(`${API_URL}/api/mercadopago/create-preference`, data);
+export const createPreference = async (data) => (await axios.post(`${API_URL}/api/mercadopago/create-preference`, data)).data;
 
 // --- Productos ---
-export const getProducts = () => axios.get(`${API_URL}/api/producto`);
-export const searchProductsByName = (param) => axios.get(`${API_URL}/api/producto/search?name=${param}`);
-export const searchProductsByCategoria = (categoriaId) => axios.get(`${API_URL}/api/producto/categoria/${categoriaId}`);
-export const updateProduct = (Productid, param) => axios.patch(`${API_URL}/api/producto/${Productid}`, param);
-export const createProduct = (producto) => axios.post(`${API_URL}/api/producto`, producto);
-export const uploadImage = (id,imageFile) => axios.post(`${API_URL}/api/producto/${id}/upload`,imageFile);
-export const getTotalStock = () => axios.get(`${API_URL}/api/producto/total-stock`);
+export const getProducts = async () => (await axios.get(`${API_URL}/api/producto`)).data;
+export const searchProductsByName = async (param) => (await axios.get(`${API_URL}/api/producto/search?name=${param}`)).data;
+export const searchProductsByCategoria = async (categoriaId) => (await axios.get(`${API_URL}/api/producto/categoria/${categoriaId}`)).data;
+export const updateProduct = async (id, data) => (await axios.patch(`${API_URL}/api/producto/${id}`, data)).data;
+export const createProduct = async (data) => (await axios.post(`${API_URL}/api/producto`, data)).data;
+export const uploadImage = async (id, imageFile) => {
+  const formData = new FormData();
+  formData.append("imagen", imageFile);
+  return (await axios.post(`${API_URL}/api/producto/${id}/upload`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  })).data;
+};
+export const getTotalStock = async () => (await axios.get(`${API_URL}/api/producto/total-stock`)).data;
 
 // --- Ventas ---
-export const getVentas = () => axios.get(`${API_URL}/api/venta`);
-export const getVentasCount = () => axios.get(`${API_URL}/api/venta/count`);
+export const getVentas = async () => (await axios.get(`${API_URL}/api/venta`)).data;
+export const getVentasCount = async () => (await axios.get(`${API_URL}/api/venta/count`)).data;
 
 // --- Zonas ---
-export const getZonas = () => axios.get(`${API_URL}/api/zona`);
-export const createZona = (zonaData) => axios.post(`${API_URL}/api/zona`,zonaData);
-export const updateZona = (id, data) => axios.patch(`${API_URL}/api/zona/${id}`, data);
-export const deleteZona = (zonaId) => axios.delete(`${API_URL}/api/zona/${zonaId}`);
-export const searchZonasByName = (param) => axios.get(`${API_URL}/api/zona/search?name=${param}`);
+export const getZonas = async () => (await axios.get(`${API_URL}/api/zona`)).data;
+export const createZona = async (data) => (await axios.post(`${API_URL}/api/zona`, data)).data;
+export const updateZona = async (id, data) => (await axios.patch(`${API_URL}/api/zona/${id}`, data)).data;
+export const deleteZona = async (id) => (await axios.delete(`${API_URL}/api/zona/${id}`)).data;
+export const searchZonasByName = async (param) => (await axios.get(`${API_URL}/api/zona/search?name=${param}`)).data;
