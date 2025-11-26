@@ -4,83 +4,93 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import "./Login.css";
 
-const Login = () => { 
-  const { login, errorLogin, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm({ mode: "onSubmit" });
 
-  // Si el usuario ya está autenticado, saltar el login
-  useEffect(() => {
-    if (isAuthenticated()) {
-      navigate("/products");
-    }
-  }, [isAuthenticated, navigate]);
+const Login = () => {
+ const { login, errorLogin, isAuthenticated } = useAuth();
+ const navigate = useNavigate();
+ const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm({ mode: "onSubmit" });
 
-  const onSubmit = async (data) => {
-    await login(data);
-    // Navegar solo si la autenticación fue exitosa
-    if (isAuthenticated()) {
-      navigate("/products");
-    }
-  };
 
-  return (
-    <div className="login-page">
-      <div className="login-container">
-        <div className="login-header">
-          <h1>Bienvenido</h1>
-          <p>Ingrese a su cuenta para continuar</p>
-        </div>
+ // Si el usuario ya está autenticado, saltar el login
+ useEffect(() => {
+   if (isAuthenticated()) {
+     navigate("/products");
+   }
+ }, [isAuthenticated, navigate]);
 
-        <form className="login-form" onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className="form-group">
-            <label htmlFor="usuario">Usuario</label>
-            <input
-              type="text"
-              id="usuario"
-              {...register("usuario", { required: "Usuario es requerido" })}
-              placeholder="Usuario"
-              className="form-input"
-              autoComplete="username"
-            />
-            {errors.usuario && (
-              <div className="error-message">{errors.usuario.message}</div>
-            )}
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="contraseña">Contraseña</label>
-            <input
-              type="password"
-              id="contraseña"
-              {...register("contraseña", { required: "Contraseña es requerida" })}
-              placeholder="Contraseña"
-              className="form-input"
-              autoComplete="current-password"
-            />
-            {errors.contraseña && (
-              <div className="error-message">{errors.contraseña.message}</div>
-            )}
-          </div>
+ const onSubmit = async (data) => {
+   await login(data);
+   // Navegar solo si la autenticación fue exitosa
+   if (isAuthenticated()) {
+     navigate("/products");
+   }
+ };
 
-          <button type="submit" className="login-btn" disabled={isSubmitting}>
-            {isSubmitting ? "Ingresando..." : "Ingresar"}
-          </button>
 
-          {errorLogin && <div className="error-message">{errorLogin}</div>}
-        </form>
+ return (
+   <div className="login-page">
+     <div className="login-container">
+       <div className="login-header">
+         <h1>Bienvenido</h1>
+         <p>Ingrese a su cuenta para continuar</p>
+       </div>
 
-        <div className="login-footer">
-          <p>
-            No tiene una cuenta?{" "}
-            <Link to="/register" className="register-link">
-              Quiero registrarme
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+
+       <form className="login-form" onSubmit={handleSubmit(onSubmit)} noValidate>
+         <div className="form-group">
+           <label htmlFor="usuario">Usuario</label>
+           <input
+             type="text"
+             id="usuario"
+             {...register("usuario", { required: "Usuario es requerido" })}
+             placeholder="Usuario"
+             className="form-input"
+             autoComplete="username"
+           />
+           {errors.usuario && (
+             <div className="error-message">{errors.usuario.message}</div>
+           )}
+         </div>
+
+
+         <div className="form-group">
+           <label htmlFor="contraseña">Contraseña</label>
+           <input
+             type="password"
+             id="contraseña"
+             {...register("contraseña", { required: "Contraseña es requerida" })}
+             placeholder="Contraseña"
+             className="form-input"
+             autoComplete="current-password"
+           />
+           {errors.contraseña && (
+             <div className="error-message">{errors.contraseña.message}</div>
+           )}
+         </div>
+
+
+         <button type="submit" className="login-btn" disabled={isSubmitting}>
+           {isSubmitting ? "Ingresando..." : "Ingresar"}
+         </button>
+
+
+         {errorLogin && <div className="error-message">{errorLogin}</div>}
+       </form>
+
+
+       <div className="login-footer">
+         <p>
+           No tiene una cuenta?{" "}
+           <Link to="/register" className="register-link">
+             Quiero registrarme
+           </Link>
+         </p>
+       </div>
+     </div>
+   </div>
+ );
 };
+
 
 export default Login;
