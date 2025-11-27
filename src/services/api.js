@@ -11,7 +11,7 @@ export const updateClient = async (id, clientData) =>
 
 export const searchClientesByName = async (param) => {
   const res = await axios.get(`${API_URL}/api/cliente/search?name=${param}`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const getClientesCount = async () =>
@@ -20,7 +20,7 @@ export const getClientesCount = async () =>
 // --- Categorías ---
 export const getCategorias = async () => {
   const res = await axios.get(`${API_URL}/api/categoria`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const createCategoria = async (data) =>
@@ -32,15 +32,17 @@ export const updateCategoria = async (id, data) =>
 export const deleteCategoria = async (id) =>
   (await axios.delete(`${API_URL}/api/categoria/${id}`)).data;
 
+// ✅ CORREGIDO: param 'q' en lugar de 'name'
 export const searchCategoriasByName = async (param) => {
-  const res = await axios.get(`${API_URL}/api/categoria/search?name=${param}`);
-  return res.data.data; // <- solo el array
+  if (!param) return [];
+  const res = await axios.get(`${API_URL}/api/categoria/search?q=${param}`);
+  return res.data.data || [];
 };
 
 // --- Distribuidores ---
 export const getDistribuidoresByZona = async (zonaId) => {
   const res = await axios.get(`${API_URL}/api/distribuidor/zona/${zonaId}`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const createDistribuidor = async (data) =>
@@ -59,17 +61,17 @@ export const createPreference = async (data) =>
 // --- Productos ---
 export const getProducts = async () => {
   const res = await axios.get(`${API_URL}/api/producto`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const searchProductsByName = async (param) => {
   const res = await axios.get(`${API_URL}/api/producto/search?q=${param}`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const searchProductsByCategoria = async (categoriaId) => {
   const res = await axios.get(`${API_URL}/api/producto/categoria/${categoriaId}`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const updateProduct = async (id, data) =>
@@ -92,7 +94,7 @@ export const uploadImage = async (id, imageFile) => {
 // --- Ventas ---
 export const getVentas = async () => {
   const res = await axios.get(`${API_URL}/api/venta`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const getVentasCount = async () =>
@@ -104,7 +106,7 @@ export const procesarCompra = async (compraData) =>
 // --- Zonas ---
 export const getZonas = async () => {
   const res = await axios.get(`${API_URL}/api/zona`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
 
 export const createZona = async (data) =>
@@ -117,6 +119,7 @@ export const deleteZona = async (id) =>
   (await axios.delete(`${API_URL}/api/zona/${id}`)).data;
 
 export const searchZonasByName = async (param) => {
+  if (!param) return [];
   const res = await axios.get(`${API_URL}/api/zona/search?name=${param}`);
-  return res.data.data; // <- solo el array
+  return res.data.data || [];
 };
