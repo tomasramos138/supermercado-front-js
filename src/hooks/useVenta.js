@@ -1,61 +1,57 @@
 import { useQuery } from "@tanstack/react-query";
 import { getVentasCount, getVentas, procesarCompra as procesarCompraAPI } from "../services/api";
 
-
 function useVenta() {
- // Query para la cantidad de ventas
- const {
-   data: ventasCount,
-   isError: isCountError,
-   error: countError,
-   isLoading: isCountLoading,
-   refetch: refetchCount
- } = useQuery({
-   queryKey: ["ventasCount"],
-   queryFn: getVentasCount, // ya devuelve los datos directamente
- });
+
+  // ------- Cantidad de Ventas -------
+  const {
+    data: ventasCountData,
+    isError: isCountError,
+    error: countError,
+    isLoading: isCountLoading,
+    refetch: refetchCount
+  } = useQuery({
+    queryKey: ["ventasCount"],
+    queryFn: getVentasCount,
+  });
+
+  // ✔️ EXTRAER SOLO EL NÚMERO
+  const ventasCount = ventasCountData?.data ?? 0;
 
 
- // Query para las ventas
- const {
-   data: ventas,
-   isError: isVentasError,
-   error: ventasError,
-   isLoading: isVentasLoading,
-   refetch: refetchVentas
- } = useQuery({
-   queryKey: ["ventas"],
-   queryFn: getVentas, // ya devuelve los datos directamente
- });
+  // ------- Listado de Ventas -------
+  const {
+    data: ventas,
+    isError: isVentasError,
+    error: ventasError,
+    isLoading: isVentasLoading,
+    refetch: refetchVentas
+  } = useQuery({
+    queryKey: ["ventas"],
+    queryFn: getVentas,
+  });
 
 
- // Función de mutación para procesar compra
- const procesarCompra = async (compraData) => {
-   try {
-     return await procesarCompraAPI(compraData);
-   } catch (err) {
-     console.error("Error al procesar compra:", err);
-     throw err;
-   }
- };
+  // ------- Procesar Compra -------
+  const procesarCompra = async (compraData) => {
+    return await procesarCompraAPI(compraData);
+  };
 
-
- return {
-   ventasCount,
-   isCountError,
-   countError,
-   isCountLoading,
-   ventas,
-   isVentasError,
-   ventasError,
-   isVentasLoading,
-   isLoading: isCountLoading || isVentasLoading,
-   isError: isCountError || isVentasError,
-   refetchCount,
-   refetchVentas,
-   procesarCompra
- };
+  return {
+    ventasCount,
+    isCountError,
+    countError,
+    isCountLoading,
+    ventas,
+    isVentasError,
+    ventasError,
+    isVentasLoading,
+    isLoading: isCountLoading || isVentasLoading,
+    isError: isCountError || isVentasError,
+    refetchCount,
+    refetchVentas,
+    procesarCompra,
+  };
 }
-
 
 export default useVenta;
