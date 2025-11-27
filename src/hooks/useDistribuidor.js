@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  getDistribuidoresByZona,
-  createDistribuidor,
-  updateDistribuidor,
-  deleteDistribuidor
-} from "../services/api";
+import { getDistribuidoresByZona, createDistribuidor, updateDistribuidor, deleteDistribuidor } from "../services/api";
 
 function useDistribuidor(zonaId) {
   const { data, isError, error, isLoading, refetch } = useQuery({
@@ -18,9 +13,9 @@ function useDistribuidor(zonaId) {
   const createDistribuidorFn = async (distribuidorData) => {
     try {
       const res = await createDistribuidor(distribuidorData);
-      return res;
+      return res.data;
     } catch (err) {
-      console.error("Error al crear el distribuidor:", err);
+      console.error("Error al crear distribuidor:", err);
       throw err;
     }
   };
@@ -28,9 +23,9 @@ function useDistribuidor(zonaId) {
   const updateDistribuidorFn = async (id, distribuidorData) => {
     try {
       const res = await updateDistribuidor(id, distribuidorData);
-      return res;
+      return res.data;
     } catch (err) {
-      console.error("Error al actualizar el distribuidor:", err);
+      console.error("Error al actualizar distribuidor:", err);
       throw err;
     }
   };
@@ -38,9 +33,9 @@ function useDistribuidor(zonaId) {
   const deleteDistribuidorFn = async (id) => {
     try {
       const res = await deleteDistribuidor(id);
-      return res;
+      return res.data;
     } catch (err) {
-      console.error("Error al eliminar el distribuidor:", err);
+      console.error("Error al eliminar distribuidor:", err);
       throw err;
     }
   };

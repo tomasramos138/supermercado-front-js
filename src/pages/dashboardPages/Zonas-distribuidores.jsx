@@ -6,7 +6,8 @@ import './Zonas-distribuidores.css';
 
 const ZonaDistribuidor = () => {
   const { createZona, deleteZona, zonas, isLoading, refetchZonas, updateZona, searchZonasByName } = useZonas();
-  const { createDistribuidor, deleteDistribuidor, updateDistribuidor } = useDistribuidor();
+  const { createDistribuidor, deleteDistribuidor, updateDistribuidor } = useDistribuidor(editingZona?.id || null);
+
 
   // Form para crear
   const { register, handleSubmit, reset, formState: { isSubmitting }, setError } = useForm();
