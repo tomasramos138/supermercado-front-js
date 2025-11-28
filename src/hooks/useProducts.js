@@ -24,7 +24,7 @@ function useProducts() {
   });
 
   const products = Array.isArray(productsData?.data || productsData)
-    ? productsData.data || productsData
+    ? productsData.data.data || productsData
     : [];
 
 
@@ -63,7 +63,7 @@ function useProducts() {
     if (!term) return [];
     const response = await searchProductsByName(term);
     return Array.isArray(response?.data || response)
-      ? response.data || response
+      ? response.data.data || response
       : [];
   };
 
@@ -71,7 +71,7 @@ function useProducts() {
     if (!categoriaId) return [];
     const response = await searchProductsByCategoria(Number(categoriaId));
     return Array.isArray(response?.data || response)
-      ? response.data || response
+      ? response.data.data || response
       : [];
   };
 

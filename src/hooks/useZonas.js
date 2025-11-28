@@ -12,7 +12,7 @@ function useZonas() {
   const createZonaFn = async (zonaData) => {
     try {
       const res = await createZona(zonaData);
-      return res.data;
+      return res.data.data;
     } catch (err) {
       console.error("Error al crear zona:", err);
       throw err;
@@ -22,7 +22,7 @@ function useZonas() {
   const updateZonaFn = async (id, zonaData) => {
     try {
       const res = await updateZona(id, zonaData);
-      return res.data;
+      return res.data.data;
     } catch (err) {
       console.error("Error al actualizar zona:", err);
       throw err;
@@ -32,7 +32,7 @@ function useZonas() {
   const deleteZonaFn = async (id) => {
     try {
       const res = await deleteZona(id);
-      return res.data;
+      return res.data.data;
     } catch (err) {
       console.error("Error al eliminar zona:", err);
       throw err;
@@ -42,7 +42,7 @@ function useZonas() {
   const searchZonasFn = async (name) => {
     try {
       const res = await searchZonasByName(name);
-      return res.data;
+      return res.data.data;
     } catch (err) {
       console.error("Error al buscar zonas:", err);
       throw err;

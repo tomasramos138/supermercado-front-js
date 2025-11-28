@@ -22,7 +22,7 @@ function useMercadoPago() {
    } catch (error) {
      console.error(
        "Error creando preferencia de pago:",
-       error.response?.data || error.message
+       error.response?.data.data || error.message
      );
      throw new Error(
        error.response?.data?.error || "Error creando preferencia de pago"

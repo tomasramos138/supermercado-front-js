@@ -13,7 +13,7 @@ function useDistribuidor(zonaId) {
   const createDistribuidorFn = async (distribuidorData) => {
     try {
       const res = await createDistribuidor(distribuidorData);
-      return res.data;
+      return res.data.data;
     } catch (err) {
       console.error("Error al crear distribuidor:", err);
       throw err;
@@ -23,7 +23,7 @@ function useDistribuidor(zonaId) {
   const updateDistribuidorFn = async (id, distribuidorData) => {
     try {
       const res = await updateDistribuidor(id, distribuidorData);
-      return res.data;
+      return res.data.data;
     } catch (err) {
       console.error("Error al actualizar distribuidor:", err);
       throw err;
@@ -33,7 +33,7 @@ function useDistribuidor(zonaId) {
   const deleteDistribuidorFn = async (id) => {
     try {
       const res = await deleteDistribuidor(id);
-      return res.data;
+      return res.data.data;
     } catch (err) {
       console.error("Error al eliminar distribuidor:", err);
       throw err;

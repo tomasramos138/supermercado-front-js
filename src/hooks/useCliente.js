@@ -13,7 +13,7 @@ function useClientes() {
   const updateClientFn = async ({ id, ...clientData }) => {
     const res = await updateClient(id, clientData);
     alert("Cliente modificado correctamente");
-    return res.data;
+    return res.data.data;
   };
 
   const searchClientesByNameFn = (param) => searchClientesByName(param);
