@@ -1,55 +1,41 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDistribuidoresByZona, createDistribuidor, updateDistribuidor, deleteDistribuidor } from "../services/api";
+import {
+  getDistribuidoresByZona,
+  createDistribuidor,
+  updateDistribuidor,
+  deleteDistribuidor
+} from "../services/api";
 
-function useDistribuidor(zonaId) {
-  const { data, isError, error, isLoading, refetch } = useQuery({
+function useDistribuidores(zonaId) {
+
+  const {
+    data: distData,
+    isLoading,
+    isError,
+    error,
+    refetch
+  } = useQuery({
     queryKey: ["distribuidores", zonaId],
     queryFn: () => getDistribuidoresByZona(zonaId),
-    enabled: !!zonaId,
+    enabled: !!zonaId, // evita ejecutar si zonaId no existe
   });
 
-  const distribuidores = data?.data ?? [];
-
-  const createDistribuidorFn = async (distribuidorData) => {
-    try {
-      const res = await createDistribuidor(distribuidorData);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error al crear distribuidor:", err);
-      throw err;
-    }
-  };
-
-  const updateDistribuidorFn = async (id, distribuidorData) => {
-    try {
-      const res = await updateDistribuidor(id, distribuidorData);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error al actualizar distribuidor:", err);
-      throw err;
-    }
-  };
-
-  const deleteDistribuidorFn = async (id) => {
-    try {
-      const res = await deleteDistribuidor(id);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error al eliminar distribuidor:", err);
-      throw err;
-    }
-  };
+  const distribuidores = Array.isArray(distData)
+    ? distData
+    : Array.isArray(distData?.data)
+      ? distData.data
+      : [];
 
   return {
     distribuidores,
+    isLoading,
     isError,
     error,
-    isLoading,
-    refetchDistribuidores: refetch,
-    createDistribuidor: createDistribuidorFn,
-    updateDistribuidor: updateDistribuidorFn,
-    deleteDistribuidor: deleteDistribuidorFn,
+    refetch,
+    createDistribuidor,
+    updateDistribuidor,
+    deleteDistribuidor
   };
 }
 
-export default useDistribuidor;
+export default useDistribuidores;

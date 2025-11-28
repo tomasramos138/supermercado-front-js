@@ -1,52 +1,39 @@
 import { useQuery } from "@tanstack/react-query";
-import { getZonas, createZona, updateZona, deleteZona, searchZonasByName } from "../services/api";
+import {
+  getZonas,
+  searchZonasByName,
+  createZona,
+  deleteZona,
+  updateZona
+} from "../services/api";
 
 function useZonas() {
-  const { data, isError, error, isLoading, refetch } = useQuery({
+  const {
+    data: zonasData,
+    isError,
+    error,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: ["zonas"],
     queryFn: getZonas,
   });
 
-  const zonas = data?.data ?? [];
+  // backend: { message, data: [] }
+  const zonas = Array.isArray(zonasData) 
+    ? zonasData
+    : Array.isArray(zonasData?.data)
+      ? zonasData.data
+      : [];
 
-  const createZonaFn = async (zonaData) => {
-    try {
-      const res = await createZona(zonaData);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error al crear zona:", err);
-      throw err;
-    }
-  };
+  const createZonaFn = async (zona) => createZona(zona);
+  const deleteZonaFn = async (id) => deleteZona(id);
+  const updateZonaFn = async (id, zona) => updateZona(id, zona);
 
-  const updateZonaFn = async (id, zonaData) => {
-    try {
-      const res = await updateZona(id, zonaData);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error al actualizar zona:", err);
-      throw err;
-    }
-  };
-
-  const deleteZonaFn = async (id) => {
-    try {
-      const res = await deleteZona(id);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error al eliminar zona:", err);
-      throw err;
-    }
-  };
-
-  const searchZonasFn = async (name) => {
-    try {
-      const res = await searchZonasByName(name);
-      return res.data.data;
-    } catch (err) {
-      console.error("Error al buscar zonas:", err);
-      throw err;
-    }
+  const safeSearchZonas = async (term) => {
+    if (!term) return [];
+    const res = await searchZonasByName(term);
+    return Array.isArray(res) ? res : [];
   };
 
   return {
@@ -54,11 +41,11 @@ function useZonas() {
     isError,
     error,
     isLoading,
-    refetchZonas: refetch,
+    refetch,
     createZona: createZonaFn,
-    updateZona: updateZonaFn,
     deleteZona: deleteZonaFn,
-    searchZonasByName: searchZonasFn,
+    updateZona: updateZonaFn,
+    searchZonasByName: safeSearchZonas,
   };
 }
 

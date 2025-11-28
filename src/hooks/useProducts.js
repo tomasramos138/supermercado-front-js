@@ -23,9 +23,8 @@ function useProducts() {
     queryFn: getProducts,
   });
 
-  const products = Array.isArray(productsData?.data || productsData)
-    ? productsData.data.data || productsData
-    : [];
+  // backend = { message, data: [...] }
+  const products = productsData?.data ?? [];
 
 
   // ------- Stock Total -------
@@ -40,7 +39,6 @@ function useProducts() {
     queryFn: getTotalStock,
   });
 
-  // ✔️ BACKEND: { stocktotal: number }
   const totalStock = totalStockData?.stocktotal ?? 0;
 
 
@@ -62,17 +60,13 @@ function useProducts() {
   const safeSearchByName = async (term) => {
     if (!term) return [];
     const response = await searchProductsByName(term);
-    return Array.isArray(response?.data || response)
-      ? response.data.data || response
-      : [];
+    return response?.data ?? [];
   };
 
   const safeSearchByCategoria = async (categoriaId) => {
     if (!categoriaId) return [];
     const response = await searchProductsByCategoria(Number(categoriaId));
-    return Array.isArray(response?.data || response)
-      ? response.data.data || response
-      : [];
+    return response?.data ?? [];
   };
 
 
