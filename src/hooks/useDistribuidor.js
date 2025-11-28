@@ -9,7 +9,7 @@ import {
 function useDistribuidores(zonaId) {
 
   const {
-    data: distData,
+    data,
     isLoading,
     isError,
     error,
@@ -17,13 +17,14 @@ function useDistribuidores(zonaId) {
   } = useQuery({
     queryKey: ["distribuidores", zonaId],
     queryFn: () => getDistribuidoresByZona(zonaId),
-    enabled: !!zonaId, // evita ejecutar si zonaId no existe
+    enabled: Boolean(zonaId), // solo corre si zonaId existe
   });
 
-  const distribuidores = Array.isArray(distData)
-    ? distData
-    : Array.isArray(distData?.data)
-      ? distData.data
+  // Normalización del resultado
+  const distribuidores = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.data)
+      ? data.data
       : [];
 
   return {
@@ -32,6 +33,8 @@ function useDistribuidores(zonaId) {
     isError,
     error,
     refetch,
+
+    // Mutaciones directas desde la API
     createDistribuidor,
     updateDistribuidor,
     deleteDistribuidor

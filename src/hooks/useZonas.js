@@ -28,7 +28,11 @@ function useZonas() {
 
   const createZonaFn = async (zona) => createZona(zona);
   const deleteZonaFn = async (id) => deleteZona(id);
-  const updateZonaFn = async (id, zona) => updateZona(id, zona);
+  const updateZonaFn = async (id, zona) => {
+    if (!id) throw new Error("ID inválido");
+    return updateZona(id, zona);
+  };
+  
 
   const safeSearchZonas = async (term) => {
     if (!term) return [];
