@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../contexts/auth";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // ✅ cambio para v4
 
 
 // URL del backend desde Vite

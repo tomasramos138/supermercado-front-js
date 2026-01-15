@@ -7,9 +7,21 @@ import useProducts from "../hooks/useProducts";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const {clientesCount, isLoading: isClientesLoading, isError: isClientesError,} = useClientesCount();
-  const {ventasCount, isLoading: isVentasLoading, isError: isVentasError, } = useVentasCount();
-  const {totalStock, isStockLoading, isStockError} = useProducts();
+
+  const {
+    clientesCount,
+    isLoading: isClientesLoading,
+    isError: isClientesError,
+  } = useClientesCount();
+
+  const {
+    ventasCount,
+    isLoading: isVentasLoading,
+    isError: isVentasError,
+  } = useVentasCount();
+
+  // 👇 👉 este es el nombre correcto
+  const { totalStock, isStockLoading, isStockError } = useProducts();
 
   return (
     <div className="dashboard-page">
@@ -19,10 +31,14 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-grid">
-        {/* Sección de Métricas Rápidas */}
+
+        {/* MÉTRICAS */}
         <div className="metrics-section">
           <h2 className="section-title">Resumen General</h2>
+
           <div className="metrics-grid">
+
+            {/* Clientes */}
             <div className="metric-card">
               <div className="metric-icon">👥</div>
               <div className="metric-content">
@@ -37,6 +53,7 @@ const Dashboard = () => {
               </div>
             </div>
 
+            {/* Stock TOTAL */}
             <div className="metric-card">
               <div className="metric-icon">📦</div>
               <div className="metric-content">
@@ -46,11 +63,14 @@ const Dashboard = () => {
                 ) : isStockError ? (
                   <p className="metric-value">Error</p>
                 ) : (
-                  <p className="metric-value">{totalStock?.toLocaleString()}</p>
+                  <p className="metric-value">
+                    {totalStock?.toLocaleString()}
+                  </p>
                 )}
               </div>
             </div>
 
+            {/* Ventas */}
             <div className="metric-card">
               <div className="metric-icon">💰</div>
               <div className="metric-content">
@@ -64,12 +84,14 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
+
           </div>
         </div>
 
-        {/* Sección de Acciones Rápidas */}
+        {/* Acciones rápidas */}
         <div className="quick-actions-section">
           <h2 className="section-title">Acciones Rápidas</h2>
+
           <div className="actions-grid">
             <Link to="/products/zonas-distribuidores" className="action-card">
               <span className="action-icon">🗺️</span>
@@ -83,8 +105,9 @@ const Dashboard = () => {
 
             <Link to="/products/GestionProductos" className="action-card">
               <span className="action-icon">📊</span>
-              <span className="action-label">Gestion productos</span>
+              <span className="action-label">Gestión productos</span>
             </Link>
+
             <Link to="/products/Categoria" className="action-card">
               <span className="action-icon">🏷️</span>
               <span className="action-label">Categoría</span>
@@ -92,9 +115,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Sección de Módulos Principales */}
+        {/* Módulos */}
         <div className="modules-section">
           <h2 className="section-title">Módulos Principales</h2>
+
           <div className="modules-grid">
             <Link to="/products/ventas" className="module-card">
               <span className="action-icon">💰</span>
@@ -107,14 +131,16 @@ const Dashboard = () => {
             <Link to="/products/GestionUsu" className="module-card">
               <div className="action-icon">👥</div>
               <div className="module-content">
-                <h3>Gestion de Usuarios</h3>
+                <h3>Gestión de Usuarios</h3>
                 <p>Administra tu base de usuarios</p>
               </div>
             </Link>
           </div>
         </div>
+
       </div>
     </div>
   );
 };
-export default Dashboard
+
+export default Dashboard;

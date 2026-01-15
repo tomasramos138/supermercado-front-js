@@ -16,7 +16,7 @@ const ZonaDistribuidor = () => {
   const [editingZona, setEditingZona] = useState(null);
   const [isProcessingDelete, setIsProcessingDelete] = useState(false);
   const [isProcessingUpdate, setIsProcessingUpdate] = useState(false);
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [displayedZonas, setDisplayedZonas] = useState([]);
 
@@ -27,7 +27,7 @@ const ZonaDistribuidor = () => {
   const handleSearch = async (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-    
+
     if (term.trim() === "") {
       setDisplayedZonas(zonas || []);
     } else {
@@ -99,7 +99,6 @@ const ZonaDistribuidor = () => {
 
   const handleEditSubmit = async (data) => {
     if (!editingZona) return;
-    
     try {
       setIsProcessingUpdate(true);
 
@@ -189,7 +188,7 @@ const ZonaDistribuidor = () => {
           ))
         ) : (
           <div className="empty-state">
-            {searchTerm ? "No se encontraron zonas con ese nombre" : "No hay zonas creadas. Crea la primera zona con su distribuidor."}
+            {searchTerm ? "No se encontraron zonas con ese nombre" : "No hay zonas creadas."}
           </div>
         )}
       </div>
@@ -210,110 +209,16 @@ const ZonaDistribuidor = () => {
 
           <div className="form-section">
             <h3>Datos de la Zona</h3>
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Nombre de la Zona:</label>
-                <input
-                  {...register("zonaName", { 
-                    required: "El nombre de la zona es obligatorio",
-                    minLength: {
-                      value: 2,
-                      message: "El nombre debe tener al menos 2 caracteres"
-                    }
-                  })}
-                  type="text"
-                  placeholder="Nombre de la zona"
-                />
-                {errors.zonaName && <p className="error-message">{errors.zonaName.message}</p>}
-              </div>
-
-              <div className="form-group">
-                <label>Descripción:</label>
-                <input
-                  {...register("zonaDescription", { 
-                    required: "La descripción es obligatoria",
-                    minLength: {
-                      value: 5,
-                      message: "La descripción debe tener al menos 5 caracteres"
-                    }
-                  })}
-                  type="text"
-                  placeholder="Descripción de la zona"
-                />
-                {errors.zonaDescription && <p className="error-message">{errors.zonaDescription.message}</p>}
-              </div>
-            </div>
+            <input {...register("zonaName", { required: true })} type="text" placeholder="Nombre de la zona" />
+            <input {...register("zonaDescription", { required: true })} type="text" placeholder="Descripción" />
           </div>
 
           <div className="form-section">
             <h3>Datos del Distribuidor</h3>
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Nombre:</label>
-                <input
-                  {...register("distribuidorName", { 
-                    required: "El nombre del distribuidor es obligatorio",
-                    pattern: {
-                      value: /^[A-Za-z0-9ÁáÉéÍíÓóÚúÑñ\s]+$/,
-                      message: "Solo se permiten letras, números y espacios"
-                    }
-                  })}
-                  type="text"
-                  placeholder="Nombre del distribuidor"
-                />
-                {errors.distribuidorName && <p className="error-message">{errors.distribuidorName.message}</p>}
-              </div>
-
-              <div className="form-group">
-                <label>Apellido:</label>
-                <input
-                  {...register("distribuidorApellido", { 
-                    required: "El apellido del distribuidor es obligatorio",
-                    pattern: {
-                      value: /^[A-Za-z0-9ÁáÉéÍíÓóÚúÑñ\s]+$/,
-                      message: "Solo se permiten letras, números y espacios"
-                    }
-                  })}
-                  type="text"
-                  placeholder="Apellido del distribuidor"
-                />
-                {errors.distribuidorApellido && <p className="error-message">{errors.distribuidorApellido.message}</p>}
-              </div>
-
-              <div className="form-group">
-                <label>DNI:</label>
-                <input
-                  {...register("distribuidorDni", { 
-                    required: "El DNI es obligatorio",
-                    pattern: {
-                      value: /^\d{7,8}$/,
-                      message: "El DNI debe tener 7 u 8 dígitos"
-                    }
-                  })}
-                  type="text"
-                  placeholder="12345678"
-                />
-                {errors.distribuidorDni && <p className="error-message">{errors.distribuidorDni.message}</p>}
-              </div>
-
-              <div className="form-group">
-                <label>Valor de Entrega:</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  {...register("distribuidorValorEntrega", { 
-                    required: "El valor de entrega es obligatorio",
-                    min: {
-                      value: 0,
-                      message: "El valor debe ser mayor o igual a 0"
-                    }
-                  })}
-                  placeholder="0.00"
-                />
-                {errors.distribuidorValorEntrega && <p className="error-message">{errors.distribuidorValorEntrega.message}</p>}
-              </div>
-            </div>
+            <input {...register("distribuidorName", { required: true })} type="text" placeholder="Nombre" />
+            <input {...register("distribuidorApellido", { required: true })} type="text" placeholder="Apellido" />
+            <input {...register("distribuidorDni", { required: true })} type="text" placeholder="DNI" />
+            <input {...register("distribuidorValorEntrega", { required: true })} type="number" step="0.01" min="0" placeholder="Valor de entrega" />
           </div>
 
           <button type="submit" disabled={isSubmitting}>
