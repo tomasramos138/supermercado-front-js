@@ -1,14 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+export const API_URL = import.meta.env.VITE_API_URL
+
 const getClientesCount = async () => {
-  const response = await axios.get("http://localhost:3000/api/cliente/count");
+  const response = await axios.get(`${API_URL}/api/cliente/count`);
   return response.data.data;
 };
 
 const updateClient = async ({ id, ...clientData }) => {
   try {
-    const response = await axios.patch(`http://localhost:3000/api/cliente/${id}`, clientData);
+    const response = await axios.patch(`${API_URL}/api/cliente/${id}`, clientData);
     alert('Cliente modificado correctamente');
     return response.data;
   } catch (error) {
@@ -18,7 +20,7 @@ const updateClient = async ({ id, ...clientData }) => {
 };
 
 const searchClientesByName = async (param) => {
-  const response = await axios.get("http://localhost:3000/api/cliente/search", {
+  const response = await axios.get(`${API_URL}/api/cliente/search`, {
     params: { q: param },
   });
   return response.data.data;

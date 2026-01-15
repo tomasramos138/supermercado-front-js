@@ -2,20 +2,19 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useProducts from "../../hooks/useProducts";
 import useCategoria from "../../hooks/useCategoria";
+import EditProductModal from "../../components/EditProductModal";
 import "./GestionProductos.css";
 
 const Gestion_productos = () => {
-  const { products, isLoading, isError, updateProduct, refetchProducts, searchProductsByName, } = useProducts();
+  const { products, isLoading, isError, updateProduct, refetchProducts, searchProductsByName } = useProducts();
   const { categorias, isLoading: isLoadingCategorias } = useCategoria();
 
-  const { register, watch, reset } = useForm();
+  const { register, watch } = useForm();
   const [editStock, setEditStock] = useState({});
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isProcessingUpdate, setIsProcessingUpdate] = useState(false);
-
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }} = useForm();
 
   const searchTerm = watch("searchTerm");
 
@@ -36,7 +35,7 @@ const Gestion_productos = () => {
     };
 
     const timeoutId = setTimeout(searchProducts, 300);
-    
+  
     return () => clearTimeout(timeoutId);
   }, [searchTerm, searchProductsByName, products]);
 
@@ -53,9 +52,9 @@ const Gestion_productos = () => {
     const newStock = editStock[id];
     if (newStock !== undefined && !isNaN(newStock)) {
       try {
-        await updateProduct({ 
-          Productid: id, 
-          param: { stock: Number(newStock) } 
+        await updateProduct({
+          Productid: id,
+          param: { stock: Number(newStock) }
         });
         alert("Stock actualizado correctamente");
         refetchProducts();
@@ -69,9 +68,9 @@ const Gestion_productos = () => {
   const handleToggleEstado = async (id, currentEstado) => {
     try {
       const nuevoEstado = !currentEstado;
-      await updateProduct({ 
-        Productid: id, 
-        param: { estado: nuevoEstado } 
+      await updateProduct({
+        Productid: id,
+        param: { estado: nuevoEstado }
       });
       refetchProducts();
     } catch (error) {
@@ -82,24 +81,17 @@ const Gestion_productos = () => {
 
   const openEditModal = (producto) => {
     setEditingProduct(producto);
-    resetEdit({
-      name: producto.name,
-      descripcion: producto.descripcion,
-      precio: producto.precio,
-      categoriaId: producto.categoria?.id || "" 
-    });
     setEditModalOpen(true);
   };
 
   const closeEditModal = () => {
     setEditModalOpen(false);
     setEditingProduct(null);
-    resetEdit();
   };
 
-  const onEditSubmit = async (data) => {
+  const handleEditSubmit = async (data) => {
     if (!editingProduct) return;
-    
+  
     try {
       setIsProcessingUpdate(true);
       await updateProduct({
@@ -223,87 +215,22 @@ const Gestion_productos = () => {
         ) : (
           <p className="no-productos">
             {searchTerm && searchTerm.trim()
-              ? "No se encontraron productos con ese nombre" 
+              ? "No se encontraron productos con ese nombre"
               : "No hay productos registrados"
             }
           </p>
         )}
       </div>
 
-      {/* Modal de edición - CON CATEGORÍA Y SIN TIPO */}
-      {editModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Editar Producto</h3>
-            <form onSubmit={handleSubmitEdit(onEditSubmit)} className="form-producto">
-              <div className="form-grid">
-                <div className="form-group">
-                  <label>Nombre:</label>
-                  <input
-                    type="text"
-                    {...registerEdit("name", {
-                      required: "El nombre es obligatorio",
-                      minLength: { value: 2, message: "El nombre debe tener al menos 2 caracteres" }
-                    })}
-                  />
-                  {errorsEdit?.name && <p className="error-message">{errorsEdit.name.message}</p>}
-                </div>
-
-                <div className="form-group">
-                  <label>Precio:</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    {...registerEdit("precio", {
-                      required: "El precio es obligatorio",
-                      min: { value: 0, message: "El precio debe ser mayor o igual a 0" }
-                    })}
-                  />
-                  {errorsEdit?.precio && <p className="error-message">{errorsEdit.precio.message}</p>}
-                </div>
-
-                <div className="form-group">
-                  <label>Categoría:</label>
-                  <select
-                    {...registerEdit("categoriaId", {
-                      required: "La categoría es obligatoria"
-                    })}
-                    className="category-select"
-                  >
-                    <option value="">Seleccionar categoría</option>
-                    {categorias?.map((categoria) => (
-                      <option key={categoria.id} value={categoria.id}>
-                        {categoria.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errorsEdit?.categoriaId && <p className="error-message">{errorsEdit.categoriaId.message}</p>}
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Descripción:</label>
-                <textarea
-                  rows="3"
-                  {...registerEdit("descripcion", {
-                    required: "La descripción es obligatoria",
-                    minLength: { value: 5, message: "La descripción debe tener al menos 5 caracteres" }
-                  })}
-                />
-                {errorsEdit?.descripcion && <p className="error-message">{errorsEdit.descripcion.message}</p>}
-              </div>
-
-              <div className="modal-actions">
-                <button type="button" onClick={closeEditModal}>Cancelar</button>
-                <button type="submit" disabled={isProcessingUpdate || isSubmittingEdit || isLoadingCategorias}>
-                  {isProcessingUpdate ? "Guardando..." : "Guardar"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <EditProductModal
+        isOpen={editModalOpen}
+        onClose={closeEditModal}
+        onSave={handleEditSubmit}
+        editingProduct={editingProduct}
+        categorias={categorias}
+        isLoadingCategorias={isLoadingCategorias}
+        isSaving={isProcessingUpdate}
+      />
     </div>
   );
 };

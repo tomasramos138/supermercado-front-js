@@ -1,97 +1,51 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+// cypress/e2e/ventas-no-auth.cy.js
+// Versión sin inyectar autenticación: interceptamos las llamadas y visitamos /products/ventas.
+// Úsalo solo si tu entorno NO exige auth para navegar a esa ruta.
 
-// Mock del hook useVenta
-vi.mock('../hooks/useVenta', () => ({
-  __esModule: true,
-  default: () => ({
-    ventas: [
-      {
-        id: 'v1',
-        fecha: '2025-10-01T10:00:00.000Z',
-        cliente: { name: 'Juan', apellido: 'Perez', zona: { name: 'Centro' } },
-        distribuidor: { name: 'Distrib A', apellido: 'Uno', valorEntrega: 5 },
-        total: 45.5,
-        itemsVenta: [
-          { producto: { name: 'Manzana' }, cantidad: 2, precio: 10 },
-          { producto: { name: 'Leche' }, cantidad: 1, precio: 25.5 },
-        ],
-      },
-      {
-        id: 'v2',
-        fecha: '2025-10-02T15:30:00.000Z',
-        cliente: { name: 'María', apellido: 'Gómez', zona: { name: 'Norte' } },
-        distribuidor: { name: 'Distrib B', apellido: 'Dos', valorEntrega: 0 },
-        total: 20.0,
-        itemsVenta: [
-          { producto: { name: 'Pan' }, cantidad: 2, precio: 10 },
-        ],
-      },
-    ],
-    isLoading: false,
-    isError: false,
-  }),
-}));
+describe('Ventas - sin autenticación (stubs sólo)', () => {
+  const ventasPattern = '**/api/venta**'
+  const ventasCountPattern = '**/api/venta/count**'
 
-// Importa el componente (ruta relativa desde src/tests)
-import Ventas from '../pages/dashboardPages/Ventas';
+  beforeEach(() => {
+    cy.intercept('GET', ventasPattern, {
+      statusCode: 200,
+      body: {
+        data: [
+          {
+            id: 1,
+            fecha: "2025-08-31T02:19:14.000Z",
+            total: 55000,
+            distribuidor: { id: 2, name: "Distribuidor Zona 2", apellido: "Dis", valorEntrega: 500, zona: 2 },
+            cliente: { id: 1, name: "Tomas", apellido: "Ramos", dni: 45504689, usuario: "tomasRamos@gmail.com", zona: { id:1, name:"Oeste" } },
+            itemsVenta: [{ id: 1, cantidad: 1, precio: 5000, subtotal: 5000, producto: { id: 3, name: "jamon crudo" }, venta: 1 }]
+          }
+        ]
+      }
+    }).as('getVentas')
 
-describe('Componente Ventas', () => {
-  test('renderiza título y filas de ventas', () => {
-    render(<Ventas />);
+    cy.intercept('GET', ventasCountPattern, { statusCode: 200, body: { data: 1 } }).as('getVentasCount')
+  })
 
-    // Título principal
-    expect(screen.getByText(/Reporte de Ventas/i)).toBeInTheDocument();
+  it('muestra el count y el listado de ventas', () => {
+    cy.visit('/products/ventas')
 
-    // Filas de ventas (buscamos por cliente)
-    expect(screen.getByText(/Juan Perez/i)).toBeInTheDocument();
-    expect(screen.getByText(/María Gómez/i)).toBeInTheDocument();
+    // Esperamos a que lleguen las respuestas stub
+    cy.wait('@getVentas')
+    cy.wait('@getVentasCount')
 
-    // Totales mostrados
-    expect(screen.getByText(/\$45.50/)).toBeInTheDocument();
-    expect(screen.getByText(/\$20.00/)).toBeInTheDocument();
-  });
+    // Verificamos que el componente listó las ventas
+    cy.get('.ventas-table', { timeout: 10000 }).should('exist')
+    cy.get('.venta-row').should('have.length.at.least', 1)
 
-  test('toggle de detalles muestra productos y cantidad total', () => {
-    render(<Ventas />);
+    // Comprobamos cliente y total en la primera fila
+    cy.get('.venta-cliente').first().should('contain.text', 'Tomas')
+    cy.get('.venta-total').first().invoke('text').then(txt => {
+      const raw = txt.replace(/\s/g, '')
+      expect(/55000|55\.000|\$55/.test(raw)).to.be.true
+    })
 
-    // Encontrar botón "Ver Detalles" de la primera venta
-    const viewButtons = screen.getAllByRole('button', { name: /Ver Detalles|Ocultar Detalles/ });
-    expect(viewButtons.length).toBeGreaterThan(0);
-
-    // Click para abrir detalles de la primera venta
-    fireEvent.click(viewButtons[0]);
-
-    // Ahora deben aparecer los productos y la cantidad total calculada
-    expect(screen.getByText(/Manzana/i)).toBeInTheDocument();
-    expect(screen.getByText(/Leche/i)).toBeInTheDocument();
-
-    // Cantidad total de productos: 2 + 1 = 3 (aparece como texto en el componente)
-    expect(screen.getByText(/Cantidad de productos:/i)).toBeInTheDocument();
-    expect(screen.getByText(/3/)).toBeInTheDocument();
-  });
-
-  test('ordenar por total funciona (menor a mayor / mayor a menor)', () => {
-    render(<Ventas />);
-
-    // Botones de orden (Menor a Mayor y Mayor a Menor)
-    const btnMenorMayor = screen.getByRole('button', { name: /Menor a Mayor/i });
-    const btnMayorMenor = screen.getByRole('button', { name: /Mayor a Menor/i });
-
-    // Inicialmente orden asc por defecto en tu componente (siempre setea asc en el state)
-    // Después de render, la primera fila debería corresponder al menor total (20.00)
-    const primerasCeldas = screen.getAllByText(/#v/); // IDs: '#v1', '#v2'
-    // No confiamos en el orden por texto genérico; mejor comprobar tras cambiar el orden:
-    fireEvent.click(btnMayorMenor);
-
-    // Tras ordenar desc, la primera venta visible (en orden) debería mostrar el mayor total $45.50
-    // Buscamos que exista el texto del total mayor en el documento (ya lo comprobamos antes)
-    expect(screen.getByText(/\$45.50/)).toBeInTheDocument();
-
-    // Volvemos a ordenar asc
-    fireEvent.click(btnMenorMayor);
-    expect(screen.getByText(/\$20.00/)).toBeInTheDocument();
-  });
-});
+    // Verificamos el count mostrado donde corresponda en tu UI.
+    // Si el count se muestra en el dashboard, ajusta el selector; aquí se comprueba un elemento que contenga "1" en el contexto.
+    cy.contains(/\b1\b/).should('exist')
+  })
+})

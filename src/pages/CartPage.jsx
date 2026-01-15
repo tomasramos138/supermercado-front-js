@@ -1,78 +1,106 @@
 import { useContext, useState } from "react";
 import { useCart } from "../hooks/useCart";
-import  useVentas  from "../hooks/useVenta";
 import { AuthContext } from "../contexts/auth";
 import useProducts from "../hooks/useProducts";
-import './CartPage.css';
+import useMercadoPago from "../hooks/usemercadoPago";
+import "./CartPage.css";
 
 const CartPage = ({ isOpen, onClose }) => {
-  const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount, clearCart } = useCart();
-  const { user, distribuidor } = useContext(AuthContext);
-  const { procesarCompra } = useVentas();
+  const { cart, removeFromCart, updateQuantity, cartTotal, cartItemCount } = useCart();
+  const { distribuidor, user } = useContext(AuthContext);
+  const { refetchProducts } = useProducts();
+  const { createPreference } = useMercadoPago();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [mensajeExito, setMensajeExito] = useState(null);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const { refetchProducts } = useProducts(); 
-  
-  // Se calcula el precio total que es el precio del carrito + el valor de entrega del distribuidor
+
   const valorEntrega = distribuidor?.valorEntrega || 0;
   const totalConEnvio = cartTotal + valorEntrega;
 
-  const handleMostrarConfirmacion = () => {
-    setShowConfirmation(true);
-  };
+  const handleMercadoPago = async () => {
+  // Asegurar que cart es un array
+  if (!cart || !Array.isArray(cart) || cart.length === 0) {
+    setError("El carrito está vacío");
+    return;
+  }
 
-  const handleCancelarConfirmacion = () => {
-    setShowConfirmation(false);
-    setError(null);
-  };
+  // VERIFICAR que el usuario esté logueado
+  if (!user || !user.id) {
+    setError("Debes iniciar sesión para realizar una compra");
+    return;
+  }
 
-  const handleProcesarCompraConfirmada = async () => {
+  // VERIFICAR que hay distribuidor seleccionado
+  if (!distribuidor || !distribuidor.id) {
+    setError("No hay distribuidor seleccionado");
+    return;
+  }
+
+  try {
     setIsLoading(true);
     setError(null);
-    setShowConfirmation(false);
 
-    try {
-      // Preparar datos para la compra
-      const itemsParaCompra = cart.map(item => ({
-        productoId: item.id,
-        cantidad: item.quantity,
+    // PREPARAR los datos COMPLETOS que espera el backend
+    const payload = {
+      items: cart.map(item => ({
+        id: item.id, // ¡IMPORTANTE! El backend necesita el ID del producto
+        name: item.name,
+        quantity: Number(item.quantity),
+        precio: Number(item.precio),
+      })),
+      clienteId: Number(user.id), // Convertir a número
+      distribuidorId: Number(distribuidor.id), // Convertir a número
+    };
+
+    console.log("Enviando datos al backend:", payload);
+
+    // LLAMAR al backend con los datos COMPLETOS
+    const response = await createPreference(payload);
+
+    // Verificar la respuesta
+    if (response?.init_point) {
+      console.log("Preferencia creada, venta ID:", response.ventaId);
+      
+      // Guardar info de la venta
+      sessionStorage.setItem('ventaPendiente', JSON.stringify({
+        ventaId: response.ventaId,
+        timestamp: new Date().toISOString()
       }));
 
-      // Procesar toda la compra usando el hook
-      await procesarCompra({
-        items: itemsParaCompra,
-        cliente: user.id,
-        distribuidor: distribuidor?.id,
-      });
-
-      setMensajeExito("¡Compra realizada con éxito! Gracias por elegirnos.");
-      clearCart();
-      await refetchProducts();
-
-      setTimeout(() => {
-        onClose();
-        setMensajeExito(null);
-      }, 3000);
-
-    } catch (err) {
-      setError(err.response?.data?.message || err.message || "Ocurrió un error inesperado al procesar la compra.");
-    } finally {
-      setIsLoading(false);
+      // Redirigir a MercadoPago
+      window.location.href = response.init_point;
+    } else {
+      throw new Error(response?.error || "No se recibió un enlace de pago válido");
     }
-  };
+  } catch (err) {
+    console.error("Error en handleMercadoPago:", err);
+    
+    // Manejo específico de errores
+    if (err.message.includes("stock_insuficiente") || err.message.includes("Stock")) {
+      setError("Algunos productos no tienen stock suficiente");
+      await refetchProducts();
+    } else if (err.message.includes("cliente")) {
+      setError("Debes iniciar sesión para comprar");
+    } else if (err.message.includes("distribuidor")) {
+      setError("Selecciona un distribuidor para continuar");
+    } else {
+      setError(err.message || "Error al procesar la compra");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   if (!isOpen) return null;
 
   return (
     <>
       <div className="cart-overlay" onClick={onClose} />
-      
       <div className="cart-slider">
         <div className="cart-header">
-          <h2>Tu Carrito ({cartItemCount} {cartItemCount === 1 ? 'item' : 'items'})</h2>
+          <h2>
+            Tu Carrito ({cartItemCount} {cartItemCount === 1 ? "item" : "items"})
+          </h2>
           <button className="close-btn" onClick={onClose} aria-label="Cerrar carrito">
             &times;
           </button>
@@ -80,10 +108,10 @@ const CartPage = ({ isOpen, onClose }) => {
 
         <div className="cart-content">
           {error && <div className="alert alert-danger mx-3">{error}</div>}
-          
+
           {cartItemCount === 0 ? (
             <div className="empty-cart-message">
-              <p>{mensajeExito ? mensajeExito : "Tu carrito está vacío"}</p>
+              <p>Tu carrito está vacío</p>
               <button className="continue-shopping-btn" onClick={onClose}>
                 Seguir comprando
               </button>
@@ -94,14 +122,14 @@ const CartPage = ({ isOpen, onClose }) => {
                 {cart.map((item) => (
                   <div key={item.id} className="cart-item">
                     <img
-                      src={item.imagen || 'https://via.placeholder.com/80'}
+                      src={item.imagen || "https://via.placeholder.com/80"}
                       alt={item.name}
                       className="item-image"
                     />
                     <div className="item-info">
                       <h3 className="item-name">{item.name}</h3>
                       <p className="item-description">{item.descripcion}</p>
-                      
+
                       <div className="quantity-controls">
                         <button
                           className="quantity-btn minus"
@@ -119,16 +147,16 @@ const CartPage = ({ isOpen, onClose }) => {
                           +
                         </button>
                         <span className="stock-info">
-                          {item.quantity >= item.stock ? 'Máximo' : `Stock: ${item.stock}`}
+                          {item.quantity >= item.stock ? "Máximo" : `Stock: ${item.stock}`}
                         </span>
                       </div>
-                      
+
                       <div className="item-price">
                         ${(item.precio * item.quantity).toFixed(2)}
                         <span className="unit-price">(${item.precio.toFixed(2)} c/u)</span>
                       </div>
                     </div>
-                    
+
                     <button
                       className="remove-item-btn"
                       onClick={() => removeFromCart(item.id)}
@@ -142,80 +170,29 @@ const CartPage = ({ isOpen, onClose }) => {
 
               <div className="cart-summary">
                 <div className="summary-row">
-                  <span>Subtotal ({cartItemCount} {cartItemCount === 1 ? 'producto' : 'productos'}):</span>
+                  <span>Subtotal:</span>
                   <span>${cartTotal.toFixed(2)}</span>
                 </div>
                 <div className="summary-row">
                   <span>Envío:</span>
-                  <span>
-                    {valorEntrega > 0 ? `$${valorEntrega.toFixed(2)}` : 'Gratis'}
-                  </span>
+                  <span>{valorEntrega > 0 ? `$${valorEntrega.toFixed(2)}` : "Gratis"}</span>
                 </div>
                 <div className="summary-row total">
                   <span>Total:</span>
                   <span>${totalConEnvio.toFixed(2)}</span>
                 </div>
-                
-                <button 
+
+                <button
                   className="checkout-btn"
-                  onClick={handleMostrarConfirmacion}
+                  onClick={handleMercadoPago}
                   disabled={isLoading || cartItemCount === 0}
                 >
-                  {isLoading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Procesando...
-                    </>
-                  ) : (
-                    "Proceder al pago"
-                  )}
+                  {isLoading ? "Procesando..." : "Proceder al pago"}
                 </button>
               </div>
             </>
           )}
         </div>
-
-        {/* Modal de Confirmación */}
-        {showConfirmation && (
-          <div className="confirmation-overlay">
-            <div className="confirmation-modal">
-              <div className="confirmation-header">
-                <h3>Confirmar Compra</h3>
-              </div>
-              <div className="confirmation-body">
-                <p>¿Estás seguro de que deseas proceder con la compra?</p>
-                <div className="confirmation-details">
-                  <p><strong>Total a pagar:</strong> ${totalConEnvio.toFixed(2)}</p>
-                  <p><strong>Productos:</strong> {cartItemCount}</p>
-                  <p><strong>Envío:</strong> {valorEntrega > 0 ? `$${valorEntrega.toFixed(2)}` : 'Gratis'}</p>
-                </div>
-              </div>
-              <div className="confirmation-actions">
-                <button 
-                  className="btn-cancel"
-                  onClick={handleCancelarConfirmacion}
-                  disabled={isLoading}
-                >
-                  Cancelar
-                </button>
-                <button 
-                  className="btn-confirm"
-                  onClick={handleProcesarCompraConfirmada}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Procesando...
-                    </>
-                  ) : (
-                    "Confirmar Compra"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

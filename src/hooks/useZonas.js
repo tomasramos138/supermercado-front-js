@@ -1,35 +1,37 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+export const API_URL = import.meta.env.VITE_API_URL
+
 const getZonas = async () => {
-  const response = await axios.get("http://localhost:3000/api/zona");
+  const response = await axios.get(`${API_URL}/api/zona`);
   return response.data.data  
 };
 
 const searchZonasByName = async (param) => {
-  const response = await axios.get("http://localhost:3000/api/zona/search", {
+  const response = await axios.get(`${API_URL}/api/zona/search`, {
     params: { q: param },
   });
   return response.data.data;
 };
 
 const createZona = async (zonaData) => {
-  const response = await axios.post("http://localhost:3000/api/zona", zonaData);
+  const response = await axios.post(`${API_URL}/api/zona`, zonaData);
   return response.data;
 };
 
 const deleteZona = async (zonaId) => {
-  const response = await axios.delete(`http://localhost:3000/api/zona/${zonaId}`);
+  const response = await axios.delete(`${API_URL}/api/zona/${zonaId}`);
   return response.data;
 }
 
 const updateZona = async (zonaId, zonaData) => {
-  const response = await axios.put(`http://localhost:3000/api/zona/${zonaId}`, zonaData);
+  const response = await axios.put(`${API_URL}/api/zona/${zonaId}`, zonaData);
   return response.data;
 } 
 
 function useZonas() {
-  const { data, isError, error, isLoading, refetch } = useQuery({
+  const { data, isError, error, isLoading, refetch: refetchZonas } = useQuery({
     queryKey: ["zonas"],
     queryFn: getZonas,
   });
@@ -41,7 +43,7 @@ function useZonas() {
     isLoading,
     createZona,
     deleteZona,
-    refetchZonas: refetch,
+    refetchZonas,
     updateZona,
     searchZonasByName,
   };

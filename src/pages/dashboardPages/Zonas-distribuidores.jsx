@@ -2,20 +2,18 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import useZonas from '../../hooks/useZonas';
 import useDistribuidor from '../../hooks/useDistribuidor';
+import EditZonaModal from '../../components/EditZonaModal';
 import './Zonas-distribuidores.css';
 
 const ZonaDistribuidor = () => {
-  const { createZona, deleteZona, zonas, isLoading, refetchZonas, updateZona, searchZonasByName,} = useZonas();
+  const { createZona, deleteZona, zonas, isLoading, refetchZonas, updateZona, searchZonasByName } = useZonas();
   
-  const { createDistribuidor, deleteDistribuidor, updateDistribuidor } = useDistribuidor();
+  const { createDistribuidor, updateDistribuidor } = useDistribuidor();
 
-  //Un form para crear y otro para editar
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting }, setError } = useForm();
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }} = useForm();
+  const { register, handleSubmit, reset, formState: { isSubmitting, errors } } = useForm();
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingZona, setEditingZona] = useState(null);
-  const [editingDistribuidor, setEditingDistribuidor] = useState(null);
   const [isProcessingDelete, setIsProcessingDelete] = useState(false);
   const [isProcessingUpdate, setIsProcessingUpdate] = useState(false);
   
@@ -36,74 +34,54 @@ const ZonaDistribuidor = () => {
       try {
         const result = await searchZonasByName(term);
         setDisplayedZonas(result || []);
-      } catch (error) {
-        console.error("Error en búsqueda:", error);
+      } catch {
         setDisplayedZonas([]);
       }
     }
   };
 
-  // Función para limpiar búsqueda y recargar
-  const handleRefetch = () => {
-    setSearchTerm(""); // Limpiar el textbox
-    refetchZonas();
+  const handleRefetch = async () => {
+    setSearchTerm("");
+    await refetchZonas();
   };
 
   const onSubmit = async (data) => {
     try {
-      // 1) Crear la zona primero
-      const zonaData = {
-        name: data.zonaName,
-        description: data.zonaDescription
-      };
-
+      const zonaData = { name: data.zonaName, description: data.zonaDescription };
       const zonaCreada = await createZona(zonaData);
-      console.log('Zona creada:', zonaCreada);
 
-      // 2) Crear el distribuidor asociado a la zona
-      const distribuidorData = {
+      await createDistribuidor({
         name: data.distribuidorName,
         apellido: data.distribuidorApellido,
         dni: data.distribuidorDni,
         valorEntrega: parseFloat(data.distribuidorValorEntrega),
         zona: zonaCreada.data.id
-      };
+      });
 
-      const distribuidorCreado = await createDistribuidor(distribuidorData);
-      console.log('Distribuidor creado:', distribuidorCreado);
-
-      handleRefetch();
-      
+      await handleRefetch();
       reset();
       alert('Zona y distribuidor creados exitosamente!');
-
-    } catch (error) {
-      console.error('Error al crear zona y distribuidor:', error);
-      setError('root', {
-        type: 'manual',
-        message: 'Error al crear la zona y distribuidor'
-      });
+    } catch {
+      alert('Error al crear la zona y distribuidor');
     }
   };
 
-  const handleDelete = async (zonaId, distribuidorId) => {
-    const ok = window.confirm("¿Eliminar esta zona y su distribuidor asociado?");
-    if (!ok) return;
+  const handleDelete = async (zonaId) => {
+    if (!window.confirm("¿Eliminar esta zona? Los distribuidores asociados también se eliminarán.")) return;
     
     try {
       setIsProcessingDelete(true);
+      const response = await deleteZona(zonaId);
       
-      await deleteZona(zonaId);
-      
-      if (distribuidorId) {
-        await deleteDistribuidor(distribuidorId);
+      if (response?.message?.includes('No se puede eliminar')) {
+        alert(response.message);
+        return;
       }
-      console.log('Zona y distribuidor eliminados');
-      handleRefetch();
-     
+      
+      await handleRefetch();
+      alert('Zona eliminada correctamente');
     } catch (err) {
-      console.error("Error al eliminar zona y distribuidor:", err);
-      alert("Error al eliminar. Por favor, intenta nuevamente.");
+      alert(err.response?.data?.message || "Error al eliminar la zona.");
     } finally {
       setIsProcessingDelete(false);
     }
@@ -111,72 +89,44 @@ const ZonaDistribuidor = () => {
 
   const openEditModal = (zona) => {
     setEditingZona(zona);
-    
-    // Obtener el distribuidor desde la propiedad distribuidores de la zona
-    const distribuidorAsociado = zona.distribuidores && zona.distribuidores.length > 0 
-      ? zona.distribuidores[0] 
-      : null;
-    
-    setEditingDistribuidor(distribuidorAsociado);
-
-    resetEdit({
-      zonaName: zona.name,
-      zonaDescription: zona.description,
-      distribuidorName: distribuidorAsociado?.name || '',
-      distribuidorApellido: distribuidorAsociado?.apellido || '',
-      distribuidorDni: distribuidorAsociado?.dni || '',
-      distribuidorValorEntrega: distribuidorAsociado?.valorEntrega || 0
-    });
-    
     setEditModalOpen(true);
   };
 
   const closeEditModal = () => {
     setEditModalOpen(false);
     setEditingZona(null);
-    setEditingDistribuidor(null);
-    resetEdit();
   };
 
-  const onEditSubmit = async (data) => {
+  const handleEditSubmit = async (data) => {
     if (!editingZona) return;
     
     try {
       setIsProcessingUpdate(true);
 
-      const zonaData = {
+      await updateZona(editingZona.id, {
         name: data.zonaName,
         description: data.zonaDescription
-      };
-      await updateZona(editingZona.id, zonaData);
+      });
 
-      if (editingDistribuidor) {
-        const distribuidorData = {
+      const distribuidor = editingZona.distribuidores?.[0];
+      if (distribuidor) {
+        await updateDistribuidor(distribuidor.id, {
           name: data.distribuidorName,
           apellido: data.distribuidorApellido,
           dni: data.distribuidorDni,
           valorEntrega: parseFloat(data.distribuidorValorEntrega),
           zona: editingZona.id
-        };
-        await updateDistribuidor(editingDistribuidor.id, distribuidorData);
+        });
       }
 
-      handleRefetch();
-      
+      await handleRefetch();
       closeEditModal();
       alert('Zona y distribuidor actualizados exitosamente!');
-      
-    } catch (err) {
-      console.error("Error al actualizar zona y distribuidor:", err);
+    } catch {
+      alert('Error al actualizar');
     } finally {
       setIsProcessingUpdate(false);
     }
-  };
-
-  const getDistribuidorByZona = (zona) => {
-    return zona.distribuidores && zona.distribuidores.length > 0 
-      ? zona.distribuidores[0] 
-      : null;
   };
 
   if (isLoading) return <p className="loading-message">Cargando zonas...</p>;
@@ -185,7 +135,6 @@ const ZonaDistribuidor = () => {
     <div className="zonas-distribuidores-container">
       <h1>Gestión de Zonas y Distribuidores</h1>
 
-      {/* Campo de búsqueda */}
       <div className="search-container">
         <input
           type="text"
@@ -196,61 +145,48 @@ const ZonaDistribuidor = () => {
         />
       </div>
 
-      {/* Listado de Zonas con sus Distribuidores */}
       <div className="zonas-list">
         <h2>Zonas y Distribuidores Existentes</h2>
-        {displayedZonas && displayedZonas.length > 0 ? (
-          displayedZonas.map((zona) => {
-            const distribuidor = getDistribuidorByZona(zona);
-            return (
-              <div key={zona.id} className="zona-card">
-                <div className="zona-actions">
-                  <button
-                    className="zona-delete"
-                    onClick={() => handleDelete(zona.id, distribuidor?.id)}
-                    disabled={isProcessingDelete}
-                    title="Eliminar zona y distribuidor"
-                  >
-                    ✖
-                  </button>
-                  <button
-                    className="zona-edit"
-                    onClick={() => openEditModal(zona)}
-                    title="Editar zona y distribuidor"
-                  >
-                    ✎
-                  </button>
-                </div>
-                
-                <div className="zona-info">
-                  <div className="zona-nombre">
-                    <strong>Zona:</strong> {zona.name}
-                  </div>
-                  <div className="zona-descripcion">
-                    <strong>Descripción:</strong> {zona.description}
-                  </div>
-                </div>
-
-                {distribuidor ? (
-                  <div className="distribuidor-info">
-                    <div className="distribuidor-nombre">
-                      <strong>Distribuidor:</strong> {distribuidor.name} {distribuidor.apellido}
-                    </div>
-                    <div className="distribuidor-dni">
-                      <strong>DNI:</strong> {distribuidor.dni}
-                    </div>
-                    <div className="distribuidor-valor">
-                      <strong>Valor de Entrega:</strong> ${distribuidor.valorEntrega}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="distribuidor-info empty">
-                    <em>No hay distribuidor asociado a esta zona</em>
-                  </div>
-                )}
+        {displayedZonas?.length > 0 ? (
+          displayedZonas.map((zona) => (
+            <div key={zona.id} className="zona-card">
+              <div className="zona-actions">
+                <button className="zona-delete" onClick={() => handleDelete(zona.id)} disabled={isProcessingDelete}>
+                  ✖
+                </button>
+                <button className="zona-edit" onClick={() => openEditModal(zona)}>
+                  ✎
+                </button>
               </div>
-            );
-          })
+              
+              <div className="zona-info">
+                <div className="zona-nombre">
+                  <strong>Zona:</strong> {zona.name}
+                </div>
+                <div className="zona-descripcion">
+                  <strong>Descripción:</strong> {zona.description}
+                </div>
+              </div>
+
+              {zona.distribuidores?.[0] ? (
+                <div className="distribuidor-info">
+                  <div className="distribuidor-nombre">
+                    <strong>Distribuidor:</strong> {zona.distribuidores[0].name} {zona.distribuidores[0].apellido}
+                  </div>
+                  <div className="distribuidor-dni">
+                    <strong>DNI:</strong> {zona.distribuidores[0].dni}
+                  </div>
+                  <div className="distribuidor-valor">
+                    <strong>Valor de Entrega:</strong> ${zona.distribuidores[0].valorEntrega}
+                  </div>
+                </div>
+              ) : (
+                <div className="distribuidor-info empty">
+                  <em>No hay distribuidor asociado a esta zona</em>
+                </div>
+              )}
+            </div>
+          ))
         ) : (
           <div className="empty-state">
             {searchTerm ? "No se encontraron zonas con ese nombre" : "No hay zonas creadas. Crea la primera zona con su distribuidor."}
@@ -258,132 +194,20 @@ const ZonaDistribuidor = () => {
         )}
       </div>
 
-      {/* Modal de edición */}
-      {editModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Editar Zona y Distribuidor</h3>
-            <form onSubmit={handleSubmitEdit(onEditSubmit)} className="form-zona-distribuidor">
-              
-              {/* Sección Zona en Modal */}
-              <div className="form-section">
-                <h4>Datos de la Zona</h4>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Nombre de la zona"
-                    {...registerEdit("zonaName", { 
-                      required: "El nombre de la zona es obligatorio",
-                      minLength: {
-                        value: 2,
-                        message: "El nombre debe tener al menos 2 caracteres"
-                      }
-                    })}
-                  />
-                  {errorsEdit?.zonaName && <p className="error-message">{errorsEdit.zonaName.message}</p>}
-                </div>
+      <EditZonaModal
+        isOpen={editModalOpen}
+        onClose={closeEditModal}
+        onSave={handleEditSubmit}
+        editingZona={editingZona}
+        isSaving={isProcessingUpdate}
+      />
 
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Descripción de la zona"
-                    {...registerEdit("zonaDescription", { 
-                      required: "La descripción es obligatoria",
-                      minLength: {
-                        value: 5,
-                        message: "La descripción debe tener al menos 5 caracteres"
-                      }
-                    })}
-                  />
-                  {errorsEdit?.zonaDescription && <p className="error-message">{errorsEdit.zonaDescription.message}</p>}
-                </div>
-              </div>
-
-              {/* Sección Distribuidor Modal */}
-              <div className="form-section">
-                <h4>Datos del Distribuidor</h4>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Nombre del distribuidor"
-                    {...registerEdit("distribuidorName", { 
-                      required: "El nombre del distribuidor es obligatorio",
-                      pattern: {
-                      value: /^[A-Za-z0-9ÁáÉéÍíÓóÚúÑñ\s]+$/,
-                      message: "Solo se permiten letras, números y espacios"
-                      }
-                    })}
-                  />
-                  {errorsEdit?.distribuidorName && <p className="error-message">{errorsEdit.distribuidorName.message}</p>}
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="Apellido del distribuidor"
-                    {...registerEdit("distribuidorApellido", { 
-                      required: "El apellido del distribuidor es obligatorio",
-                      pattern: {
-                      value: /^[A-Za-z0-9ÁáÉéÍíÓóÚúÑñ\s]+$/,
-                      message: "Solo se permiten letras, números y espacios"
-                      }
-                    })}
-                  />
-                  {errorsEdit?.distribuidorApellido && <p className="error-message">{errorsEdit.distribuidorApellido.message}</p>}
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="text"
-                    placeholder="DNI (12345678)"
-                    {...registerEdit("distribuidorDni", { 
-                      required: "El DNI es obligatorio",
-                      pattern: {
-                        value: /^\d{7,8}$/,
-                        message: "El DNI debe tener 7 u 8 dígitos"
-                      }
-                    })}
-                  />
-                  {errorsEdit?.distribuidorDni && <p className="error-message">{errorsEdit.distribuidorDni.message}</p>}
-                </div>
-
-                <div className="form-group">
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="Valor de entrega (0.00)"
-                    {...registerEdit("distribuidorValorEntrega", { 
-                      required: "El valor de entrega es obligatorio",
-                      min: {
-                        value: 0,
-                        message: "El valor debe ser mayor o igual a 0"
-                      }
-                    })}
-                  />
-                  {errorsEdit?.distribuidorValorEntrega && <p className="error-message">{errorsEdit.distribuidorValorEntrega.message}</p>}
-                </div>
-              </div>
-
-              <div className="modal-actions">
-                <button type="button" onClick={closeEditModal}>Cancelar</button>
-                <button type="submit" disabled={isProcessingUpdate || isSubmittingEdit}>
-                  {isProcessingUpdate ? "Guardando..." : "Guardar"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Formulario para crear nueva zona y distribuidor */}
       <div className="nueva-zona-distribuidor">
         <h2>Crear Nueva Zona con Distribuidor</h2>
 
         <form className="nuevo-producto-form" onSubmit={handleSubmit(onSubmit)} noValidate>
           {errors.root && <p className="error-message">{errors.root.message}</p>}
 
-          {/* Sección Zona */}
           <div className="form-section">
             <h3>Datos de la Zona</h3>
             <div className="form-grid">
@@ -421,7 +245,6 @@ const ZonaDistribuidor = () => {
             </div>
           </div>
 
-          {/* Sección Distribuidor */}
           <div className="form-section">
             <h3>Datos del Distribuidor</h3>
             <div className="form-grid">

@@ -5,7 +5,7 @@ import "./GestionUsu.css";
 
 function GestionUsu() {
   const { searchClientesByName, updateClient } = useClientes();
-  const {register, watch, } = useForm();
+  const { register, watch } = useForm();
 
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,8 @@ function GestionUsu() {
 
   const handleToggleAdmin = async (id, currentRole) => {
     try {
-      const newRole = !currentRole;
+      // Cambiar entre 'admin' y 'usuario'
+      const newRole = currentRole === 'admin' ? 'usuario' : 'admin';
       await updateClient({ id, rol: newRole });
       setClientes((prev) =>
         prev.map((c) => (c.id === id ? { ...c, rol: newRole } : c))
@@ -46,6 +47,33 @@ function GestionUsu() {
     } catch (error) {
       console.error("Error actualizando rol:", error);
       alert("Error al actualizar el rol");
+    }
+  };
+
+  // O si quieres un selector más completo con múltiples roles:
+  const handleRoleChange = async (id, newRole) => {
+    try {
+      await updateClient({ id, rol: newRole });
+      setClientes((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, rol: newRole } : c))
+      );
+    } catch (error) {
+      console.error("Error actualizando rol:", error);
+      alert("Error al actualizar el rol");
+    }
+  };
+
+  // Función para traducir el rol a texto legible
+  const getRoleLabel = (role) => {
+    switch (role) {
+      case 'admin':
+        return 'Administrador';
+      case 'usuario':
+        return 'Usuario';
+      case 'empleado':
+        return 'Empleado';
+      default:
+        return role || 'Usuario';
     }
   };
 
@@ -82,7 +110,8 @@ function GestionUsu() {
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>DNI</th>
-                <th>Rol</th>
+                <th>Rol Actual</th>
+                <th>Cambiar Rol</th>
               </tr>
             </thead>
             <tbody>
@@ -93,17 +122,24 @@ function GestionUsu() {
                   <td>{cliente.apellido}</td>
                   <td>{cliente.dni}</td>
                   <td>
-                    <div className="role-checkbox">
-                      <input
-                        type="checkbox"
-                        id={`rol-switch-${cliente.id}`}
-                        checked={cliente.rol}
-                        onChange={() =>
-                          handleToggleAdmin(cliente.id, cliente.rol)
-                        }
-                      />
-                      <label htmlFor={`rol-switch-${cliente.id}`}></label>
-                      <span>{cliente.rol ? "Admin" : "Cliente"}</span>
+                    <span className={`role-badge role-${cliente.rol || 'usuario'}`}>
+                      {getRoleLabel(cliente.rol)}
+                    </span>
+                  </td>
+                  <td>
+                    {/* Opción 1: Switch simple admin/usuario */}
+                    <div className="role-toggle">
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={cliente.rol === 'admin'}
+                          onChange={() => handleToggleAdmin(cliente.id, cliente.rol)}
+                        />
+                        <span className="slider"></span>
+                      </label>
+                      <span className="toggle-label">
+                        {cliente.rol === 'admin' ? 'Admin' : 'Usuario'}
+                      </span>
                     </div>
                   </td>
                 </tr>

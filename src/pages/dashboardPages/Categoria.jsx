@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useCategoria from "../../hooks/useCategoria";
+import EditCategoriaModal from "../../components/EditCategoriaModal";
 import "./Categoria.css";
 
 function NuevaCategoria() {
   const { categorias, isLoading, createCategoria, refetchCategorias, updateCategoria, deleteCategoria, isCreating = false, searchCategoriasByName } = useCategoria();
   const { register, handleSubmit, reset, formState: { errors, isSubmitting }} = useForm();
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, reset: resetEdit, formState: { errors: errorsEdit, isSubmitting: isSubmittingEdit }} = useForm();
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [isProcessingDelete, setIsProcessingDelete] = useState(false);
   const [isProcessingUpdate, setIsProcessingUpdate] = useState(false);
-  
   
   const [searchTerm, setSearchTerm] = useState("");
   const [displayedCategorias, setDisplayedCategorias] = useState([]);
@@ -50,9 +49,7 @@ function NuevaCategoria() {
         description: data.description 
       });
       
-      // Funcion que hace el refetch y limpia el texto de la barra de búsqueda
       handleRefetch();
-      
       reset();
     } catch (error) {
       console.error("Error al crear la categoría:", error);
@@ -75,21 +72,22 @@ function NuevaCategoria() {
 
   const openEditModal = (cat) => {
     setEditingCategory(cat);
-    resetEdit({ name: cat.name, description: cat.description });
     setEditModalOpen(true);
   };
 
   const closeEditModal = () => {
     setEditModalOpen(false);
     setEditingCategory(null);
-    resetEdit();
   };
 
-  const onEditSubmit = async (data) => {
+  const handleEditSubmit = async (data) => {
     if (!editingCategory) return;
     try {
       setIsProcessingUpdate(true);
-      await updateCategoria(editingCategory.id, { name: data.name, description: data.description });
+      await updateCategoria(editingCategory.id, { 
+        name: data.name, 
+        description: data.description 
+      });
       handleRefetch();
       closeEditModal();
     } catch (err) {
@@ -149,44 +147,13 @@ function NuevaCategoria() {
         )}
       </div>
 
-      {/* Modal de edición simple */}
-      {editModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Editar categoría</h3>
-            <form onSubmit={handleSubmitEdit(onEditSubmit)} className="form-categoria">
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Nombre"
-                  {...registerEdit("name", {
-                    required: "El nombre es obligatorio",
-                    minLength: { value: 2, message: "El nombre debe tener al menos 2 caracteres" },
-                    pattern: { value: /^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/, message: "Solo se permiten letras y espacios" }
-                  })}
-                />
-                {errorsEdit?.name && <p className="error-message">{errorsEdit.name.message}</p>}
-              </div>
-
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Descripción"
-                  {...registerEdit("description", {
-                    minLength: { value: 5, message: "La descripción debe tener al menos 5 caracteres" }
-                  })}
-                />
-                {errorsEdit?.description && <p className="error-message">{errorsEdit.description.message}</p>}
-              </div>
-
-              <div className="modal-actions">
-                <button type="button" onClick={closeEditModal}>Cancelar</button>
-                <button type="submit" disabled={isProcessingUpdate || isSubmittingEdit}>{isProcessingUpdate ? "Guardando..." : "Guardar"}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <EditCategoriaModal
+        isOpen={editModalOpen}
+        onClose={closeEditModal}
+        onSave={handleEditSubmit}
+        editingCategory={editingCategory}
+        isSaving={isProcessingUpdate}
+      />
 
       <div className="nueva-categoria">
         <h3 className="nueva-categoria-title">Nueva Categoría</h3>

@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+export const API_URL = import.meta.env.VITE_API_URL
+
 const getCategoria = async () => {
-  const response = await axios.get("http://localhost:3000/api/categoria");
+  const response = await axios.get(`${API_URL}/api/categoria`);
   return response.data.data;
  };
 
 const searchCategoriasByName = async (param) => {
-  const response = await axios.get("http://localhost:3000/api/categoria/search", {
+  const response = await axios.get(`${API_URL}/api/categoria/search`, {
     params: { q: param },
   });
   return response.data.data;
@@ -15,7 +17,7 @@ const searchCategoriasByName = async (param) => {
 
  const createCategoria = async (categoriaData) => {
   try {
-    const response = await axios.post("http://localhost:3000/api/categoria", categoriaData);
+    const response = await axios.post(`${API_URL}/api/categoria`, categoriaData);
     alert("Categoría creada correctamente");
     return response.data;
   } catch (error) {
@@ -27,7 +29,7 @@ const searchCategoriasByName = async (param) => {
  
  const deleteCategoria = async (id) => {
   try {
-    const response = await axios.delete(`http://localhost:3000/api/categoria/${id}`);
+    const response = await axios.delete(`${API_URL}/api/categoria/${id}`);
     alert("Categoría eliminada correctamente");
     return response.data;
   } catch (error) {
@@ -39,7 +41,7 @@ const searchCategoriasByName = async (param) => {
  
  const updateCategoria = async (id, categoriaData) => {
   try {
-    const response = await axios.put(`http://localhost:3000/api/categoria/${id}`, categoriaData);
+    const response = await axios.put(`${API_URL}/api/categoria/${id}`, categoriaData);
     alert("Categoría actualizada correctamente");
     return response.data;
   } catch (error) {

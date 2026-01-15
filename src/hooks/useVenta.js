@@ -1,26 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+export const API_URL = import.meta.env.VITE_API_URL
+
 const getVentasCount = async () => {
-  const response = await axios.get("http://localhost:3000/api/venta/count");
+  const response = await axios.get(`${API_URL}/api/venta/count`);
   return response.data.data;
 };
 
 const getVentas = async () => {
-  const response = await axios.get("http://localhost:3000/api/venta");
+  const response = await axios.get(`${API_URL}/api/venta`);
   return response.data.data;
 };
 
-
-// Función para procesar toda la compra
-const procesarCompra = async (compraData) => {
-  try {
-    const response = await axios.post("http://localhost:3000/api/venta/procesarCompra", compraData);
-    return response.data;
-  } catch (error) {
-    console.error('Error al procesar compra:', error);
-    throw error;
-  }
+const getVentaById = async (ventaId) => {
+  const response = await axios.get(`${API_URL}/api/venta/${ventaId}`);
+  return response.data.data;
 };
 
 function useVenta() {
@@ -55,7 +50,7 @@ function useVenta() {
     isVentasLoading,
     isLoading: isCountLoading || isVentasLoading,
     isError: isCountError || isVentasError,
-    procesarCompra
+    getVentaById
   };
 }
 

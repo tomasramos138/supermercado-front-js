@@ -1,37 +1,39 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+export const API_URL = import.meta.env.VITE_API_URL
+
 const getProducts = async () => {
-  const response = await axios.get("http://localhost:3000/api/producto");
+  const response = await axios.get(`${API_URL}/api/producto`);
   return response.data.data;
 };
 
 const searchProductsByName = async (param) => {
-  const response = await axios.get("http://localhost:3000/api/producto/search", {
+  const response = await axios.get(`${API_URL}/api/producto/search`, {
     params: { q: param },
   });
   return response.data.data;
 };
 
 const searchProductsByCategoria = async (categoriaId) => {
-  const response = await axios.get("http://localhost:3000/api/producto/searchCat", {
+  const response = await axios.get(`${API_URL}/api/producto/searchCat`, {
     params: { categoriaId: categoriaId }, 
   });
   return response.data.data;
 };
 
 const getTotalStock = async () => {
-  const response = await axios.get("http://localhost:3000/api/producto/stockTotal");
+  const response = await axios.get(`${API_URL}/api/producto/stockTotal`);
   return response.data.data; 
 };
 
 const updateProduct = async ({ Productid, param }) => {
-  const response = await axios.put(`http://localhost:3000/api/producto/${Productid}`, param);
+  const response = await axios.put(`${API_URL}/api/producto/${Productid}`, param);
   return response.data;
 };
 
 const createProduct = async (producto) => {
-  const response = await axios.post("http://localhost:3000/api/producto", producto);
+  const response = await axios.post(`${API_URL}/api/producto`, producto);
   return response.data;
 };
 
@@ -39,7 +41,7 @@ const uploadImage = async (imageFile) => {
   const formData = new FormData();
   formData.append('imagen', imageFile);
   
-  const response = await axios.post( "http://localhost:3000/api/producto/imagen", formData, 
+  const response = await axios.post( `${API_URL}/api/producto/imagen`, formData, 
     {
       headers: {
         'Content-Type': 'multipart/form-data'

@@ -1,124 +1,143 @@
+
 import { useState, useEffect } from "react";
 import { AuthContext } from "../contexts/auth";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-function isExpired(expiration) {
-  return Date.now() / 1000 > expiration;
-}
 
-function getUser(jwt) {
-  try {
-    const decoded = jwtDecode(jwt);
-    
-    if (isExpired(decoded.exp)) {
-      return null;
-    }
+// URL del backend desde Vite
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-    return {
-      id: decoded.id,
-      usuario: decoded.usuario,
-      name: decoded.name,
-      apellido: decoded.apellido,
-      rol: decoded.rol,
-      zona: decoded.zona,
-    };
-  } catch (error) {
-    return null;
-  }
+
+if (!import.meta.env.VITE_API_URL) {
+ console.warn(
+   "VITE_API_URL no definida. Revisa tus variables de entorno."
+ );
 }
 
 
+// Función para verificar expiración de JWT
+function isExpired(exp) {
+ return Date.now() / 1000 > exp;
+}
 
+
+// Función para decodificar el JWT y obtener datos del usuario
+function getUser(token) {
+ if (!token) return null;
+ try {
+   const decoded = jwtDecode(token);
+   if (isExpired(decoded.exp)) return null;
+
+
+   return {
+     id: decoded.id,
+     usuario: decoded.usuario,
+     name: decoded.name,
+     apellido: decoded.apellido,
+     rol: decoded.rol,
+     zona: decoded.zona,
+   };
+ } catch (error) {
+   console.error("Error decoding JWT:", error);
+   return null;
+ }
+}
+
+
+// Proveedor de contexto de autenticación
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(getUser(localStorage.getItem("token")));//Si hay un token guardado en localStorage, lo decodifica. Si el token sigue siendo válido, devuelve los datos del usuario. Si el token está vencido o corrupto, getUser() devuelve null
-  const [distribuidor, setDistribuidor] = useState(null);
-  const [wasAuthenticated, setWasAuthenticated] = useState(false);
-  const [errorLogin, setErrorLogin] = useState(null);
+ const [user, setUser] = useState(getUser(localStorage.getItem("token")));
+ const [distribuidor, setDistribuidor] = useState(null);
+ const [wasAuthenticated, setWasAuthenticated] = useState(false);
+ const [errorLogin, setErrorLogin] = useState(null);
 
-  // Función para obtener el distribuidor por zona
-  const fetchDistribuidor = async (zona) => {
-    try {
-      const response = await axios.get(`http://localhost:3000/api/distribuidor/zona/${zona.id}`);
-      return response.data.data[0];
-    } catch (error) {
-      console.error("Error al obtener distribuidor:", error);
-      return null;
-    }
-  };
 
-  // Cargar distribuidor cuando el usuario cambia
-  useEffect(() => {
-    const loadDistribuidor = async () => {
-      if (user?.zona) {
-        const distribuidorData = await fetchDistribuidor(user.zona);
-        setDistribuidor(distribuidorData);
-      }
-    };
-    
-    loadDistribuidor();
-  }, [user]);
+ // Obtener distribuidor por zona
+ const fetchDistribuidor = async (zona) => {
+   if (!zona?.id) return null;
+   try {
+     const response = await axios.get(`${API_URL}/api/distribuidor/zona/${zona.id}`, {
+       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+     });
+     return response.data.data?.[0] || null;
+   } catch (error) {
+     console.error("Error al obtener distribuidor:", error);
+     return null;
+   }
+ };
 
-  const isAuthenticated = () => {
-    return !!getUser(localStorage.getItem('token'));
-  }
 
-  const login = async (userData) => {
-    setErrorLogin(null);
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        userData
-      );
-      localStorage.setItem("token", response.data.token);
-      const user = getUser(response.data.token);
-      setUser(user);
-      setWasAuthenticated(true);
-      
-      // Cargar distribuidor después de login
-      if (user?.zona) {
-        const distribuidorData = await fetchDistribuidor(user.zona);
-        setDistribuidor(distribuidorData);
-      }
-    } catch (error) {
-      console.log("error", error);
-      setErrorLogin(error.response.data.message || "Error al iniciar sesión");
-    }
-  };
+ // Cargar distribuidor cuando cambia el usuario
+ useEffect(() => {
+   const loadDistribuidor = async () => {
+     if (user?.zona) {
+       const distribuidorData = await fetchDistribuidor(user.zona);
+       setDistribuidor(distribuidorData);
+     }
+   };
+   loadDistribuidor();
+ }, [user]);
 
-  const registerUser = async (userData) => {
-    setErrorLogin(null);
-    try {
-      const response = await axios.post("http://localhost:3000/api/auth/register", userData);
-      return { success: true, data: response.data };
-    } catch (error) {
-      console.error("Error al registrar usuario:", error);
-      const message = error.response?.data?.message || "Error al registrar usuario";
-      setErrorLogin(message);
-      return { success: false, message };
-    }
-  };
 
-  const logout = () => {
-    setUser(null);
-    setDistribuidor(null);
-    localStorage.removeItem("token");
-    setWasAuthenticated(false); // Resetear estado de autenticación
-  };
+ const isAuthenticated = () => !!getUser(localStorage.getItem("token"));
 
-// Permite que las funciones puedan ser utilizadas en otras componentes del contexto
-  const authValue = {
-    isAuthenticated,
-    user,
-    distribuidor, 
-    login,
-    registerUser,
-    logout,
-    wasAuthenticated,
-    errorLogin,
-  };
 
-  return (
-    <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>
-  );
+ const login = async (userData) => {
+   setErrorLogin(null);
+   try {
+     const response = await axios.post(`${API_URL}/api/auth/login`, userData);
+     const token = response.data.token;
+     localStorage.setItem("token", token);
+     const loggedUser = getUser(token);
+     setUser(loggedUser);
+     setWasAuthenticated(true);
+
+
+     if (loggedUser?.zona) {
+       const distribuidorData = await fetchDistribuidor(loggedUser.zona);
+       setDistribuidor(distribuidorData);
+     }
+   } catch (error) {
+     console.error("Login error:", error);
+     setErrorLogin(error.response?.data?.message || "Error al iniciar sesión");
+   }
+ };
+
+
+ const registerUser = async (userData) => {
+   setErrorLogin(null);
+   try {
+     const response = await axios.post(`${API_URL}/api/auth/register`, userData);
+     return { success: true, data: response.data };
+   } catch (error) {
+     console.error("Error registrando usuario:", error);
+     const message = error.response?.data?.message || "Error al registrar usuario";
+     setErrorLogin(message);
+     return { success: false, message };
+   }
+ };
+
+
+ const logout = () => {
+   setUser(null);
+   setDistribuidor(null);
+   localStorage.removeItem("token");
+   setWasAuthenticated(false);
+ };
+
+
+ const authValue = {
+   isAuthenticated,
+   user,
+   distribuidor,
+   login,
+   registerUser,
+   logout,
+   wasAuthenticated,
+   errorLogin,
+ };
+
+
+ return <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>;
 };
