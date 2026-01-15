@@ -19,47 +19,32 @@ const getVentaById = async (ventaId) => {
 };
 
 function useVenta() {
-
-  // ------- Cantidad de Ventas -------
-  const {
-    data: ventasCountData,
-    isError: isCountError,
-    error: countError,
-    isLoading: isCountLoading,
-    refetch: refetchCount
+  const { 
+    data: countData, 
+    isError: isCountError, 
+    error: countError, 
+    isLoading: isCountLoading 
   } = useQuery({
     queryKey: ["ventasCount"],
     queryFn: getVentasCount,
   });
 
-  // ✔️ EXTRAER SOLO EL NÚMERO
-  const ventasCount = ventasCountData?.data ?? 0;
-
-
-  // ------- Listado de Ventas -------
-  const {
-    data: ventas,
-    isError: isVentasError,
-    error: ventasError,
-    isLoading: isVentasLoading,
-    refetch: refetchVentas
+  const { 
+    data: ventasData, 
+    isError: isVentasError, 
+    error: ventasError, 
+    isLoading: isVentasLoading 
   } = useQuery({
     queryKey: ["ventas"],
     queryFn: getVentas,
   });
 
-
-  // ------- Procesar Compra -------
-  const procesarCompra = async (compraData) => {
-    return await procesarCompraAPI(compraData);
-  };
-
   return {
-    ventasCount,
+    ventasCount: countData,
     isCountError,
     countError,
     isCountLoading,
-    ventas,
+    ventas: ventasData,
     isVentasError,
     ventasError,
     isVentasLoading,

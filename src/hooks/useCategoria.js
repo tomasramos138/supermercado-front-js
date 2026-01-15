@@ -1,11 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
- getCategorias,
- searchCategoriasByName,
- createCategoria,
- updateCategoria,
- deleteCategoria
-} from "../services/api";
+import axios from "axios";
 
 export const API_URL = import.meta.env.VITE_API_URL
 

@@ -36,29 +36,8 @@ function useZonas() {
     queryFn: getZonas,
   });
 
-  // backend: { message, data: [] }
-  const zonas = Array.isArray(zonasData) 
-    ? zonasData
-    : Array.isArray(zonasData?.data)
-      ? zonasData.data
-      : [];
-
-  const createZonaFn = async (zona) => createZona(zona);
-  const deleteZonaFn = async (id) => deleteZona(id);
-  const updateZonaFn = async (id, zona) => {
-    if (!id) throw new Error("ID inválido");
-    return updateZona(id, zona);
-  };
-  
-
-  const safeSearchZonas = async (term) => {
-    if (!term) return [];
-    const res = await searchZonasByName(term);
-    return Array.isArray(res) ? res : [];
-  };
-
   return {
-    zonas,
+    zonas: data,
     isError,
     error,
     isLoading,
@@ -70,4 +49,4 @@ function useZonas() {
   };
 }
 
-export default useZonas;
+export default useZonas;   

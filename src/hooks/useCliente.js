@@ -27,30 +27,18 @@ const searchClientesByName = async (param) => {
 };
 
 function useClientes() {
-  const { data, isError, error, isLoading, refetch } = useQuery({
+  const { data, isError, error, isLoading } = useQuery({
     queryKey: ["clientesCount"],
     queryFn: getClientesCount,
   });
-
-  // ✔️ EXTRAER SOLO EL NUMERO
-  const clientesCount = data?.data ?? 0;
-
-  const updateClientFn = async ({ id, ...clientData }) => {
-    const res = await updateClient(id, clientData);
-    alert("Cliente modificado correctamente");
-    return res.data.data;
-  };
-
-  const searchClientesByNameFn = (param) => searchClientesByName(param);
-
+  
   return {
-    clientesCount,
+    clientesCount: data,
     isError,
     error,
     isLoading,
-    refetchClientesCount: refetch,
-    updateClient: updateClientFn,
-    searchClientesByName: searchClientesByNameFn,
+    updateClient,
+    searchClientesByName,
   };
 }
 

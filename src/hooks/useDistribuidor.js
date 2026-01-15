@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  getDistribuidoresByZona,
-  createDistribuidor,
-  updateDistribuidor,
-  deleteDistribuidor
-} from "../services/api";
+import axios from "axios";
 
 export const API_URL = import.meta.env.VITE_API_URL
 
@@ -41,32 +36,12 @@ function useDistribuidor(zonaId) {
     distribuidores: data,
     isError,
     error,
-    refetch
-  } = useQuery({
-    queryKey: ["distribuidores", zonaId],
-    queryFn: () => getDistribuidoresByZona(zonaId),
-    enabled: Boolean(zonaId), // solo corre si zonaId existe
-  });
-
-  // Normalización del resultado
-  const distribuidores = Array.isArray(data)
-    ? data
-    : Array.isArray(data?.data)
-      ? data.data
-      : [];
-
-  return {
-    distribuidores,
     isLoading,
-    isError,
-    error,
-    refetch,
-
-    // Mutaciones directas desde la API
     createDistribuidor,
-    updateDistribuidor,
-    deleteDistribuidor
+    deleteDistribuidor, 
+    refetchDistribuidores: refetch,
+    updateDistribuidor
   };
 }
 
-export default useDistribuidores;
+export default useDistribuidor;
