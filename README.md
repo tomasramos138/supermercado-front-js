@@ -14,7 +14,7 @@
 
 ```bash
 git clone https://github.com/tomasramos138/supermercado-front-js
-cd Front-End-DSW
+cd supermercado-front-js
 ```
 
 ---
