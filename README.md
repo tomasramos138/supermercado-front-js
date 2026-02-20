@@ -8,7 +8,7 @@
 
 ---
 
-## ⚙️ Configuración del Entorno
+## ⚙️ Configuración
 
 ### Clonar el repositorio
 
