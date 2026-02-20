@@ -51,7 +51,7 @@ http://localhost:5173
 
 ---
 
-## 🏗️ Compilación para Producción
+## Compilación para Producción
 
 ```bash
 pnpm build
@@ -62,19 +62,19 @@ pnpm preview
 
 ## 🧪 Ejecutar las Pruebas
 
-### 🔹 Pruebas unitarias e integración
+### Pruebas unitarias e integración
 
 ```bash
 pnpm test
 ```
 
-### 🔹 Pruebas E2E con Cypress
+### Pruebas E2E con Cypress
 
 ```bash
 pnpm cypress:open
 ```
 
-### 🔹 Cobertura de pruebas
+### Cobertura de pruebas
 
 ```bash
 pnpm test:coverage
@@ -82,7 +82,7 @@ pnpm test:coverage
 
 ---
 
-## 📜 Scripts Disponibles
+## Scripts Disponibles
 
 - `pnpm run dev` → Iniciar servidor de desarrollo
 - `pnpm build` → Compilar aplicación para producción
