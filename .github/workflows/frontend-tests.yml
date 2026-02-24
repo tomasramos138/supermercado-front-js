@@ -1,0 +1,41 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Allow pnpm scripts
+        run: pnpm config set ignore-scripts false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Cypress binary
+        run: pnpm exec cypress install
+
+      - name: Run unit tests
+        run: pnpm test:run
+
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          start: pnpm dev
+          wait-on: 'http://localhost:5173'
