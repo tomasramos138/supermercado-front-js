@@ -1,0 +1,32 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - run: npm install -g pnpm
+      - run: pnpm install
+
+      # 🔹 Unit tests (Vitest)
+      - name: Run unit tests
+        run: pnpm test:run
+
+      # 🔹 Cypress E2E
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          start: pnpm dev
+          wait-on: 'http://localhost:5173'
