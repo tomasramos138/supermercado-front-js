@@ -27,11 +27,8 @@ const getTotalStock = async () => {
   return response.data.data; 
 };
 
-const updateProduct = async (productId, param) => {
-  const response = await axios.put(
-    `${API_URL}/api/producto/${productId}`,
-    param
-  );
+const updateProduct = async ({ Productid, param }) => {
+  const response = await axios.put(`${API_URL}/api/producto/${Productid}`, param);
   return response.data;
 };
 
@@ -42,13 +39,15 @@ const createProduct = async (producto) => {
 
 const uploadImage = async (imageFile) => {
   const formData = new FormData();
-  formData.append("imagen", imageFile);
-
-  const response = await axios.post(
-    `${API_URL}/api/producto/imagen`,
-    formData
+  formData.append('imagen', imageFile);
+  
+  const response = await axios.post( `${API_URL}/api/producto/imagen`, formData, 
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
   );
-
   return response.data;
 };
 
