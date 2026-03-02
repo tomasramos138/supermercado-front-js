@@ -19,7 +19,7 @@ const Profile = () => {
    name: user?.name || "",
    lastName: user?.apellido || "",
    usuario: user?.usuario || "",
-   role: user?.rol === true ? "Administrador" : "Cliente",
+   role: user?.rol ||"Usuario",
    zone: user?.zona?.id || "",
    avatar: "👤",
  };
