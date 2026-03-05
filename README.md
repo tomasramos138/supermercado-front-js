@@ -42,7 +42,7 @@ VITE_API_BASE_URL=http://localhost:3000/api
 ### Modo desarrollo
 
 ```bash
-pnpm dev
+pnpm run dev
 ```
 
 La aplicación estará disponible en:
@@ -87,11 +87,8 @@ pnpm test:coverage
 - `pnpm run dev` → Iniciar servidor de desarrollo
 - `pnpm build` → Compilar aplicación para producción
 - `pnpm preview` → Vista previa de la compilación de producción
-- `pnpm lint` → Ejecutar ESLint
 - `pnpm test` → Ejecutar pruebas unitarias e integración
 - `pnpm test:coverage` → Ejecutar pruebas con reporte de cobertura
 - `pnpm cypress:open` → Abrir ejecutor de pruebas Cypress
 - `pnpm cypress:run` → Ejecutar pruebas Cypress en modo headless
-- `pnpm test:coverage` → Ejecutar pruebas con reporte de cobertura
-- `pnpm cypress:open` → Abrir ejecutor de pruebas Cypress
-- `pnpm cypress:run` → Ejecutar pruebas Cypress en modo headless
+
