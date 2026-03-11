@@ -1,42 +1,55 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useAuth } from "../hooks/useAuth"; 
 
 export const API_URL = import.meta.env.VITE_API_URL
 
-const getVentasCount = async () => {
-  const response = await axios.get(`${API_URL}/api/venta/count`);
+const getVentasCount = async (token) => {
+  const response = await axios.get(`${API_URL}/api/venta/count`, {
+    headers: { 'Authorization': `Bearer ${token}` } 
+  });
   return response.data.data;
 };
 
-const getVentas = async () => {
-  const response = await axios.get(`${API_URL}/api/venta`);
+const getVentas = async (token) => {
+  const response = await axios.get(`${API_URL}/api/venta`, {
+    headers: { 'Authorization': `Bearer ${token}` } 
+  });
   return response.data.data;
 };
 
-const getVentaById = async (ventaId) => {
-  const response = await axios.get(`${API_URL}/api/venta/${ventaId}`);
+const getVentaById = async (ventaId, token) => { 
+  const response = await axios.get(`${API_URL}/api/venta/${ventaId}`, {
+    headers: { 'Authorization': `Bearer ${token}` } 
+  });
   return response.data.data;
 };
 
 function useVenta() {
+  const { token } = useAuth();
+
   const { 
     data: countData, 
     isError: isCountError, 
     error: countError, 
-    isLoading: isCountLoading 
+    isLoading: isCountLoading,
+    refetch: refetchCount 
   } = useQuery({
     queryKey: ["ventasCount"],
-    queryFn: getVentasCount,
+    queryFn: () => getVentasCount(token), 
+    enabled: !!token,
   });
 
   const { 
     data: ventasData, 
     isError: isVentasError, 
     error: ventasError, 
-    isLoading: isVentasLoading 
+    isLoading: isVentasLoading,
+    refetch: refetchVentas 
   } = useQuery({
     queryKey: ["ventas"],
-    queryFn: getVentas,
+    queryFn: () => getVentas(token), 
+    enabled: !!token, 
   });
 
   return {
@@ -44,13 +57,17 @@ function useVenta() {
     isCountError,
     countError,
     isCountLoading,
+    refetchCount,
+    
     ventas: ventasData,
     isVentasError,
     ventasError,
     isVentasLoading,
+    refetchVentas,
+    
     isLoading: isCountLoading || isVentasLoading,
     isError: isCountError || isVentasError,
-    getVentaById
+    getVentaById: (ventaId) => getVentaById(ventaId, token),
   };
 }
 

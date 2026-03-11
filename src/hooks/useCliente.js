@@ -1,16 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useAuth } from "../hooks/useAuth"; 
 
 export const API_URL = import.meta.env.VITE_API_URL
 
-const getClientesCount = async () => {
-  const response = await axios.get(`${API_URL}/api/cliente/count`);
+const getClientesCount = async (token) => {
+  const response = await axios.get(`${API_URL}/api/cliente/count`, {
+    headers: { 'Authorization': `Bearer ${token}` } 
+  });
   return response.data.data;
 };
 
-const updateClient = async ({ id, ...clientData }) => {
+const updateClient = async ({ id, ...clientData }, token) => { 
   try {
-    const response = await axios.patch(`${API_URL}/api/cliente/${id}`, clientData);
+    const response = await axios.patch(`${API_URL}/api/cliente/${id}`, clientData, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
     alert('Cliente modificado correctamente');
     return response.data;
   } catch (error) {
@@ -19,17 +24,21 @@ const updateClient = async ({ id, ...clientData }) => {
   }
 };
 
-const searchClientesByName = async (param) => {
+const searchClientesByName = async (param, token) => { 
   const response = await axios.get(`${API_URL}/api/cliente/search`, {
+    headers: { 'Authorization': `Bearer ${token}` }, 
     params: { q: param },
   });
   return response.data.data;
 };
 
 function useClientes() {
-  const { data, isError, error, isLoading } = useQuery({
+  const { token } = useAuth();
+
+  const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["clientesCount"],
-    queryFn: getClientesCount,
+    queryFn: () => getClientesCount(token),
+    enabled: !!token, // Solo ejecuta si hay token
   });
   
   return {
@@ -37,8 +46,9 @@ function useClientes() {
     isError,
     error,
     isLoading,
-    updateClient,
-    searchClientesByName,
+    refetchClientesCount: refetch, 
+    updateClient: (data) => updateClient(data, token),
+    searchClientesByName: (param) => searchClientesByName(param, token),
   };
 }
 

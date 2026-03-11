@@ -1,95 +1,101 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 
 export const API_URL = import.meta.env.VITE_API_URL
 
-const getProducts = async () => {
-  const response = await axios.get(`${API_URL}/api/producto`);
+const getProducts = async (token) => {
+  const response = await axios.get(`${API_URL}/api/producto`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
   return response.data.data;
 };
 
-const searchProductsByName = async (param) => {
+const searchProductsByName = async (param, token) => {
   const response = await axios.get(`${API_URL}/api/producto/search`, {
+    headers: { 'Authorization': `Bearer ${token}` },
     params: { q: param },
   });
   return response.data.data;
 };
 
-const searchProductsByCategoria = async (categoriaId) => {
+const searchProductsByCategoria = async (categoriaId, token) => {
   const response = await axios.get(`${API_URL}/api/producto/searchCat`, {
-    params: { categoriaId: categoriaId }, 
+    headers: { 'Authorization': `Bearer ${token}` },
+    params: { categoriaId },
   });
   return response.data.data;
 };
 
-const getTotalStock = async () => {
-  const response = await axios.get(`${API_URL}/api/producto/stockTotal`);
-  return response.data.data; 
+const getTotalStock = async (token) => {
+  const response = await axios.get(`${API_URL}/api/producto/stockTotal`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return response.data.data;
 };
 
-const updateProduct = async ({ Productid, param }) => {
-  const response = await axios.put(`${API_URL}/api/producto/${Productid}`, param);
+const updateProduct = async (data, token) => {
+  const response = await axios.put(`${API_URL}/api/producto/${data.Productid}`, data.param, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  alert("Producto actualizado correctamente");
   return response.data;
 };
 
-const createProduct = async (producto) => {
-  const response = await axios.post(`${API_URL}/api/producto`, producto);
+
+const createProduct = async (producto, token) => {
+  const response = await axios.post(`${API_URL}/api/producto`, producto, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  alert("Producto creado correctamente");
   return response.data;
 };
 
-const uploadImage = async (imageFile) => {
+const uploadImage = async (imageFile, token) => {
   const formData = new FormData();
   formData.append('imagen', imageFile);
   
-  const response = await axios.post( `${API_URL}/api/producto/imagen`, formData, 
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+  const response = await axios.post(`${API_URL}/api/producto/imagen`, formData, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
     }
-  );
+  });
   return response.data;
 };
 
 function useProducts() {
-  const { 
-    data, 
-    isError, 
-    error, 
-    isLoading,
-    refetch: refetchProducts 
-  } = useQuery({
+  const { token } = useAuth();
+
+  const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["products"],
-    queryFn: getProducts,
+    queryFn: () => getProducts(token),
+    enabled: !!token,
   });
 
   const { 
     data: totalStock, 
-    isError: isStockError, 
-    error: stockError, 
-    isLoading: isStockLoading,
     refetch: refetchStock 
   } = useQuery({
     queryKey: ["totalStock"],
-    queryFn: getTotalStock,
+    queryFn: () => getTotalStock(token),
+    enabled: !!token,
   });
 
   return {
     products: data,
-    totalStock, 
+    totalStock,
     isError,
     error,
     isLoading,
-    isStockError,
-    stockError,
-    isStockLoading,
-    refetchProducts,
-    refetchStock,   
-    createProduct,
-    updateProduct,
-    uploadImage,
-    searchProductsByName,
-    searchProductsByCategoria,
+    refetchProducts: refetch,
+    refetchStock,
+    // Funciones que reciben token internamente
+    createProduct: (producto) => createProduct(producto, token),
+    updateProduct: (data) => updateProduct(data, token),
+    uploadImage: (imageFile) => uploadImage(imageFile, token),
+    searchProductsByName: (param) => searchProductsByName(param, token),
+    searchProductsByCategoria: (categoriaId) => searchProductsByCategoria(categoriaId, token),
   };
 }
 
