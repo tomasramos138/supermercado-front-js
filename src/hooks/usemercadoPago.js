@@ -1,17 +1,22 @@
 import axios from 'axios';
+import { useAuth } from "../hooks/useAuth";
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export const createPreferenceAPI = async (data) => {
+export const createPreferenceAPI = async (data, token) => {
   console.log("Enviando al backend:", data);
-  return (await axios.post(`${API_URL}/api/mercadopago/create-preference`, data)).data;
+  return (await axios.post(`${API_URL}/api/mercadopago/create-preference`, data, {
+    headers: { 'Authorization': `Bearer ${token}` } 
+  })).data;
 };
 
 function useMercadoPago() {
+  const { token } = useAuth(); 
+
   const createPreference = async (payload) => {
     // Verificar que el payload tenga la estructura correcta
     if (!payload || !payload.items || !Array.isArray(payload.items)) {
-      throw new Error("Datos del carrito inválidos");
+      throw new Error("Datos del carrito invÃ¡lidos");
     }
 
     if (!payload.clienteId) {
@@ -23,8 +28,7 @@ function useMercadoPago() {
     }
 
     try {
-      // La función del API ya devuelve los datos directamente
-      const response = await createPreferenceAPI(payload);
+      const response = await createPreferenceAPI(payload, token);
       console.log("Respuesta del backend:", response);
       return response;
     } catch (error) {
