@@ -1,47 +1,55 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "../axiosConfig"; 
 import { useAuth } from "../hooks/useAuth";
 
-export const API_URL = import.meta.env.VITE_API_URL
-
-const getDistribuidoresByZona = async (zonaId, token) => {
-  const response = await axios.get(`${API_URL}/api/distribuidor?zona=${zonaId}`, {
-    headers: { 'Authorization': `Bearer ${token}` } 
-  });
+const getDistribuidoresByZona = async (zonaId) => {
+  const response = await axiosInstance.get(`/api/distribuidor?zona=${zonaId}`);
   console.log("useDistribuidor: Datos recibidos:", response.data);
   return response.data.data;
 };
 
-const createDistribuidor = async (distribuidorData, token) => { 
-  const response = await axios.post(`${API_URL}/api/distribuidor`, distribuidorData, {
-    headers: { 'Authorization': `Bearer ${token}` } 
-  });
-  alert("Distribuidor creado correctamente");
-  return response.data;
+const createDistribuidor = async (distribuidorData) => {
+  try {
+    const response = await axiosInstance.post("/api/distribuidor", distribuidorData);
+    alert("Distribuidor creado correctamente");
+    return response.data;
+  } catch (error) {
+    console.error("Error al crear distribuidor:", error);
+    alert("Error al crear el distribuidor");
+    throw error;
+  }
 };
 
-const deleteDistribuidor = async (distribuidorId, token) => { 
-  const response = await axios.delete(`${API_URL}/api/distribuidor/${distribuidorId}`, {
-    headers: { 'Authorization': `Bearer ${token}` } 
-  });
-  alert("Distribuidor eliminado correctamente");
-  return response.data;
+const deleteDistribuidor = async (distribuidorId) => {
+  try {
+    const response = await axiosInstance.delete(`/api/distribuidor/${distribuidorId}`);
+    alert("Distribuidor eliminado correctamente");
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar distribuidor:", error);
+    alert("Error al eliminar el distribuidor");
+    throw error;
+  }
 };
 
-const updateDistribuidor = async (distribuidorId, distribuidorData, token) => { 
-  const response = await axios.put(`${API_URL}/api/distribuidor/${distribuidorId}`, distribuidorData, {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  alert("Distribuidor actualizado correctamente");
-  return response.data;
+const updateDistribuidor = async (distribuidorId, distribuidorData) => {
+  try {
+    const response = await axiosInstance.put(`/api/distribuidor/${distribuidorId}`, distribuidorData);
+    alert("Distribuidor actualizado correctamente");
+    return response.data;
+  } catch (error) {
+    console.error("Error al actualizar distribuidor:", error);
+    alert("Error al actualizar el distribuidor");
+    throw error;
+  }
 };
 
 function useDistribuidor(zonaId) {
-  const { token } = useAuth(); 
+  const { token } = useAuth();
 
   const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["distribuidores", zonaId],
-    queryFn: () => getDistribuidoresByZona(zonaId, token), 
+    queryFn: () => getDistribuidoresByZona(zonaId),
     enabled: !!zonaId && !!token,
   });
 
@@ -51,9 +59,9 @@ function useDistribuidor(zonaId) {
     error,
     isLoading,
     refetchDistribuidores: refetch,
-    createDistribuidor: (distribuidorData) => createDistribuidor(distribuidorData, token),
-    deleteDistribuidor: (distribuidorId) => deleteDistribuidor(distribuidorId, token),
-    updateDistribuidor: (distribuidorId, distribuidorData) => updateDistribuidor(distribuidorId, distribuidorData, token),
+    createDistribuidor,
+    deleteDistribuidor,
+    updateDistribuidor,
   };
 }
 

@@ -1,14 +1,5 @@
-import axios from 'axios';
+import axiosInstance from "../axiosConfig";
 import { useAuth } from "../hooks/useAuth";
-
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-export const createPreferenceAPI = async (data, token) => {
-  console.log("Enviando al backend:", data);
-  return (await axios.post(`${API_URL}/api/mercadopago/create-preference`, data, {
-    headers: { 'Authorization': `Bearer ${token}` } 
-  })).data;
-};
 
 function useMercadoPago() {
   const { token } = useAuth(); 
@@ -16,7 +7,7 @@ function useMercadoPago() {
   const createPreference = async (payload) => {
     // Verificar que el payload tenga la estructura correcta
     if (!payload || !payload.items || !Array.isArray(payload.items)) {
-      throw new Error("Datos del carrito invÃ¡lidos");
+      throw new Error("Datos del carrito inválidos");
     }
 
     if (!payload.clienteId) {
@@ -28,19 +19,27 @@ function useMercadoPago() {
     }
 
     try {
-      const response = await createPreferenceAPI(payload, token);
-      console.log("Respuesta del backend:", response);
-      return response;
+      console.log("Enviando al backend:", payload);
+      const response = await axiosInstance.post(
+        "/api/mercadopago/create-preference", 
+        payload
+      );
+      
+      console.log("Respuesta del backend:", response.data);
+      return response.data;
+      
     } catch (error) {
       console.error(
         "Error creando preferencia de pago:",
         error.response?.data || error.message
       );
-      throw new Error(
+      
+      const errorMessage = 
         error.response?.data?.error || 
         error.response?.data?.message || 
-        "Error creando preferencia de pago"
-      );
+        "Error creando preferencia de pago";
+      
+      throw new Error(errorMessage);
     }
   };
   
