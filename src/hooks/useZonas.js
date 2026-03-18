@@ -1,55 +1,60 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useAuth } from "../hooks/useAuth"; 
+import axiosInstance from "../axiosConfig"; 
+import { useAuth } from "../hooks/useAuth";
 
-export const API_URL = import.meta.env.VITE_API_URL
-
-const getZonas = async (token) => {
-  const response = await axios.get(`${API_URL}/api/zona`, {
-    headers: { 'Authorization': `Bearer ${token}` } 
-  });
+const getZonas = async () => {
+  const response = await axiosInstance.get("/api/zona");
   return response.data.data;
 };
 
-const searchZonasByName = async (param, token) => {
-  const response = await axios.get(`${API_URL}/api/zona/search`, {
-    headers: { 'Authorization': `Bearer ${token}` },
+const searchZonasByName = async (param) => {
+  const response = await axiosInstance.get("/api/zona/search", {
     params: { q: param },
   });
   return response.data.data;
 };
 
-const createZona = async (zonaData, token) => {
-  const response = await axios.post(`${API_URL}/api/zona`, zonaData, {
-    headers: { 'Authorization': `Bearer ${token}` } 
-  });
-  alert("Zona creada correctamente");
-  return response.data;
+const createZona = async (zonaData) => {
+  try {
+    const response = await axiosInstance.post("/api/zona", zonaData);
+    alert("Zona creada correctamente");
+    return response.data;
+  } catch (error) {
+    console.error("Error al crear zona:", error);
+    alert("Error al crear la zona");
+    throw error;
+  }
 };
 
-const deleteZona = async (zonaId, token) => {
-  const response = await axios.delete(`${API_URL}/api/zona/${zonaId}`, {
-    headers: { 'Authorization': `Bearer ${token}` } 
-  });
-  alert("Zona eliminada correctamente");
-  return response.data;
+const deleteZona = async (zonaId) => {
+  try {
+    const response = await axiosInstance.delete(`/api/zona/${zonaId}`);
+    alert("Zona eliminada correctamente");
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar zona:", error);
+    alert("Error al eliminar la zona");
+    throw error;
+  }
 };
 
-const updateZona = async (zonaId, zonaData, token) => {
-  const response = await axios.put(`${API_URL}/api/zona/${zonaId}`, zonaData, {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  alert("Zona actualizada correctamente");
-  return response.data;
+const updateZona = async (zonaId, zonaData) => {
+  try {
+    const response = await axiosInstance.put(`/api/zona/${zonaId}`, zonaData);
+    alert("Zona actualizada correctamente");
+    return response.data;
+  } catch (error) {
+    console.error("Error al actualizar zona:", error);
+    alert("Error al actualizar la zona");
+    throw error;
+  }
 };
 
 function useZonas() {
-  const { token } = useAuth();
 
   const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["zonas"],
-    queryFn: () => getZonas(token), 
-    enabled: !!token, 
+    queryFn: getZonas
   });
 
   return {
@@ -58,10 +63,10 @@ function useZonas() {
     error,
     isLoading,
     refetchZonas: refetch,
-    createZona: (zonaData) => createZona(zonaData, token),
-    deleteZona: (zonaId) => deleteZona(zonaId, token),
-    updateZona: (zonaId, zonaData) => updateZona(zonaId, zonaData, token),
-    searchZonasByName: (param) => searchZonasByName(param, token),
+    createZona,
+    deleteZona,
+    updateZona,
+    searchZonasByName,
   };
 }
 

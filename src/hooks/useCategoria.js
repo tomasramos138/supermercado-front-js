@@ -1,35 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 
-export const API_URL = import.meta.env.VITE_API_URL
-
-const getCategoria = async (token) => {
-  const response = await axios.get(`${API_URL}/api/categoria`,{
-        headers: {
-      'Authorization': `Bearer ${token}` 
-    }
-  });
+const getCategoria = async () => {
+  const response = await axiosInstance.get("/api/categoria");
   return response.data.data;
- };
+};
 
-const searchCategoriasByName = async (param, token) => {
-  const response = await axios.get(`${API_URL}/api/categoria/search`, {
-    headers: {
-      'Authorization': `Bearer ${token}` 
-    },
+const searchCategoriasByName = async (param) => {
+  const response = await axiosInstance.get("/api/categoria/search", {
     params: { q: param },
   });
   return response.data.data;
 };
 
-const createCategoria = async (categoriaData, token) => {
+const createCategoria = async (categoriaData) => {
   try {
-    const response = await axios.post(`${API_URL}/api/categoria`, categoriaData, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    const response = await axiosInstance.post("/api/categoria", categoriaData);
     alert("Categoría creada correctamente");
     return response.data;
   } catch (error) {
@@ -39,13 +26,9 @@ const createCategoria = async (categoriaData, token) => {
   }
 };
 
-const deleteCategoria = async (id, token) => {
+const deleteCategoria = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/api/categoria/${id}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    const response = await axiosInstance.delete(`/api/categoria/${id}`);
     alert("Categoría eliminada correctamente");
     return response.data;
   } catch (error) {
@@ -54,14 +37,10 @@ const deleteCategoria = async (id, token) => {
     throw error;
   }
 };
- 
-const updateCategoria = async (id, categoriaData, token) => {
+
+const updateCategoria = async (id, categoriaData) => {
   try {
-    const response = await axios.put(`${API_URL}/api/categoria/${id}`, categoriaData, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    const response = await axiosInstance.put(`/api/categoria/${id}`, categoriaData);
     alert("Categoría actualizada correctamente");
     return response.data;
   } catch (error) {
@@ -70,17 +49,14 @@ const updateCategoria = async (id, categoriaData, token) => {
     throw error;
   }
 };
- 
- function useCategoria() {
+
+function useCategoria() {
   const { token } = useAuth();
-  const getToken = () => localStorage.getItem('token');
-  console.log('Token enviado:', token);
-  console.log('Token length:', token?.length);
   
   const { data, isError, error, isLoading, refetch } = useQuery({
     queryKey: ["categorias"],
-    queryFn: () => getCategoria(token), 
-    enabled: !!token, // Solo ejecuta si hay token
+    queryFn: getCategoria,
+    enabled: !!token, // Nos aseguramos que solo se ejecute si hay un token
   });
 
   return {
@@ -88,11 +64,10 @@ const updateCategoria = async (id, categoriaData, token) => {
     isError,
     error,
     isLoading,
-    //Se pasa el token en cada función
-    createCategoria: (data) => createCategoria(data, token),
-    deleteCategoria: (id) => deleteCategoria(id, token),
-    updateCategoria: (id, data) => updateCategoria(id, data, token),
-    searchCategoriasByName: (param) => searchCategoriasByName(param, token),
+    createCategoria,
+    deleteCategoria,
+    updateCategoria,
+    searchCategoriasByName,
     refetchCategorias: refetch,
   };
 }
