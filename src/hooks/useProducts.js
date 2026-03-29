@@ -30,7 +30,6 @@ const getTotalStock = async () => {
 const updateProduct = async (data) => {
   try {
     const response = await axiosInstance.put(`/api/producto/${data.Productid}`, data.param);
-    alert("Producto actualizado correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al actualizar producto:", error);
@@ -42,7 +41,6 @@ const updateProduct = async (data) => {
 const createProduct = async (producto) => {
   try {
     const response = await axiosInstance.post("/api/producto", producto);
-    alert("Producto creado correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al crear producto:", error);

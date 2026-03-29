@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "../axiosConfig"; // Ajusta la ruta según donde pusiste axiosConfig
+import axiosInstance from "../axiosConfig";
 import { useAuth } from "../hooks/useAuth";
 
 

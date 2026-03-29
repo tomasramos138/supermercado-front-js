@@ -17,7 +17,6 @@ const searchZonasByName = async (param) => {
 const createZona = async (zonaData) => {
   try {
     const response = await axiosInstance.post("/api/zona", zonaData);
-    alert("Zona creada correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al crear zona:", error);
@@ -29,7 +28,6 @@ const createZona = async (zonaData) => {
 const deleteZona = async (zonaId) => {
   try {
     const response = await axiosInstance.delete(`/api/zona/${zonaId}`);
-    alert("Zona eliminada correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al eliminar zona:", error);
@@ -41,7 +39,6 @@ const deleteZona = async (zonaId) => {
 const updateZona = async (zonaId, zonaData) => {
   try {
     const response = await axiosInstance.put(`/api/zona/${zonaId}`, zonaData);
-    alert("Zona actualizada correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al actualizar zona:", error);

@@ -10,7 +10,6 @@ const getClientesCount = async () => {
 const updateClient = async ({ id, ...clientData }) => {
   try {
     const response = await axiosInstance.patch(`/api/cliente/${id}`, clientData);
-    alert('Cliente modificado correctamente');
     return response.data;
   } catch (error) {
     console.error('Error al modificar el cliente:', error);

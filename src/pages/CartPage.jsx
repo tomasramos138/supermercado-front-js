@@ -40,10 +40,10 @@ const CartPage = ({ isOpen, onClose }) => {
     setIsLoading(true);
     setError(null);
 
-    // PREPARAR los datos COMPLETOS que espera el backend
+    // Prepara los datos que espera el backend
     const payload = {
       items: cart.map(item => ({
-        id: item.id, // ¡IMPORTANTE! El backend necesita el ID del producto
+        id: item.id, //El backend necesita el ID del producto
         name: item.name,
         quantity: Number(item.quantity),
         precio: Number(item.precio),
@@ -51,8 +51,6 @@ const CartPage = ({ isOpen, onClose }) => {
       clienteId: Number(user.id), // Convertir a número
       distribuidorId: Number(distribuidor.id), // Convertir a número
     };
-
-    console.log("Enviando datos al backend:", payload);
 
     // LLAMAR al backend con los datos COMPLETOS
     const response = await createPreference(payload);
