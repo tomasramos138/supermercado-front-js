@@ -83,6 +83,9 @@ export const AuthProvider = ({ children }) => {
     setErrorLogin(null);
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, userData);
+
+      console.log("LOGIN RESPONSE:", response.data);
+
       const newToken = response.data.token;
       
       // Guardar en localStorage Y en el estado
