@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
-// Crear una instancia personalizada de axios
 const axiosInstance = axios.create({
   baseURL: API_URL,
 });
@@ -21,7 +20,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-//Para manejar los errores de autenticación
+//Maneja los errores de autenticación
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {

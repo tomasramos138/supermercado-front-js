@@ -11,7 +11,6 @@ const getDistribuidoresByZona = async (zonaId) => {
 const createDistribuidor = async (distribuidorData) => {
   try {
     const response = await axiosInstance.post("/api/distribuidor", distribuidorData);
-    alert("Distribuidor creado correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al crear distribuidor:", error);
@@ -23,7 +22,6 @@ const createDistribuidor = async (distribuidorData) => {
 const deleteDistribuidor = async (distribuidorId) => {
   try {
     const response = await axiosInstance.delete(`/api/distribuidor/${distribuidorId}`);
-    alert("Distribuidor eliminado correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al eliminar distribuidor:", error);
@@ -35,7 +33,6 @@ const deleteDistribuidor = async (distribuidorId) => {
 const updateDistribuidor = async (distribuidorId, distribuidorData) => {
   try {
     const response = await axiosInstance.put(`/api/distribuidor/${distribuidorId}`, distribuidorData);
-    alert("Distribuidor actualizado correctamente");
     return response.data;
   } catch (error) {
     console.error("Error al actualizar distribuidor:", error);
