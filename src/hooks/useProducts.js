@@ -70,13 +70,13 @@ const uploadImage = async (imageFile) => {
 function useProducts() {
   const { token } = useAuth();
   const { data: products, isError, error, isLoading, refetch } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["products",token],
     queryFn: getProducts,
     enabled: !!token,
   });
 
   const { data: totalStock, refetch: refetchStock } = useQuery({
-    queryKey: ["totalStock"],
+    queryKey: ["totalStock",token],
     queryFn: getTotalStock, 
     enabled: !!token,
   });
