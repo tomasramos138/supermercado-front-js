@@ -84,13 +84,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, userData);
 
-      console.log("LOGIN RESPONSE:", response.data);
-
       const newToken = response.data.token;
       
       // Guardar en localStorage Y en el estado
       localStorage.setItem("token", newToken);
-        console.log("TOKEN GUARDADO:", localStorage.getItem("token"));
+      console.log("TOKEN GUARDADO:", localStorage.getItem("token"));
       setToken(newToken); 
       
       const loggedUser = getUser(newToken);
@@ -129,6 +127,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const authValue = { 
+    token,
     isAuthenticated,
     user,
     distribuidor,

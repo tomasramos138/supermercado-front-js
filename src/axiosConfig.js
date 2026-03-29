@@ -25,10 +25,9 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expirado o no válido
-      localStorage.removeItem('token');
-      console.error('Sesión expirada');
+      console.error('401 - posible token inválido');
     }
+
     return Promise.reject(error);
   }
 );
