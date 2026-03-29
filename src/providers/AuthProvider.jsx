@@ -90,6 +90,7 @@ export const AuthProvider = ({ children }) => {
       
       // Guardar en localStorage Y en el estado
       localStorage.setItem("token", newToken);
+        console.log("TOKEN GUARDADO:", localStorage.getItem("token"));
       setToken(newToken); 
       
       const loggedUser = getUser(newToken);
@@ -127,8 +128,7 @@ export const AuthProvider = ({ children }) => {
     setWasAuthenticated(false);
   };
 
-  const authValue = {
-    token, 
+  const authValue = { 
     isAuthenticated,
     user,
     distribuidor,
